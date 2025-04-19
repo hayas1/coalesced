@@ -10,9 +10,6 @@ readme.workspace = true
 [lib]
 proc-macro = true
 
-[features]
-default = ["syn/extra-traits"] # TODO developing
-
 [dependencies]
 proc-macro2 = "1.0.95"
 quote = "1.0.39"
