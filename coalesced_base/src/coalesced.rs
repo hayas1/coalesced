@@ -24,7 +24,7 @@ pub trait IntoHistory: Sized {
 }
 impl<T: Coalesce> IntoHistory for T {
     type History = Coalesced<T>;
-    fn into_history(self) -> Self::History {
+    default fn into_history(self) -> Self::History {
         Coalesced::new(self)
     }
 }
