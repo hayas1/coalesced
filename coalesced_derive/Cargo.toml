@@ -16,7 +16,7 @@ default = ["syn/extra-traits"] # TODO developing
 [dependencies]
 proc-macro2 = "1.0.95"
 quote = "1.0.39"
-syn = { version = "2.0.100", features = ["full"] }
+syn = { version = "2.0.101", features = ["full"] }
 
 [dev-dependencies]
 coalesced = { path = "../", features = ["derive"] }
