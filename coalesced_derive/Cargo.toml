@@ -11,9 +11,9 @@ readme.workspace = true
 proc-macro = true
 
 [dependencies]
-proc-macro2 = "1.0.95"
+proc-macro2 = "1.0.101"
 quote = "1.0.39"
-syn = { version = "2.0.104", features = ["full"] }
+syn = { version = "2.0.106", features = ["full"] }
 
 [dev-dependencies]
 coalesced = { path = "../", features = ["derive"] }
