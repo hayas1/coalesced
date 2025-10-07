@@ -7,6 +7,7 @@ use crate::{
 
 pub mod annotation;
 pub mod semigroup;
+pub mod statistics;
 
 pub trait Construction<T>: Semigroup + Sized + From<T> + Deref<Target = T> + DerefMut {
     fn into_inner(self) -> T;
