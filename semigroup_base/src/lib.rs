@@ -1,4 +1,5 @@
 pub mod annotate;
+pub mod commutative;
 pub mod iter;
 #[cfg(feature = "monoid")]
 pub mod monoid;
