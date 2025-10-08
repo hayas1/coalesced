@@ -13,6 +13,9 @@ pub struct ContainerAttr {
     #[darling(default)]
     annotated: bool,
 
+    #[darling(default)]
+    commutative: bool,
+
     with: Option<Path>,
     annotation_param: Option<Ident>,
 }
@@ -40,6 +43,10 @@ impl ContainerAttr {
     }
     pub fn is_annotated(&self) -> bool {
         self.annotated
+    }
+
+    pub fn is_commutative(&self) -> bool {
+        self.commutative
     }
 
     pub fn annotation(&self, constant: &Constant, annotation_ident: &Ident) -> Annotation {

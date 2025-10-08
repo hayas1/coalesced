@@ -17,11 +17,15 @@ use crate::{
 pub struct StructSemigroup<'a> {
     constant: &'a Constant,
     derive: &'a DeriveInput,
+    attr: &'a ContainerAttr,
     field_ops: Vec<FieldSemigroupOp<'a>>,
 }
 impl ToTokens for StructSemigroup<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         self.impl_semigroup().to_tokens(tokens);
+        self.impl_commutative()
+            .iter()
+            .for_each(|s| s.to_tokens(tokens));
     }
 }
 impl<'a> StructSemigroup<'a> {
@@ -35,6 +39,7 @@ impl<'a> StructSemigroup<'a> {
         Ok(Self {
             constant,
             derive,
+            attr,
             field_ops,
         })
     }
@@ -43,6 +48,7 @@ impl<'a> StructSemigroup<'a> {
             constant,
             derive,
             field_ops,
+            ..
         } = self;
         let Constant { path_semigroup, .. } = constant;
         let DeriveInput {
@@ -60,6 +66,27 @@ impl<'a> StructSemigroup<'a> {
                 }
             }
         }
+    }
+    pub fn impl_commutative(&self) -> Option<ItemImpl> {
+        let Self {
+            constant,
+            derive,
+            attr,
+            ..
+        } = self;
+        let Constant {
+            path_commutative, ..
+        } = constant;
+        let DeriveInput {
+            ident, generics, ..
+        } = derive;
+        let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+        attr.is_commutative().then(|| {
+            parse_quote! {
+                #[automatically_derived]
+                impl #impl_generics #path_commutative for #ident #ty_generics #where_clause {}
+            }
+        })
     }
 }
 
