@@ -18,6 +18,9 @@ pub struct OpTrait<'a> {
 impl ToTokens for OpTrait<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         self.def_trait().to_tokens(tokens);
+        self.impl_commutative()
+            .iter()
+            .for_each(|i| i.to_tokens(tokens));
         self.impl_trait().to_tokens(tokens);
         self.impl_trait_reverse().to_tokens(tokens);
         self.impl_trait_annotated()
@@ -51,6 +54,28 @@ impl<'a> OpTrait<'a> {
             method_ident,
             attr,
             annotation,
+        })
+    }
+
+    pub fn impl_commutative(&self) -> Option<ItemImpl> {
+        let Self {
+            constant,
+            derive,
+            attr,
+            ..
+        } = self;
+        let Constant {
+            path_commutative, ..
+        } = constant;
+        let DeriveInput {
+            ident, generics, ..
+        } = derive;
+        let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+        attr.is_commutative().then(|| {
+            parse_quote! {
+                #[automatically_derived]
+                impl #impl_generics #path_commutative for #ident #ty_generics #where_clause {}
+            }
         })
     }
 

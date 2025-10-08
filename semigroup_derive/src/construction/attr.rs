@@ -16,6 +16,9 @@ pub struct ContainerAttr {
     annotated: bool,
     unit: Option<Expr>,
 
+    #[darling(default)]
+    commutative: bool,
+
     op_trait: Option<Ident>,
 
     annotation_type_param: Option<TypeParam>,
@@ -66,6 +69,10 @@ impl ContainerAttr {
         self.op_trait
             .as_ref()
             .map(|_| format_ident!("{}", ident.to_string().to_snake_case()))
+    }
+
+    pub fn is_commutative(&self) -> bool {
+        self.commutative
     }
 
     pub fn unit_annotate(&self) -> Expr {
