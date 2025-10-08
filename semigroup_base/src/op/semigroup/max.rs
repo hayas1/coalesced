@@ -1,10 +1,10 @@
 use semigroup_derive::ConstructionUse;
 
-use crate::{op::Construction, reverse::Reverse, semigroup::Semigroup};
+use crate::{commutative::Commutative, op::Construction, reverse::Reverse, semigroup::Semigroup};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(op_trait = MaxExt)]
+#[construction(op_trait = MaxExt, commutative)]
 pub struct Max<T: Ord>(pub T);
 impl<T: Ord> Semigroup for Max<T> {
     fn semigroup_op(base: Self, other: Self) -> Self {
@@ -20,7 +20,7 @@ impl<T: Ord + num::Bounded> crate::monoid::Monoid for Max<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
 
     use super::*;
 
@@ -34,6 +34,12 @@ mod tests {
     fn test_max_as_monoid() {
         let (a, b, c) = (Max(1), Max(2), Max(3));
         assert_monoid!(a, b, c);
+    }
+
+    #[test]
+    fn test_max_commutative() {
+        let (a, b, c) = (Max(1), Max(2), Max(3));
+        assert_commutative!(a, b, c);
     }
 
     #[test]

@@ -2,11 +2,11 @@ use std::ops::Mul;
 
 use semigroup_derive::ConstructionUse;
 
-use crate::{op::Construction, reverse::Reverse, semigroup::Semigroup};
+use crate::{commutative::Commutative, op::Construction, reverse::Reverse, semigroup::Semigroup};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(op_trait = ProdExt)]
+#[construction(op_trait = ProdExt, commutative)]
 pub struct Prod<T: Mul<Output = T>>(pub T);
 impl<T: Mul<Output = T>> Semigroup for Prod<T> {
     fn semigroup_op(base: Self, other: Self) -> Self {
@@ -22,7 +22,7 @@ impl<T: Mul<Output = T> + num::One> crate::monoid::Monoid for Prod<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
 
     use super::*;
 
@@ -36,6 +36,12 @@ mod tests {
     fn test_prod_as_monoid() {
         let (a, b, c) = (Prod(1), Prod(2), Prod(3));
         assert_monoid!(a, b, c);
+    }
+
+    #[test]
+    fn test_prod_commutative() {
+        let (a, b, c) = (Prod(1), Prod(2), Prod(3));
+        assert_commutative!(a, b, c);
     }
 
     #[test]

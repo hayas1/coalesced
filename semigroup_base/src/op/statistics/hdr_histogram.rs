@@ -1,12 +1,12 @@
 use hdrhistogram::{Counter, Histogram};
 use semigroup_derive::ConstructionUse;
 
-use crate::{op::Construction, reverse::Reverse, semigroup::Semigroup};
+use crate::{commutative::Commutative, op::Construction, reverse::Reverse, semigroup::Semigroup};
 
 pub const DEFAULT_SIGFIG: u8 = 3;
 
 #[derive(Debug, Clone, PartialEq, ConstructionUse)]
-#[construction(op_trait = HdrHistogramExt)]
+#[construction(op_trait = HdrHistogramExt, commutative)]
 pub struct HdrHistogram<T: Counter>(pub Histogram<T>);
 impl<T: Counter> Semigroup for HdrHistogram<T> {
     fn semigroup_op(mut base: Self, other: Self) -> Self {
@@ -39,7 +39,7 @@ impl<T: Counter> FromIterator<u64> for HdrHistogram<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
 
     use super::*;
 
@@ -57,6 +57,14 @@ mod tests {
         let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();
         let c: HdrHistogram<u32> = [7, 8, 9].into_iter().collect();
         assert_monoid!(a, b, c);
+    }
+
+    #[test]
+    fn test_hdr_histogram_commutative() {
+        let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
+        let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();
+        let c: HdrHistogram<u32> = [7, 8, 9].into_iter().collect();
+        assert_commutative!(a, b, c);
     }
 
     #[test]
