@@ -1,21 +1,8 @@
 ---
 source: semigroup_derive/src/construction.rs
-assertion_line: 70
+assertion_line: 69
 expression: formatted
 ---
-pub trait CoalesceExt: Sized + Semigroup {
-    fn coalesce(self, other: Self) -> Self {
-        ::semigroup::Semigroup::semigroup_op(self, other)
-    }
-}
-#[automatically_derived]
-impl<T> CoalesceExt for Coalesce<T> {}
-#[automatically_derived]
-impl<T> CoalesceExt for ::semigroup::Reverse<Coalesce<T>> {}
-#[automatically_derived]
-impl<T, A> CoalesceExt for ::semigroup::Annotated<Coalesce<T>, A> {}
-#[automatically_derived]
-impl<T, A> CoalesceExt for ::semigroup::Reverse<::semigroup::Annotated<Coalesce<T>, A>> {}
 #[automatically_derived]
 impl<T> ::semigroup::Semigroup for Coalesce<T> {
     fn semigroup_op(base: Self, other: Self) -> Self {

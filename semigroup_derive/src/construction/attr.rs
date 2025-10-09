@@ -1,7 +1,5 @@
 use darling::FromDeriveInput;
-use heck::ToSnakeCase;
-use quote::format_ident;
-use syn::{parse_quote, DeriveInput, Expr, Ident, TypeParam};
+use syn::{parse_quote, DeriveInput, Expr, TypeParam};
 
 use crate::{
     annotation::Annotation,
@@ -18,8 +16,6 @@ pub struct ContainerAttr {
 
     #[darling(default)]
     commutative: bool,
-
-    op_trait: Option<Ident>,
 
     annotation_type_param: Option<TypeParam>,
     annotation_where: Option<String>,
@@ -60,15 +56,6 @@ impl ContainerAttr {
 
     pub fn is_annotated(&self) -> bool {
         self.annotated
-    }
-
-    pub fn op_trait(&self) -> Option<&Ident> {
-        self.op_trait.as_ref()
-    }
-    pub fn op_method(&self, ident: &Ident) -> Option<Ident> {
-        self.op_trait
-            .as_ref()
-            .map(|_| format_ident!("{}", ident.to_string().to_snake_case()))
     }
 
     pub fn is_commutative(&self) -> bool {
@@ -114,19 +101,18 @@ mod tests {
     #[case::ok(
         syn::parse_quote! {
             #[derive(Construction)]
-            #[construction(annotated, op_trait = CoalesceExt)]
+            #[construction(annotated)]
             pub struct Coalesce<T>(pub Option<T>);
         },
         Ok(ContainerAttr {
             annotated: true,
-            op_trait: Some(format_ident!("CoalesceExt")),
             ..default_container_attr()
         }),
     )]
     #[case::invalid_annotated_attr(
         syn::parse_quote! {
             #[derive(Construction)]
-            #[construction(op_trait = CoalesceExt, unit = ())]
+            #[construction(unit = ())]
             pub struct Construct<T>(T);
         },
         Err("attribute `unit` are supported only with `annotated`"),

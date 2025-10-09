@@ -3,7 +3,7 @@ use semigroup::{
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
-#[construction(annotated, op_trait = CoalesceExt)]
+#[construction(annotated)]
 pub struct Coalesce<T>(pub Option<T>);
 
 impl<T, A> AnnotatedSemigroup<A> for Coalesce<T> {
@@ -34,15 +34,15 @@ fn test_coalesce() {
         Coalesce(Some("value2")),
         Coalesce(None),
     );
-    assert_eq!(none.coalesce(none).into_inner(), None);
-    assert_eq!(some_value1.coalesce(none).into_inner(), Some("value1"));
-    assert_eq!(none.coalesce(some_value1).into_inner(), Some("value1"));
+    assert_eq!(none.semigroup(none).into_inner(), None);
+    assert_eq!(some_value1.semigroup(none).into_inner(), Some("value1"));
+    assert_eq!(none.semigroup(some_value1).into_inner(), Some("value1"));
     assert_eq!(
-        some_value1.coalesce(some_value2).into_inner(),
+        some_value1.semigroup(some_value2).into_inner(),
         Some("value1")
     );
     assert_eq!(
-        some_value2.coalesce(some_value1).into_inner(),
+        some_value2.semigroup(some_value1).into_inner(),
         Some("value2")
     );
 }

@@ -1,34 +1,8 @@
 ---
 source: semigroup_derive/src/construction.rs
-assertion_line: 70
+assertion_line: 69
 expression: formatted
 ---
-pub trait ConcatExt: Sized + Semigroup {
-    fn concat(self, other: Self) -> Self {
-        ::semigroup::Semigroup::semigroup_op(self, other)
-    }
-}
-#[automatically_derived]
-impl<T: IntoIterator + FromIterator<T::Item>> ConcatExt for Concat<T> {}
-#[automatically_derived]
-impl<T: IntoIterator + FromIterator<T::Item>> ConcatExt
-for ::semigroup::Reverse<Concat<T>> {}
-#[automatically_derived]
-impl<
-    T: IntoIterator + FromIterator<T::Item>,
-    X: IntoIterator + FromIterator<X::Item>,
-> ConcatExt for ::semigroup::Annotated<Concat<T>, X>
-where
-    X::Item: Clone,
-{}
-#[automatically_derived]
-impl<
-    T: IntoIterator + FromIterator<T::Item>,
-    X: IntoIterator + FromIterator<X::Item>,
-> ConcatExt for ::semigroup::Reverse<::semigroup::Annotated<Concat<T>, X>>
-where
-    X::Item: Clone,
-{}
 #[automatically_derived]
 impl<T: IntoIterator + FromIterator<T::Item>> ::semigroup::Semigroup for Concat<T> {
     fn semigroup_op(base: Self, other: Self) -> Self {
