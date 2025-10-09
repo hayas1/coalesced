@@ -1,12 +1,12 @@
 use hdrhistogram::{Counter, Histogram};
 use semigroup_derive::ConstructionUse;
 
-use crate::{commutative::Commutative, op::Construction, reverse::Reverse, semigroup::Semigroup};
+use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 
 pub const DEFAULT_SIGFIG: u8 = 3;
 
 #[derive(Debug, Clone, PartialEq, ConstructionUse)]
-#[construction(op_trait = HdrHistogramExt, commutative)]
+#[construction(commutative)]
 pub struct HdrHistogram<T: Counter>(pub Histogram<T>);
 impl<T: Counter> Semigroup for HdrHistogram<T> {
     fn semigroup_op(mut base: Self, other: Self) -> Self {
@@ -39,7 +39,9 @@ impl<T: Counter> FromIterator<u64> for HdrHistogram<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{
+        assert_commutative, assert_monoid, reverse::Reverse, semigroup::tests::assert_semigroup_op,
+    };
 
     use super::*;
 
@@ -72,7 +74,7 @@ mod tests {
         let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
         let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();
 
-        let res = a.clone().hdr_histogram(b.clone());
+        let res = a.clone().semigroup(b.clone());
         assert_eq!(res.max(), 6);
         assert_eq!(res.min(), 1);
         assert_eq!(res.mean(), 3.5);
@@ -81,7 +83,7 @@ mod tests {
         assert_eq!(res.value_at_quantile(0.9), 6);
 
         let (ra, rb) = (Reverse(a), Reverse(b));
-        let Reverse(res) = ra.hdr_histogram(rb);
+        let Reverse(res) = ra.semigroup(rb);
         assert_eq!(res.max(), 6);
         assert_eq!(res.min(), 1);
         assert_eq!(res.mean(), 3.5);

@@ -1,11 +1,11 @@
 use num::{Integer, Unsigned};
 use semigroup_derive::ConstructionUse;
 
-use crate::{commutative::Commutative, op::Construction, reverse::Reverse, semigroup::Semigroup};
+use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(op_trait = LcmExt, commutative)]
+#[construction(commutative)]
 pub struct Lcm<T: Unsigned + Integer + Clone>(pub T);
 impl<T: Unsigned + Integer + Clone> Semigroup for Lcm<T> {
     fn semigroup_op(base: Self, other: Self) -> Self {
@@ -20,7 +20,9 @@ impl<T: Unsigned + Integer + Clone> crate::monoid::Monoid for Lcm<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{
+        assert_commutative, assert_monoid, reverse::Reverse, semigroup::tests::assert_semigroup_op,
+    };
 
     use super::*;
 
@@ -45,9 +47,9 @@ mod tests {
     #[test]
     fn test_lcm() {
         let (a, b) = (Lcm(12u32), Lcm(18));
-        assert_eq!(a.lcm(b).into_inner(), 36);
+        assert_eq!(a.semigroup(b).into_inner(), 36);
 
         let (ra, rb) = (Reverse(a), Reverse(b));
-        assert_eq!(ra.lcm(rb).0.into_inner(), 36);
+        assert_eq!(ra.semigroup(rb).0.into_inner(), 36);
     }
 }

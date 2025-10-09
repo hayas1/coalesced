@@ -3,13 +3,12 @@ use semigroup_derive::ConstructionUse;
 use crate::{
     annotate::{Annotate, Annotated},
     op::{Construction, ConstructionAnnotated},
-    reverse::Reverse,
     semigroup::{AnnotatedSemigroup, Semigroup},
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(annotated, op_trait = CoalesceExt)]
+#[construction(annotated)]
 pub struct Coalesce<T>(pub Option<T>);
 impl<T, A> AnnotatedSemigroup<A> for Coalesce<T> {
     fn annotated_op(base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A> {
@@ -22,7 +21,7 @@ impl<T, A> AnnotatedSemigroup<A> for Coalesce<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::semigroup::tests::assert_semigroup_op;
+    use crate::{reverse::Reverse, semigroup::tests::assert_semigroup_op};
 
     use super::*;
 
@@ -41,13 +40,13 @@ mod tests {
     #[test]
     fn test_coalesce() {
         let (a, b) = (Coalesce(None), Coalesce(Some("value")));
-        assert_eq!(a.coalesce(b).into_inner(), Some("value"));
+        assert_eq!(a.semigroup(b).into_inner(), Some("value"));
         let (ra, rb) = (Reverse(a), Reverse(b));
-        assert_eq!(ra.coalesce(rb).0.into_inner(), Some("value"));
+        assert_eq!(ra.semigroup(rb).0.into_inner(), Some("value"));
 
         let (a, b) = (Coalesce(Some(1)), Coalesce(Some(2)));
-        assert_eq!(a.coalesce(b).into_inner(), Some(1));
+        assert_eq!(a.semigroup(b).into_inner(), Some(1));
         let (ra, rb) = (Reverse(a), Reverse(b));
-        assert_eq!(ra.coalesce(rb).0.into_inner(), Some(2));
+        assert_eq!(ra.semigroup(rb).0.into_inner(), Some(2));
     }
 }
