@@ -23,7 +23,8 @@ impl<T: Mul<Output = T> + num::One> crate::monoid::Monoid for Prod<T> {
 #[cfg(test)]
 mod tests {
     use crate::{
-        assert_commutative, assert_monoid, reverse::Reverse, semigroup::tests::assert_semigroup_op,
+        assert_commutative, assert_monoid, commutative::Reverse,
+        semigroup::tests::assert_semigroup_op,
     };
 
     use super::*;

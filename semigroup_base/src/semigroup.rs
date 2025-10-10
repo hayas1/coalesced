@@ -20,8 +20,8 @@ pub mod tests {
     use rand::seq::IndexedRandom;
 
     use crate::{
+        commutative::tests::{assert_reverse, assert_reverse_associative_law},
         iter::tests::assert_lazy_evaluation_iter,
-        reverse::tests::{assert_reverse, assert_reverse_associative_law},
     };
 
     use super::*;

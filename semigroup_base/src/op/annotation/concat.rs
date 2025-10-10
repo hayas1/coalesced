@@ -50,7 +50,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::{reverse::Reverse, semigroup::tests::assert_semigroup_op};
+    use crate::{commutative::Reverse, semigroup::tests::assert_semigroup_op};
 
     use super::*;
 

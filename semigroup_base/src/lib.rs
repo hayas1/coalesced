@@ -4,7 +4,6 @@ pub mod iter;
 #[cfg(feature = "monoid")]
 pub mod monoid;
 pub mod op;
-pub mod reverse;
 #[cfg(feature = "monoid")]
 pub mod segment_tree;
 pub mod semigroup;
