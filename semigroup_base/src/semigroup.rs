@@ -20,7 +20,7 @@ pub mod tests {
     use rand::seq::IndexedRandom;
 
     use crate::{
-        commutative::tests::{assert_reverse, assert_reverse_associative_law},
+        commutative::tests::{assert_reverse_associative_law, assert_reverse_reverse},
         iter::tests::assert_lazy_evaluation_iter,
     };
 
@@ -52,7 +52,7 @@ pub mod tests {
 
     pub fn assert_semigroup_op_impl<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
         assert_associative_law(a.clone(), b.clone(), c.clone());
-        assert_reverse(a.clone(), b.clone(), c.clone());
+        assert_reverse_reverse(a.clone(), b.clone(), c.clone());
         assert_reverse_associative_law(a.clone(), b.clone(), c.clone());
         assert_lazy_evaluation_iter(a.clone(), b.clone(), c.clone());
     }
