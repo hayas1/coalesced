@@ -39,9 +39,7 @@ impl<T: Counter> FromIterator<u64> for HdrHistogram<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        assert_commutative, assert_monoid, commutative::Reverse, semigroup::tests::assert_semigroup_op,
-    };
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
 
     use super::*;
 
@@ -82,8 +80,7 @@ mod tests {
         assert_eq!(res.value_at_quantile(0.5), 3);
         assert_eq!(res.value_at_quantile(0.9), 6);
 
-        let (ra, rb) = (Reverse(a), Reverse(b));
-        let Reverse(res) = ra.semigroup(rb);
+        let res = b.semigroup(a);
         assert_eq!(res.max(), 6);
         assert_eq!(res.min(), 1);
         assert_eq!(res.mean(), 3.5);

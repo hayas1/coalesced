@@ -20,9 +20,7 @@ impl<T: Ord + num::Bounded> crate::monoid::Monoid for Min<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        assert_commutative, assert_monoid, commutative::Reverse, semigroup::tests::assert_semigroup_op,
-    };
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
 
     use super::*;
 
@@ -48,8 +46,6 @@ mod tests {
     fn test_min() {
         let (a, b) = (Min(1), Min(2));
         assert_eq!(a.semigroup(b).into_inner(), 1);
-
-        let (ra, rb) = (Reverse(a), Reverse(b));
-        assert_eq!(ra.semigroup(rb).0.into_inner(), 1);
+        assert_eq!(b.semigroup(a).into_inner(), 1);
     }
 }

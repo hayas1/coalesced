@@ -20,10 +20,7 @@ impl<T: Unsigned + Integer + Clone> crate::monoid::Monoid for Gcd<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        assert_commutative, assert_monoid, commutative::Reverse,
-        semigroup::tests::assert_semigroup_op,
-    };
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
 
     use super::*;
 
@@ -49,8 +46,6 @@ mod tests {
     fn test_gcd() {
         let (a, b) = (Gcd(57u32), Gcd(95));
         assert_eq!(a.semigroup(b).into_inner(), 19);
-
-        let (ra, rb) = (Reverse(a), Reverse(b));
-        assert_eq!(ra.semigroup(rb).0.into_inner(), 19);
+        assert_eq!(b.semigroup(a).into_inner(), 19);
     }
 }

@@ -18,7 +18,7 @@ impl<T, A> AnnotatedSemigroup<A> for Overwrite<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{commutative::Reverse, semigroup::tests::assert_semigroup_op};
+    use crate::semigroup::tests::assert_semigroup_op;
 
     use super::*;
 
@@ -30,10 +30,8 @@ mod tests {
 
     #[test]
     fn test_overwrite() {
-        let (a, b) = (Overwrite(1), Overwrite(2));
-        assert_eq!(a.semigroup(b).into_inner(), 2);
-
-        let (ra, rb) = (Reverse(a), Reverse(b));
-        assert_eq!(ra.semigroup(rb).0.into_inner(), 1);
+        let (a, b) = (Overwrite(Some(1)), Overwrite(Some(2)));
+        assert_eq!(a.semigroup(b).into_inner(), Some(2));
+        assert_eq!(b.semigroup(a).into_inner(), Some(1));
     }
 }

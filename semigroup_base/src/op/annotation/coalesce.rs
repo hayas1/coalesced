@@ -21,7 +21,7 @@ impl<T, A> AnnotatedSemigroup<A> for Coalesce<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{commutative::Reverse, semigroup::tests::assert_semigroup_op};
+    use crate::semigroup::tests::assert_semigroup_op;
 
     use super::*;
 
@@ -41,12 +41,10 @@ mod tests {
     fn test_coalesce() {
         let (a, b) = (Coalesce(None), Coalesce(Some("value")));
         assert_eq!(a.semigroup(b).into_inner(), Some("value"));
-        let (ra, rb) = (Reverse(a), Reverse(b));
-        assert_eq!(ra.semigroup(rb).0.into_inner(), Some("value"));
+        assert_eq!(b.semigroup(a).into_inner(), Some("value"));
 
         let (a, b) = (Coalesce(Some(1)), Coalesce(Some(2)));
         assert_eq!(a.semigroup(b).into_inner(), Some(1));
-        let (ra, rb) = (Reverse(a), Reverse(b));
-        assert_eq!(ra.semigroup(rb).0.into_inner(), Some(2));
+        assert_eq!(b.semigroup(a).into_inner(), Some(2));
     }
 }
