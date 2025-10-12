@@ -5,7 +5,7 @@ expression: formatted
 ---
 #[automatically_derived]
 impl ::semigroup::Semigroup for NamedStruct {
-    fn semigroup_op(base: Self, other: Self) -> Self {
+    fn op(base: Self, other: Self) -> Self {
         Self {
             foo: <semigroup::op::annotation::overwrite::Overwrite<
                 _,

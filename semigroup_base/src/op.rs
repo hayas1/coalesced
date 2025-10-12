@@ -12,7 +12,7 @@ pub mod statistics;
 pub trait Construction<T>: Semigroup + Sized + From<T> + Deref<Target = T> + DerefMut {
     fn into_inner(self) -> T;
     fn lift_op(base: T, other: T) -> T {
-        Semigroup::semigroup_op(Self::from(base), Self::from(other)).into_inner()
+        Semigroup::op(Self::from(base), Self::from(other)).into_inner()
     }
 }
 

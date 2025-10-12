@@ -13,7 +13,7 @@ pub struct Annotated<T, A> {
     annotation: A,
 }
 impl<T: AnnotatedSemigroup<A>, A> Semigroup for Annotated<T, A> {
-    fn semigroup_op(base: Self, other: Self) -> Self {
+    fn op(base: Self, other: Self) -> Self {
         AnnotatedSemigroup::annotated_op(base, other)
     }
 }

@@ -9,7 +9,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 #[construction(commutative)]
 pub struct Prod<T: Mul<Output = T>>(pub T);
 impl<T: Mul<Output = T>> Semigroup for Prod<T> {
-    fn semigroup_op(base: Self, other: Self) -> Self {
+    fn op(base: Self, other: Self) -> Self {
         Self(base.0 * other.0)
     }
 }

@@ -5,7 +5,7 @@ expression: formatted
 ---
 #[automatically_derived]
 impl<T> ::semigroup::Semigroup for Coalesce<T> {
-    fn semigroup_op(base: Self, other: Self) -> Self {
+    fn op(base: Self, other: Self) -> Self {
         ::semigroup::Annotated::lift_unit_annotated_op((base, ()), (other, ()))
     }
 }

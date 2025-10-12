@@ -77,7 +77,7 @@ impl<T: Monoid + Clone> SegmentTree<T> {
             self.tree[leaf_offset + i] = d;
         }
         for i in (1..leaf_offset).rev() {
-            self.tree[i] = T::semigroup_op(self.tree[i * 2].clone(), self.tree[i * 2 + 1].clone());
+            self.tree[i] = T::op(self.tree[i * 2].clone(), self.tree[i * 2 + 1].clone());
         }
     }
 
@@ -97,7 +97,7 @@ impl<T: Monoid + Clone> SegmentTree<T> {
             while node > 1 {
                 node /= 2;
                 self.tree[node] =
-                    T::semigroup_op(self.tree[node * 2].clone(), self.tree[node * 2 + 1].clone());
+                    T::op(self.tree[node * 2].clone(), self.tree[node * 2 + 1].clone());
             }
             result
         })

@@ -9,7 +9,7 @@ pub const DEFAULT_SIGFIG: u8 = 3;
 #[construction(commutative)]
 pub struct HdrHistogram<T: Counter>(pub Histogram<T>);
 impl<T: Counter> Semigroup for HdrHistogram<T> {
-    fn semigroup_op(mut base: Self, other: Self) -> Self {
+    fn op(mut base: Self, other: Self) -> Self {
         base.0 += other.0;
         base
     }

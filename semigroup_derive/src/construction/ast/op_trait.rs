@@ -85,7 +85,7 @@ impl<'a> OpTrait<'a> {
             parse_quote! {
                 #[automatically_derived]
                 impl #impl_generics #path_semigroup for #ident #ty_generics #where_clause {
-                    fn semigroup_op(base: Self, other: Self) -> Self {
+                    fn op(base: Self, other: Self) -> Self {
                         #path_annotated::lift_unit_annotated_op((base, #unit), (other, #unit))
                     }
                 }

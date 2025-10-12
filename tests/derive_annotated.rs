@@ -22,7 +22,7 @@ fn test_named_struct_semigroup_op() {
     }
     .annotated("Second");
 
-    let ab = Semigroup::semigroup_op(a.clone(), b.clone());
+    let ab = Semigroup::op(a.clone(), b.clone());
     assert_eq!(ab.value().name, "B");
     assert_eq!(ab.annotation().name, "Second");
     assert_eq!(ab.value().value, Some(10));
@@ -40,7 +40,7 @@ fn test_named_struct_semigroup_op() {
             },
         ),
     );
-    let ba = Semigroup::semigroup_op(b.clone(), a.clone());
+    let ba = Semigroup::op(b.clone(), a.clone());
     assert_eq!(ba.value().name, "A");
     assert_eq!(ba.annotation().name, "First");
     assert_eq!(ba.value().value, Some(10));
@@ -72,7 +72,7 @@ fn test_unnamed_struct_semigroup_op() {
     let a = UnnamedStruct("A".to_string(), Some(10)).annotated(1.0);
     let b = UnnamedStruct("B".to_string(), None).annotated(2.0);
 
-    let ab = Semigroup::semigroup_op(a.clone(), b.clone());
+    let ab = Semigroup::op(a.clone(), b.clone());
     assert_eq!(ab.value().0, "B");
     assert_eq!(ab.annotation().0, 2.0);
     assert_eq!(ab.value().1, Some(10));
@@ -85,7 +85,7 @@ fn test_unnamed_struct_semigroup_op() {
         ),
     );
 
-    let ba = Semigroup::semigroup_op(b.clone(), a.clone());
+    let ba = Semigroup::op(b.clone(), a.clone());
     assert_eq!(ba.value().0, "A");
     assert_eq!(ba.annotation().0, 1.0);
     assert_eq!(ba.value().1, Some(10));

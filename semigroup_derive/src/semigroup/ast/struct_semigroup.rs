@@ -59,7 +59,7 @@ impl<'a> StructSemigroup<'a> {
         parse_quote! {
             #[automatically_derived]
             impl #impl_generics #path_semigroup for #ident #ty_generics #where_clause {
-                fn semigroup_op(base: Self, other: Self) -> Self {
+                fn op(base: Self, other: Self) -> Self {
                     Self {
                         #(#fields_op),*
                     }

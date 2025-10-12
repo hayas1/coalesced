@@ -5,13 +5,13 @@ expression: formatted
 ---
 #[automatically_derived]
 impl ::semigroup::Semigroup for NamedStruct {
-    fn semigroup_op(base: Self, other: Self) -> Self {
+    fn op(base: Self, other: Self) -> Self {
         Self {
             foo: <semigroup::op::annotation::overwrite::Overwrite<
                 _,
             > as ::semigroup::op::Construction<_>>::lift_op(base.foo, other.foo),
-            bar: ::semigroup::Semigroup::semigroup_op(base.bar, other.bar),
-            baz: ::semigroup::Semigroup::semigroup_op(base.baz, other.baz),
+            bar: ::semigroup::Semigroup::op(base.bar, other.bar),
+            baz: ::semigroup::Semigroup::op(base.baz, other.baz),
         }
     }
 }

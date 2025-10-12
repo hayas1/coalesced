@@ -9,7 +9,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 #[construction(commutative)]
 pub struct Xor<T: BitXor<Output = T>>(pub T);
 impl<T: BitXor<Output = T>> Semigroup for Xor<T> {
-    fn semigroup_op(base: Self, other: Self) -> Self {
+    fn op(base: Self, other: Self) -> Self {
         Self(base.0 ^ other.0)
     }
 }

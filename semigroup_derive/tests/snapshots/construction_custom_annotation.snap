@@ -5,7 +5,7 @@ expression: formatted
 ---
 #[automatically_derived]
 impl<T: IntoIterator + FromIterator<T::Item>> ::semigroup::Semigroup for Concat<T> {
-    fn semigroup_op(base: Self, other: Self) -> Self {
+    fn op(base: Self, other: Self) -> Self {
         ::semigroup::Annotated::lift_unit_annotated_op(
             (base, vec![(); 0]),
             (other, vec![(); 0]),

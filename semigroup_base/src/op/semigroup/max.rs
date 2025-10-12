@@ -7,7 +7,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 #[construction(commutative)]
 pub struct Max<T: Ord>(pub T);
 impl<T: Ord> Semigroup for Max<T> {
-    fn semigroup_op(base: Self, other: Self) -> Self {
+    fn op(base: Self, other: Self) -> Self {
         Self(std::cmp::max(base.0, other.0))
     }
 }
