@@ -40,11 +40,21 @@ where
     type Annotation = A::Item;
     fn annotated(self, annotation: Self::Annotation) -> Annotated<Self, A> {
         let iter = self.0.into_iter();
-        let (len, _) = iter.size_hint(); // TODO use exact size
-        Annotated::new(
-            Self(iter.collect()),
-            std::iter::repeat_n(annotation, len).collect(),
-        )
+        let (lower, upper) = iter.size_hint();
+        match upper.filter(|&u| u == lower) {
+            Some(len) => Annotated::new(
+                Self(iter.collect()),
+                std::iter::repeat_n(annotation, len).collect(),
+            ),
+            None => {
+                let (value, annotation): (Vec<_>, Vec<_>) =
+                    iter.map(|v| (v, annotation.clone())).collect();
+                Annotated::new(
+                    Self(value.into_iter().collect()),
+                    annotation.into_iter().collect(),
+                )
+            }
+        }
     }
 }
 
