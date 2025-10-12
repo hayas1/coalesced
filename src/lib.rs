@@ -132,7 +132,7 @@
 //! )]
 //! struct Max(pub i32);
 //! impl Semigroup for Max {
-//!     fn semigroup_op(base: Self, other: Self) -> Self {
+//!     fn op(base: Self, other: Self) -> Self {
 //!         Max(std::cmp::max(base.0, other.0))
 //!     }
 //! }

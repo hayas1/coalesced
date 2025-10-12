@@ -59,7 +59,7 @@ impl<'a> StructSemigroup<'a> {
         parse_quote! {
             #[automatically_derived]
             impl #impl_generics #path_semigroup for #ident #ty_generics #where_clause {
-                fn semigroup_op(base: Self, other: Self) -> Self {
+                fn op(base: Self, other: Self) -> Self {
                     Self {
                         #(#fields_op),*
                     }
@@ -228,7 +228,7 @@ impl<'a> StructAnnotate<'a> {
         } = derive;
         let (_, ty_generics, _) = generics.split_for_impl();
         let (impl_generics, annotation_type, where_clause) = annotation.split_for_impl(generics);
-        let a = &annotation.param().ident; // TODO ?
+        let a = &annotation.param().ident;
         let fields: Vec<FieldValue> = self
             .data_struct
             .fields

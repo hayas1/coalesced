@@ -8,7 +8,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 #[construction(commutative)]
 pub struct Lcm<T: Unsigned + Integer + Clone>(pub T);
 impl<T: Unsigned + Integer + Clone> Semigroup for Lcm<T> {
-    fn semigroup_op(base: Self, other: Self) -> Self {
+    fn op(base: Self, other: Self) -> Self {
         Self(num::integer::lcm(base.0, other.0))
     }
 }

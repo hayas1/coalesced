@@ -41,62 +41,46 @@ pub mod tests {
     pub fn assert_lazy_evaluation_iter<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
         let empty = vec![];
         assert_eq!(
-            empty
-                .iter()
-                .cloned()
-                .reduce(|acc, item| T::semigroup_op(acc, item)),
+            empty.iter().cloned().reduce(|acc, item| T::op(acc, item)),
             None
         );
         assert_eq!(
-            empty
-                .into_iter()
-                .rev()
-                .reduce(|acc, item| T::semigroup_op(item, acc)),
+            empty.into_iter().rev().reduce(|acc, item| T::op(item, acc)),
             None
         );
 
         let lazy = vec![a.clone(), b.clone(), c.clone()];
         assert_eq!(
-            lazy.iter()
-                .cloned()
-                .reduce(|acc, item| T::semigroup_op(acc, item)),
-            Some(T::semigroup_op(
-                T::semigroup_op(a.clone(), b.clone()),
-                c.clone()
-            ))
+            lazy.iter().cloned().reduce(|acc, item| T::op(acc, item)),
+            Some(T::op(T::op(a.clone(), b.clone()), c.clone()))
         );
         assert_eq!(
-            lazy.into_iter()
-                .rev()
-                .reduce(|acc, item| T::semigroup_op(item, acc)),
-            Some(T::semigroup_op(
-                a.clone(),
-                T::semigroup_op(b.clone(), c.clone())
-            ))
+            lazy.into_iter().rev().reduce(|acc, item| T::op(item, acc)),
+            Some(T::op(a.clone(), T::op(b.clone(), c.clone())))
         );
 
         let ab = vec![a.clone(), b.clone()];
         assert_eq!(
             ab.iter()
                 .cloned()
-                .rfold(c.clone(), |acc, item| T::semigroup_op(item, acc)),
-            T::semigroup_op(a.clone(), T::semigroup_op(b.clone(), c.clone()))
+                .rfold(c.clone(), |acc, item| T::op(item, acc)),
+            T::op(a.clone(), T::op(b.clone(), c.clone()))
         );
         assert_eq!(
             ab.into_iter().fold_final(c.clone()),
-            T::semigroup_op(T::semigroup_op(a.clone(), b.clone()), c.clone())
+            T::op(T::op(a.clone(), b.clone()), c.clone())
         );
 
         let bc = vec![b.clone(), c.clone()];
         assert_eq!(
             bc.iter()
                 .cloned()
-                .fold(a.clone(), |acc, item| T::semigroup_op(acc, item)),
-            T::semigroup_op(T::semigroup_op(a.clone(), b.clone()), c.clone())
+                .fold(a.clone(), |acc, item| T::op(acc, item)),
+            T::op(T::op(a.clone(), b.clone()), c.clone())
         );
         assert_eq!(
             bc.into_iter().rfold_final(a.clone()),
-            T::semigroup_op(T::semigroup_op(c.clone(), b.clone()), a.clone())
+            T::op(T::op(c.clone(), b.clone()), a.clone())
         );
     }
 }

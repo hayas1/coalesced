@@ -7,7 +7,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 #[construction(commutative)]
 pub struct Min<T: Ord>(pub T);
 impl<T: Ord> Semigroup for Min<T> {
-    fn semigroup_op(base: Self, other: Self) -> Self {
+    fn op(base: Self, other: Self) -> Self {
         Self(std::cmp::min(base.0, other.0))
     }
 }

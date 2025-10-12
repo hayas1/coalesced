@@ -31,9 +31,9 @@ impl<T: AnnotatedSemigroup<A>, A> AnnotatedMonoid<Option<A>> for OptionMonoid<T>
     }
 }
 impl<T: Semigroup> Semigroup for OptionMonoid<T> {
-    fn semigroup_op(base: Self, other: Self) -> Self {
+    fn op(base: Self, other: Self) -> Self {
         match (base, other) {
-            (Self(Some(b)), Self(Some(o))) => Self(Some(T::semigroup_op(b, o))),
+            (Self(Some(b)), Self(Some(o))) => Self(Some(T::op(b, o))),
             (b, Self(None)) => b,
             (Self(None), o) => o,
         }
@@ -109,13 +109,13 @@ pub mod tests {
         b: T,
         c: T,
     ) {
-        assert_eq!(T::unit(), T::semigroup_op(T::unit(), T::unit()));
-        assert_eq!(a.clone(), T::semigroup_op(a.clone(), T::unit()));
-        assert_eq!(a.clone(), T::semigroup_op(T::unit(), a.clone()));
-        assert_eq!(b.clone(), T::semigroup_op(b.clone(), T::unit()));
-        assert_eq!(b.clone(), T::semigroup_op(T::unit(), b.clone()));
-        assert_eq!(c.clone(), T::semigroup_op(c.clone(), T::unit()));
-        assert_eq!(c.clone(), T::semigroup_op(T::unit(), c.clone()));
+        assert_eq!(T::unit(), T::op(T::unit(), T::unit()));
+        assert_eq!(a.clone(), T::op(a.clone(), T::unit()));
+        assert_eq!(a.clone(), T::op(T::unit(), a.clone()));
+        assert_eq!(b.clone(), T::op(b.clone(), T::unit()));
+        assert_eq!(b.clone(), T::op(T::unit(), b.clone()));
+        assert_eq!(c.clone(), T::op(c.clone(), T::unit()));
+        assert_eq!(c.clone(), T::op(T::unit(), c.clone()));
 
         assert_associative_law(a.clone(), b.clone(), c.clone());
         assert_associative_law(T::unit(), b.clone(), c.clone());

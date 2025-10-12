@@ -70,7 +70,7 @@ impl<'a> FieldSemigroupOp<'a> {
             })
             .unwrap_or_else(|| {
                 parse_quote! {
-                    #member: #path_semigroup::semigroup_op(base.#member, other.#member)
+                    #member: #path_semigroup::op(base.#member, other.#member)
                 }
             })
     }
