@@ -31,7 +31,7 @@ mod tests {
         impl_construction::<Absolute>,
         syn::parse_quote! {
             #[derive(Construction)]
-            #[construction(annotated, op_trait = CoalesceExt)]
+            #[construction(annotated)]
             pub struct Coalesce<T>(pub Option<T>);
         },
     )]
@@ -40,8 +40,8 @@ mod tests {
         impl_construction::<Use>,
         syn::parse_quote! {
             #[derive(ConstructionUse)]
-            #[construction(op_trait = CoalesceExt)]
-            pub struct Coalesce<T>(pub Option<T>);
+            #[construction(commutative)]
+            pub struct Sum<T: std::ops::Add>(pub T);
         },
     )]
     #[case::construction_custom_annotation(
@@ -50,7 +50,6 @@ mod tests {
         syn::parse_quote! {
             #[derive(Construction)]
             #[construction(
-                op_trait = ConcatExt,
                 annotated,
                 annotation_type_param = "X: IntoIterator + FromIterator<X::Item>",
                 annotation_where = "X::Item: Clone",

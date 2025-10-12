@@ -1,11 +1,11 @@
 use num::{Integer, Unsigned};
 use semigroup_derive::ConstructionUse;
 
-use crate::{op::Construction, reverse::Reverse, semigroup::Semigroup};
+use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(op_trait = GcdExt)]
+#[construction(commutative)]
 pub struct Gcd<T: Unsigned + Integer + Clone>(pub T);
 impl<T: Unsigned + Integer + Clone> Semigroup for Gcd<T> {
     fn semigroup_op(base: Self, other: Self) -> Self {
@@ -20,7 +20,7 @@ impl<T: Unsigned + Integer + Clone> crate::monoid::Monoid for Gcd<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
 
     use super::*;
 
@@ -37,11 +37,15 @@ mod tests {
     }
 
     #[test]
+    fn test_gcd_commutative() {
+        let (a, b, c) = (Gcd(12u32), Gcd(18), Gcd(27));
+        assert_commutative!(a, b, c);
+    }
+
+    #[test]
     fn test_gcd() {
         let (a, b) = (Gcd(57u32), Gcd(95));
-        assert_eq!(a.gcd(b).into_inner(), 19);
-
-        let (ra, rb) = (Reverse(a), Reverse(b));
-        assert_eq!(ra.gcd(rb).0.into_inner(), 19);
+        assert_eq!(a.semigroup(b).into_inner(), 19);
+        assert_eq!(b.semigroup(a).into_inner(), 19);
     }
 }

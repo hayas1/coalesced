@@ -3,13 +3,12 @@ use semigroup_derive::ConstructionUse;
 use crate::{
     annotate::{Annotate, Annotated},
     op::{Construction, ConstructionAnnotated},
-    reverse::Reverse,
     semigroup::{AnnotatedSemigroup, Semigroup},
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(annotated, op_trait = OverwriteExt)]
+#[construction(annotated)]
 pub struct Overwrite<T>(pub T);
 impl<T, A> AnnotatedSemigroup<A> for Overwrite<T> {
     fn annotated_op(_base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A> {
@@ -31,10 +30,8 @@ mod tests {
 
     #[test]
     fn test_overwrite() {
-        let (a, b) = (Overwrite(1), Overwrite(2));
-        assert_eq!(a.overwrite(b).into_inner(), 2);
-
-        let (ra, rb) = (Reverse(a), Reverse(b));
-        assert_eq!(ra.overwrite(rb).0.into_inner(), 1);
+        let (a, b) = (Overwrite(Some(1)), Overwrite(Some(2)));
+        assert_eq!(a.semigroup(b).into_inner(), Some(2));
+        assert_eq!(b.semigroup(a).into_inner(), Some(1));
     }
 }

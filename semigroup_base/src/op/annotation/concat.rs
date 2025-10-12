@@ -3,7 +3,6 @@ use semigroup_derive::ConstructionUse;
 use crate::{
     annotate::Annotated,
     op::{Construction, ConstructionAnnotated},
-    reverse::Reverse,
     semigroup::{AnnotatedSemigroup, Semigroup},
 };
 
@@ -11,7 +10,6 @@ use crate::{
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(
     annotated,
-    op_trait = ConcatExt,
     annotation_type_param = "A: IntoIterator + FromIterator<A::Item>",
     annotation_where = "A::Item: Clone",
     unit = "vec![(); 0]",
@@ -65,9 +63,7 @@ mod tests {
     #[test]
     fn test_concat() {
         let (a, b) = (Concat(vec![1]), Concat(vec![2]));
-        assert_eq!(a.clone().concat(b.clone()).into_inner(), vec![1, 2]);
-
-        let (ra, rb) = (Reverse(a.clone()), Reverse(b.clone()));
-        assert_eq!(ra.concat(rb).0.into_inner(), vec![2, 1]);
+        assert_eq!(a.clone().semigroup(b.clone()).into_inner(), vec![1, 2]);
+        assert_eq!(b.semigroup(a).into_inner(), vec![2, 1]);
     }
 }

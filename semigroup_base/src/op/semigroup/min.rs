@@ -1,10 +1,10 @@
 use semigroup_derive::ConstructionUse;
 
-use crate::{op::Construction, reverse::Reverse, semigroup::Semigroup};
+use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(op_trait = MinExt)]
+#[construction(commutative)]
 pub struct Min<T: Ord>(pub T);
 impl<T: Ord> Semigroup for Min<T> {
     fn semigroup_op(base: Self, other: Self) -> Self {
@@ -20,7 +20,7 @@ impl<T: Ord + num::Bounded> crate::monoid::Monoid for Min<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
 
     use super::*;
 
@@ -37,13 +37,15 @@ mod tests {
     }
 
     #[test]
+    fn test_min_commutative() {
+        let (a, b, c) = (Min(1), Min(2), Min(3));
+        assert_commutative!(a, b, c);
+    }
+
+    #[test]
     fn test_min() {
         let (a, b) = (Min(1), Min(2));
-        // TODO assert_eq!(a.min(b).into_inner(), 2); // multiple applicable items in scope multiple `min` found
         assert_eq!(a.semigroup(b).into_inner(), 1);
-
-        let (ra, rb) = (Reverse(a), Reverse(b));
-        // TODO assert_eq!(ra.min(rb).0.into_inner(), 2); // multiple applicable items in scope multiple `min` found
-        assert_eq!(ra.semigroup(rb).0.into_inner(), 1);
+        assert_eq!(b.semigroup(a).into_inner(), 1);
     }
 }

@@ -166,9 +166,9 @@
 
 pub use semigroup_base::{
     annotate::{Annotate, Annotated},
+    commutative::{Commutative, Reverse},
     iter::{SemigroupDoubleEndedIterator, SemigroupIterator},
     op,
-    reverse::Reverse,
     semigroup::{AnnotatedSemigroup, Semigroup},
 };
 
