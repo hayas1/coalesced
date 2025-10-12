@@ -228,7 +228,7 @@ impl<'a> StructAnnotate<'a> {
         } = derive;
         let (_, ty_generics, _) = generics.split_for_impl();
         let (impl_generics, annotation_type, where_clause) = annotation.split_for_impl(generics);
-        let a = &annotation.param().ident; // TODO ?
+        let a = &annotation.param().ident;
         let fields: Vec<FieldValue> = self
             .data_struct
             .fields
