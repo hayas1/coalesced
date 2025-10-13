@@ -4,13 +4,13 @@ use syn::ItemStruct;
 
 use crate::{
     constant::ConstantExt,
-    property::{attr::ContainerAttr, documented::Documented},
+    properties::{attr::ContainerAttr, documented::Documented},
 };
 
 mod attr;
 mod documented;
 
-pub fn impl_property<C: ConstantExt>(
+pub fn impl_properties<C: ConstantExt>(
     attr: &ContainerAttr,
     item: &ItemStruct,
 ) -> syn::Result<TokenStream> {
@@ -28,9 +28,9 @@ mod tests {
     // use super::*;
 
     // #[rstest]
-    // #[case::property_annotated(
-    //     "property_annotated",
-    //     impl_property::<Absolute>,
+    // #[case::properties_annotated(
+    //     "properties_annotated",
+    //     impl_properties::<Absolute>,
     //     syn::parse_quote! {
     //         #[derive(Semigroup)]
     //         #[semigroup(annotated)]
@@ -42,9 +42,9 @@ mod tests {
     //         }
     //     },
     // )]
-    // #[case::property_not_annotated(
-    //     "property_not_annotated",
-    //     impl_property::<Use>,
+    // #[case::properties_not_annotated(
+    //     "properties_not_annotated",
+    //     impl_properties::<Use>,
     //     syn::parse_quote! {
     //         #[derive(SemigroupUse)]
     //         #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
@@ -55,9 +55,9 @@ mod tests {
     //         );
     //     },
     // )]
-    // #[case::property_custom_annotation(
-    //     "property_custom_annotation",
-    //     impl_property::<Absolute>,
+    // #[case::properties_custom_annotation(
+    //     "properties_custom_annotation",
+    //     impl_properties::<Absolute>,
     //     syn::parse_quote! {
     //         #[derive(Semigroup)]
     //         #[semigroup(annotated, annotation_param = X, with = "semigroup::op::annotation::overwrite::Overwrite")]
@@ -68,7 +68,7 @@ mod tests {
     //         }
     //     },
     // )]
-    // fn test_derive_property_snapshot(
+    // fn test_derive_properties_snapshot(
     //     #[case] case: &str,
     //     #[case] f: impl Fn(&ContainerAttr, &ItemStruct) -> syn::Result<TokenStream>,
     //     #[case] (attr, input): (ContainerAttr, ItemStruct),

@@ -4,7 +4,7 @@ use syn::ItemStruct;
 
 use crate::{
     constant::Constant,
-    property::{attr::ContainerAttr, documented::content::Content},
+    properties::{attr::ContainerAttr, documented::content::Content},
 };
 
 mod content;

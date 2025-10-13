@@ -1,7 +1,7 @@
 use comfy_table::{presets::ASCII_MARKDOWN, Table};
 use syn::ItemStruct;
 
-use crate::{constant::Constant, property::attr::ContainerAttr};
+use crate::{constant::Constant, properties::attr::ContainerAttr};
 
 #[derive(Debug, Clone)]
 pub struct PropertiesTable<'a> {

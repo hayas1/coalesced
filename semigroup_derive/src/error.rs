@@ -51,11 +51,11 @@ impl Display for SemigroupError {
 }
 
 #[derive(Debug, Clone)]
-pub enum PropertyError {
+pub enum PropertiesError {
     InvalidDocAttr,
 }
-impl Error for PropertyError {}
-impl Display for PropertyError {
+impl Error for PropertiesError {}
+impl Display for PropertiesError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::InvalidDocAttr => write!(f, "invalid doc attribute"),

@@ -2,8 +2,8 @@ use syn::{parse_quote, Attribute, Expr, ExprLit, ItemStruct, Lit, Meta, MetaName
 
 use crate::{
     constant::Constant,
-    error::PropertyError,
-    property::{attr::ContainerAttr, documented::table::PropertiesTable},
+    error::PropertiesError,
+    properties::{attr::ContainerAttr, documented::table::PropertiesTable},
 };
 
 #[derive(Debug, Clone)]
@@ -36,7 +36,10 @@ impl<'a> Content<'a> {
                         }),
                     ..
                 }) => Ok(str.value()),
-                _ => Err(syn::Error::new_spanned(attr, PropertyError::InvalidDocAttr)),
+                _ => Err(syn::Error::new_spanned(
+                    attr,
+                    PropertiesError::InvalidDocAttr,
+                )),
             })
             .collect::<Result<Vec<_>, _>>()?
             .join("\n"))

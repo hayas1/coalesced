@@ -2,7 +2,7 @@ mod annotation;
 mod constant;
 mod construction;
 mod error;
-mod property;
+mod properties;
 mod semigroup;
 
 #[proc_macro_derive(Construction, attributes(construction))]
@@ -46,7 +46,7 @@ pub fn properties(
 ) -> proc_macro::TokenStream {
     let meta = syn::parse_macro_input!(attr);
     let item_struct = syn::parse_macro_input!(item);
-    property::impl_property::<constant::Absolute>(&meta, &item_struct)
+    properties::impl_properties::<constant::Absolute>(&meta, &item_struct)
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
