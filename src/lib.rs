@@ -174,7 +174,7 @@ pub use semigroup_base::{
 
 #[cfg(feature = "derive")]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "derive")))]
-pub use semigroup_derive::{Construction, Semigroup};
+pub use semigroup_derive::{properties, Construction, Semigroup};
 
 #[cfg(feature = "test")]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "test")))]
