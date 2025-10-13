@@ -1,4 +1,4 @@
-use semigroup_derive::ConstructionUse;
+use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{
     annotate::{Annotate, Annotated},
@@ -6,9 +6,23 @@ use crate::{
     semigroup::{AnnotatedSemigroup, Semigroup},
 };
 
+/// A semigroup construction that returns the first non-`None` value.
+/// # Properties
+/// <!-- properties -->
+///
+/// # Examples
+/// ```
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, annotation::coalesce::Coalesce}};
+///
+/// let a = Coalesce(None);
+/// let b = Coalesce(Some(2));
+///
+/// assert_eq!(a.semigroup(b).into_inner(), Some(2));
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(annotated)]
+#[properties(annotated, monoid)]
 pub struct Coalesce<T>(pub Option<T>);
 impl<T, A> AnnotatedSemigroup<A> for Coalesce<T> {
     fn annotated_op(base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A> {
@@ -16,6 +30,12 @@ impl<T, A> AnnotatedSemigroup<A> for Coalesce<T> {
             (Some(_), _) | (None, None) => base,
             (None, Some(_)) => other,
         }
+    }
+}
+#[cfg(feature = "monoid")]
+impl<T> crate::monoid::Monoid for Coalesce<T> {
+    fn unit() -> Self {
+        Coalesce(None)
     }
 }
 

@@ -1,10 +1,24 @@
-use semigroup_derive::ConstructionUse;
+use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 
+/// A semigroup construction that returns the maximum value.
+/// # Properties
+/// <!-- properties -->
+///
+/// # Examples
+/// ```
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, semigroup::max::Max}};
+///
+/// let a = Max(1);
+/// let b = Max(2);
+///
+/// assert_eq!(a.semigroup(b).into_inner(), 2);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(commutative)]
+#[properties(monoid, commutative)]
 pub struct Max<T: Ord>(pub T);
 impl<T: Ord> Semigroup for Max<T> {
     fn op(base: Self, other: Self) -> Self {

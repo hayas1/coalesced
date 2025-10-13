@@ -1,11 +1,25 @@
 use num::{Integer, Unsigned};
-use semigroup_derive::ConstructionUse;
+use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 
+/// A semigroup construction that returns the least common multiple.
+/// # Properties
+/// <!-- properties -->
+///
+/// # Examples
+/// ```
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, semigroup::lcm::Lcm}};
+///
+/// let a = Lcm(12u32);
+/// let b = Lcm(18);
+///
+/// assert_eq!(a.semigroup(b).into_inner(), 36);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(commutative)]
+#[properties(monoid, commutative)]
 pub struct Lcm<T: Unsigned + Integer + Clone>(pub T);
 impl<T: Unsigned + Integer + Clone> Semigroup for Lcm<T> {
     fn op(base: Self, other: Self) -> Self {

@@ -1,4 +1,4 @@
-use semigroup_derive::ConstructionUse;
+use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{
     annotate::Annotated,
@@ -6,6 +6,19 @@ use crate::{
     semigroup::{AnnotatedSemigroup, Semigroup},
 };
 
+/// A semigroup construction that concatenates two values.
+/// # Properties
+/// <!-- properties -->
+///
+/// # Examples
+/// ```
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, annotation::concat::Concat}};
+///
+/// let a = Concat(vec![1, 2]);
+/// let b = Concat(vec![3, 4]);
+///
+/// assert_eq!(a.semigroup(b).into_inner(), vec![1, 2, 3, 4]);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(
@@ -15,6 +28,7 @@ use crate::{
     unit = "vec![(); 0]",
     without_annotate_impl
 )]
+#[properties(annotated, monoid)]
 pub struct Concat<T: IntoIterator + FromIterator<T::Item>>(pub T);
 impl<T: IntoIterator + FromIterator<T::Item>, A: IntoIterator + FromIterator<A::Item>>
     AnnotatedSemigroup<A> for Concat<T>
@@ -55,6 +69,12 @@ where
                 )
             }
         }
+    }
+}
+#[cfg(feature = "monoid")]
+impl<T: IntoIterator + FromIterator<T::Item>> crate::monoid::Monoid for Concat<T> {
+    fn unit() -> Self {
+        Concat(std::iter::empty().collect())
     }
 }
 
