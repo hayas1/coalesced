@@ -219,8 +219,8 @@ mod tests {
         assert_monoid,
         monoid::OptionMonoid,
         op::{
-            annotation::coalesce::Coalesce,
-            semigroup::{gcd::Gcd, lcm::Lcm, max::Max, min::Min, prod::Prod, sum::Sum, xor::Xor},
+            coalesce::Coalesce, gcd::Gcd, lcm::Lcm, max::Max, min::Min, prod::Prod, sum::Sum,
+            xor::Xor,
         },
     };
 
