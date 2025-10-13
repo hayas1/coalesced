@@ -17,11 +17,7 @@ pub struct Documented<'a> {
 }
 impl ToTokens for Documented<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let new_item = ItemStruct {
-            attrs: self.content.to_attributes(),
-            ..self.item.clone()
-        };
-        new_item.to_tokens(tokens);
+        self.documented_item().to_tokens(tokens);
     }
 }
 impl<'a> Documented<'a> {
@@ -34,5 +30,11 @@ impl<'a> Documented<'a> {
         content.embed_properties();
 
         Ok(Self { content, item })
+    }
+    pub fn documented_item(&self) -> ItemStruct {
+        ItemStruct {
+            attrs: self.content.to_attributes(),
+            ..self.item.clone()
+        }
     }
 }
