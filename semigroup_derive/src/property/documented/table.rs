@@ -1,3 +1,4 @@
+use comfy_table::{presets::ASCII_MARKDOWN, Table};
 use syn::ItemStruct;
 
 use crate::{constant::Constant, property::attr::ContainerAttr};
@@ -16,7 +17,29 @@ impl<'a> PropertiesTable<'a> {
             item,
         }
     }
-    pub fn table(&self) -> String {
-        format!("TODO {:?}", self.attr)
+    pub fn table(&self) -> Table {
+        let mut table = Table::new();
+        table
+            .load_preset(ASCII_MARKDOWN)
+            .set_header(self.header())
+            .add_row(self.row());
+        table
+    }
+    pub fn header(&self) -> Vec<&str> {
+        vec!["annotated", "monoid", "commutative"]
+    }
+    pub fn row(&self) -> Vec<&str> {
+        vec![
+            Self::cell(self.attr.is_annotated()),
+            Self::cell(self.attr.is_monoid()),
+            Self::cell(self.attr.is_commutative()),
+        ]
+    }
+    pub fn cell(is: bool) -> &'a str {
+        if is {
+            "✅"
+        } else {
+            "❌"
+        }
     }
 }
