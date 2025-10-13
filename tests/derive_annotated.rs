@@ -1,9 +1,9 @@
 use semigroup::{Annotate, Annotated, Semigroup};
 
 #[derive(Debug, Clone, PartialEq, Semigroup)]
-#[semigroup(annotated, with = "semigroup::op::annotation::coalesce::Coalesce")]
+#[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
 pub struct NamedStruct {
-    #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
+    #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
     pub name: String,
     pub value: Option<u32>,
 }
@@ -61,9 +61,9 @@ fn test_named_struct_semigroup_op() {
 }
 
 #[derive(Debug, Clone, PartialEq, Semigroup)]
-#[semigroup(annotated, with = "semigroup::op::annotation::coalesce::Coalesce")]
+#[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
 pub struct UnnamedStruct(
-    #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")] String,
+    #[semigroup(with = "semigroup::op::overwrite::Overwrite")] String,
     Option<u32>,
 );
 
