@@ -8,7 +8,6 @@ use crate::{
 
 #[derive(Debug, Clone)]
 pub struct Content<'a> {
-    constant: &'a Constant,
     doc: String,
     table: PropertiesTable<'a>,
 }
@@ -19,7 +18,6 @@ impl<'a> Content<'a> {
         item: &'a ItemStruct,
     ) -> syn::Result<Self> {
         Ok(Self {
-            constant,
             doc: Self::doc(&item.attrs)?,
             table: PropertiesTable::new(constant, attr, item),
         })

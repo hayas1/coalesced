@@ -5,17 +5,12 @@ use crate::{constant::Constant, properties::attr::ContainerAttr};
 
 #[derive(Debug, Clone)]
 pub struct PropertiesTable<'a> {
-    constant: &'a Constant,
     attr: &'a ContainerAttr,
-    item: &'a ItemStruct,
 }
 impl<'a> PropertiesTable<'a> {
     pub fn new(constant: &'a Constant, attr: &'a ContainerAttr, item: &'a ItemStruct) -> Self {
-        Self {
-            constant,
-            attr,
-            item,
-        }
+        let _ = (constant, item);
+        Self { attr }
     }
     pub fn table(&self) -> Table {
         let mut table = Table::new();
