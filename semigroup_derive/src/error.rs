@@ -50,6 +50,19 @@ impl Display for SemigroupError {
     }
 }
 
+#[derive(Debug, Clone)]
+pub enum PropertyError {
+    InvalidDocAttr,
+}
+impl Error for PropertyError {}
+impl Display for PropertyError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::InvalidDocAttr => write!(f, "invalid doc attribute"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct AttrName(pub &'static str);
 macro_rules! attr_name {
