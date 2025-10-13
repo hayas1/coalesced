@@ -8,7 +8,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup_base::{semigroup::Semigroup, op::{Construction, semigroup::min::Min}};
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, min::Min}};
 ///
 /// let a = Min(1);
 /// let b = Min(2);

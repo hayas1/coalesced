@@ -9,7 +9,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup_base::{semigroup::Semigroup, op::{Construction, semigroup::gcd::Gcd}};
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, gcd::Gcd}};
 ///
 /// let a = Gcd(12u32);
 /// let b = Gcd(18);

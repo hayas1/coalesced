@@ -1,17 +1,19 @@
+use std::ops::Mul;
+
 use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 
-/// A semigroup construction that returns the maximum value.
+/// A semigroup construction that returns the product.
 /// # Properties
 /// <!-- properties -->
 ///
 /// # Examples
 /// ```
-/// use semigroup_base::{semigroup::Semigroup, op::{Construction, semigroup::max::Max}};
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, prod::Prod}};
 ///
-/// let a = Max(1);
-/// let b = Max(2);
+/// let a = Prod(1);
+/// let b = Prod(2);
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 2);
 /// ```
@@ -19,16 +21,16 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(commutative)]
 #[properties(monoid, commutative)]
-pub struct Max<T: Ord>(pub T);
-impl<T: Ord> Semigroup for Max<T> {
+pub struct Prod<T: Mul<Output = T>>(pub T);
+impl<T: Mul<Output = T>> Semigroup for Prod<T> {
     fn op(base: Self, other: Self) -> Self {
-        Self(std::cmp::max(base.0, other.0))
+        Self(base.0 * other.0)
     }
 }
 #[cfg(feature = "monoid")]
-impl<T: Ord + num::Bounded> crate::monoid::Monoid for Max<T> {
+impl<T: Mul<Output = T> + num::One> crate::monoid::Monoid for Prod<T> {
     fn unit() -> Self {
-        Self(T::min_value())
+        Self(T::one())
     }
 }
 
@@ -39,26 +41,26 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_max_as_semigroup_op() {
-        let (a, b, c) = (Max(1), Max(2), Max(3));
+    fn test_prod_as_semigroup_op() {
+        let (a, b, c) = (Prod(1), Prod(2), Prod(3));
         assert_semigroup_op!(a, b, c);
     }
 
     #[test]
-    fn test_max_as_monoid() {
-        let (a, b, c) = (Max(1), Max(2), Max(3));
+    fn test_prod_as_monoid() {
+        let (a, b, c) = (Prod(1), Prod(2), Prod(3));
         assert_monoid!(a, b, c);
     }
 
     #[test]
-    fn test_max_commutative() {
-        let (a, b, c) = (Max(1), Max(2), Max(3));
+    fn test_prod_commutative() {
+        let (a, b, c) = (Prod(1), Prod(2), Prod(3));
         assert_commutative!(a, b, c);
     }
 
     #[test]
-    fn test_max() {
-        let (a, b) = (Max(1), Max(2));
+    fn test_prod() {
+        let (a, b) = (Prod(1), Prod(2));
         assert_eq!(a.semigroup(b).into_inner(), 2);
         assert_eq!(b.semigroup(a).into_inner(), 2);
     }

@@ -10,7 +10,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup_base::{semigroup::Semigroup, op::{Construction, semigroup::sum::Sum}};
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, sum::Sum}};
 ///
 /// let a = Sum(1);
 /// let b = Sum(2);

@@ -12,7 +12,7 @@ use crate::{
 ///
 /// # Examples
 /// ```
-/// use semigroup_base::{semigroup::Semigroup, op::{Construction, annotation::coalesce::Coalesce}};
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, coalesce::Coalesce}};
 ///
 /// let a = Coalesce(None);
 /// let b = Coalesce(Some(2));
