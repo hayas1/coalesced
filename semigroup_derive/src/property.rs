@@ -4,23 +4,19 @@ use syn::ItemStruct;
 
 use crate::{
     constant::ConstantExt,
-    property::{attr::ContainerAttr, doc::DocAttr},
+    property::{attr::ContainerAttr, documented::Documented},
 };
 
 mod attr;
-mod doc;
+mod documented;
 
 pub fn impl_property<C: ConstantExt>(
     attr: &ContainerAttr,
     item: &ItemStruct,
 ) -> syn::Result<TokenStream> {
-    let mut doc = DocAttr::new(&item.attrs)?;
-    doc.embed_properties(format!("{attr:?}"));
-    let new_item = ItemStruct {
-        attrs: doc.to_attributes(),
-        ..item.clone()
-    };
-    Ok(new_item.to_token_stream())
+    let constant = C::constant();
+    let documented = Documented::new(&constant, attr, item)?;
+    Ok(documented.to_token_stream())
 }
 
 #[cfg(test)]

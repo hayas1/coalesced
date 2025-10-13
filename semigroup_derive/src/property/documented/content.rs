@@ -1,14 +1,31 @@
-use syn::{parse_quote, Attribute, Expr, ExprLit, Lit, Meta, MetaNameValue};
+use syn::{parse_quote, Attribute, Expr, ExprLit, ItemStruct, Lit, Meta, MetaNameValue};
 
-use crate::error::PropertyError;
+use crate::{
+    constant::Constant,
+    error::PropertyError,
+    property::{attr::ContainerAttr, documented::table::PropertiesTable},
+};
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct DocAttr {
+#[derive(Debug, Clone)]
+pub struct Content<'a> {
+    constant: &'a Constant,
     doc: String,
+    table: PropertiesTable<'a>,
 }
-impl DocAttr {
-    pub fn new(attrs: &[Attribute]) -> syn::Result<Self> {
-        let doc = attrs
+impl<'a> Content<'a> {
+    pub fn new(
+        constant: &'a Constant,
+        attr: &'a ContainerAttr,
+        item: &'a ItemStruct,
+    ) -> syn::Result<Self> {
+        Ok(Self {
+            constant,
+            doc: Self::doc(&item.attrs)?,
+            table: PropertiesTable::new(constant, attr, item),
+        })
+    }
+    pub fn doc(attrs: &[Attribute]) -> syn::Result<String> {
+        Ok(attrs
             .iter()
             .filter(|attr| attr.path().is_ident("doc"))
             .map(|attr| match &attr.meta {
@@ -22,15 +39,14 @@ impl DocAttr {
                 _ => Err(syn::Error::new_spanned(attr, PropertyError::InvalidDocAttr)),
             })
             .collect::<Result<Vec<_>, _>>()?
-            .join("\n");
-        Ok(Self { doc })
+            .join("\n"))
     }
-    pub fn embed_properties<S: Into<String>>(&mut self, content: S) {
+    pub fn embed_properties(&mut self) {
         let marker = "<!-- properties -->";
         let (start, end) = ("<!-- properties start -->", "<!-- properties end -->");
         self.doc = self
             .doc
-            .replace(marker, &format!("{start}\n{}\n{end}", &content.into()));
+            .replace(marker, &format!("{start}\n{}\n{end}", &self.table.table()));
     }
     pub fn to_attributes(&self) -> Vec<Attribute> {
         self.doc
