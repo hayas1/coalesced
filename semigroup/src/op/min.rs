@@ -1,6 +1,6 @@
 use semigroup_derive::{properties, ConstructionUse};
 
-use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
+use crate::{Commutative, Construction, Semigroup};
 
 /// A semigroup construction that returns the minimum value.
 /// # Properties
@@ -8,7 +8,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{Semigroup, op::{Construction, min::Min}};
+/// use semigroup::{op::min::Min, Construction, Semigroup};
 ///
 /// let a = Min(1);
 /// let b = Min(2);

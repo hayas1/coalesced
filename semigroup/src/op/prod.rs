@@ -2,7 +2,7 @@ use std::ops::Mul;
 
 use semigroup_derive::{properties, ConstructionUse};
 
-use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
+use crate::{Commutative, Construction, Semigroup};
 
 /// A semigroup construction that returns the product.
 /// # Properties
@@ -10,7 +10,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{Semigroup, op::{Construction, prod::Prod}};
+/// use semigroup::{op::prod::Prod, Construction, Semigroup};
 ///
 /// let a = Prod(1);
 /// let b = Prod(2);

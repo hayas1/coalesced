@@ -1,9 +1,7 @@
 use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{
-    annotate::{Annotate, Annotated},
-    op::{Construction, ConstructionAnnotated},
-    semigroup::{AnnotatedSemigroup, Semigroup},
+    Annotate, Annotated, AnnotatedSemigroup, Construction, ConstructionAnnotated, Semigroup,
 };
 
 /// A semigroup construction that returns the first non-`None` value.
@@ -12,7 +10,7 @@ use crate::{
 ///
 /// # Examples
 /// ```
-/// use semigroup::{Semigroup, op::{Construction, coalesce::Coalesce}};
+/// use semigroup::{op::coalesce::Coalesce, Construction, Semigroup};
 ///
 /// let a = Coalesce(None);
 /// let b = Coalesce(Some(2));

@@ -1,7 +1,7 @@
 use num::{Integer, Unsigned};
 use semigroup_derive::{properties, ConstructionUse};
 
-use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
+use crate::{Commutative, Construction, Semigroup};
 
 /// A semigroup construction that returns the least common multiple.
 /// # Properties
@@ -9,7 +9,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{Semigroup, op::{Construction, lcm::Lcm}};
+/// use semigroup::{op::lcm::Lcm, Construction, Semigroup};
 ///
 /// let a = Lcm(12u32);
 /// let b = Lcm(18);

@@ -1,10 +1,6 @@
 use semigroup_derive::{properties, ConstructionUse};
 
-use crate::{
-    annotate::Annotated,
-    op::{Construction, ConstructionAnnotated},
-    semigroup::{AnnotatedSemigroup, Semigroup},
-};
+use crate::{Annotated, AnnotatedSemigroup, Construction, ConstructionAnnotated, Semigroup};
 
 /// A semigroup construction that concatenates two values.
 /// # Properties
@@ -12,7 +8,7 @@ use crate::{
 ///
 /// # Examples
 /// ```
-/// use semigroup::{Semigroup, op::{Construction, concat::Concat}};
+/// use semigroup::{op::concat::Concat, Construction, Semigroup};
 ///
 /// let a = Concat(vec![1, 2]);
 /// let b = Concat(vec![3, 4]);

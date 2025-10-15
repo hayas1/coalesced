@@ -1,6 +1,6 @@
 use semigroup_derive::{properties, ConstructionUse};
 
-use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
+use crate::{Commutative, Construction, Semigroup};
 
 /// A semigroup construction that returns the maximum value.
 /// # Properties
@@ -8,7 +8,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{Semigroup, op::{Construction, max::Max}};
+/// use semigroup::{op::max::Max, Construction, Semigroup};
 ///
 /// let a = Max(1);
 /// let b = Max(2);

@@ -1,6 +1,6 @@
 use semigroup_derive::ConstructionUse;
 
-use crate::{op::Construction, Annotate, Annotated, AnnotatedSemigroup, Semigroup};
+use crate::{Annotate, Annotated, AnnotatedSemigroup, Construction, Semigroup};
 
 pub trait Monoid: Semigroup {
     fn unit() -> Self;

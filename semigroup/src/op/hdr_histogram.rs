@@ -1,7 +1,7 @@
 use hdrhistogram::{Counter, Histogram};
 use semigroup_derive::{properties, ConstructionUse};
 
-use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
+use crate::{Commutative, Construction, Semigroup};
 
 pub const DEFAULT_SIGFIG: u8 = 3;
 
@@ -14,7 +14,7 @@ pub const DEFAULT_SIGFIG: u8 = 3;
 ///
 /// # Examples
 /// ```
-/// use semigroup::{Semigroup, op::{Construction, hdr_histogram::HdrHistogram}};
+/// use semigroup::{op::hdr_histogram::HdrHistogram, Construction, Semigroup};
 ///
 /// let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
 /// let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();

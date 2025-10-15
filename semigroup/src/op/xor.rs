@@ -2,7 +2,7 @@ use std::ops::BitXor;
 
 use semigroup_derive::{properties, ConstructionUse};
 
-use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
+use crate::{Commutative, Construction, Semigroup};
 
 /// A semigroup construction that returns the exclusive or.
 /// # Properties
@@ -10,7 +10,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{Semigroup, op::{Construction, xor::Xor}};
+/// use semigroup::{op::xor::Xor, Construction, Semigroup};
 ///
 /// let a = Xor(0b101);
 /// let b = Xor(0b100);

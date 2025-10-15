@@ -1,7 +1,7 @@
 use num::{Integer, Unsigned};
 use semigroup_derive::{properties, ConstructionUse};
 
-use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
+use crate::{Commutative, Construction, Semigroup};
 
 /// A semigroup construction that returns the greatest common divisor.
 /// # Properties
@@ -9,7 +9,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{Semigroup, op::{Construction, gcd::Gcd}};
+/// use semigroup::{op::gcd::Gcd, Construction, Semigroup};
 ///
 /// let a = Gcd(12u32);
 /// let b = Gcd(18);

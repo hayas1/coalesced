@@ -1,9 +1,7 @@
 use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{
-    annotate::{Annotate, Annotated},
-    op::{Construction, ConstructionAnnotated},
-    semigroup::{AnnotatedSemigroup, Semigroup},
+    Annotate, Annotated, AnnotatedSemigroup, Construction, ConstructionAnnotated, Semigroup,
 };
 
 /// A semigroup construction that returns the second value.
@@ -12,7 +10,7 @@ use crate::{
 ///
 /// # Examples
 /// ```
-/// use semigroup::{Semigroup, op::{Construction, overwrite::Overwrite}};
+/// use semigroup::{op::overwrite::Overwrite, Construction, Semigroup};
 ///
 /// let a = Overwrite(1);
 /// let b = Overwrite(2);
