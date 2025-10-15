@@ -23,14 +23,14 @@ pub fn impl_properties<C: ConstantExt>(
 mod tests {
     use rstest::rstest;
 
-    use crate::constant::{Absolute, Use};
+    use crate::constant::{External, Internal};
 
     use super::*;
 
     #[rstest]
     #[case::properties_annotated(
         "properties_annotated",
-        impl_properties::<Absolute>,
+        impl_properties::<External>,
         (
             syn::parse_quote! {
                 annotated, monoid
@@ -47,7 +47,7 @@ mod tests {
     )]
     #[case::properties_not_annotated(
         "properties_not_annotated",
-        impl_properties::<Use>,
+        impl_properties::<Internal>,
         (
             syn::parse_quote! {
 
@@ -56,7 +56,7 @@ mod tests {
                 /// A semigroup struct that returns the sum and overwrite
                 /// # Properties
                 /// <!-- properties -->
-                #[derive(SemigroupUse)]
+                #[derive(SemigroupInternal)]
                 #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
                 pub struct UnnamedStruct<T: std::ops::Add> (
                     #[semigroup(with = "semigroup::op::semigroup::add::Added")]

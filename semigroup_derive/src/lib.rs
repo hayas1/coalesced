@@ -9,16 +9,16 @@ mod semigroup;
 #[proc_macro_derive(Construction, attributes(construction))]
 pub fn derive_construction(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let derive = syn::parse_macro_input!(input);
-    construction::impl_construction::<constant::Absolute>(&derive)
+    construction::impl_construction::<constant::External>(&derive)
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
 
 #[cfg(feature = "use_scope")]
-#[proc_macro_derive(ConstructionUse, attributes(construction))]
-pub fn derive_construction_use(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+#[proc_macro_derive(ConstructionInternal, attributes(construction))]
+pub fn derive_construction_internal(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let derive = syn::parse_macro_input!(input);
-    construction::impl_construction::<constant::Use>(&derive)
+    construction::impl_construction::<constant::Internal>(&derive)
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
@@ -26,16 +26,16 @@ pub fn derive_construction_use(input: proc_macro::TokenStream) -> proc_macro::To
 #[proc_macro_derive(Semigroup, attributes(semigroup))]
 pub fn derive_semigroup(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let derive = syn::parse_macro_input!(input);
-    semigroup::impl_semigroup::<constant::Absolute>(&derive)
+    semigroup::impl_semigroup::<constant::External>(&derive)
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
 
 #[cfg(feature = "use_scope")]
-#[proc_macro_derive(SemigroupUse, attributes(semigroup))]
-pub fn derive_semigroup_use(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+#[proc_macro_derive(SemigroupInternal, attributes(semigroup))]
+pub fn derive_semigroup_internal(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let derive = syn::parse_macro_input!(input);
-    semigroup::impl_semigroup::<constant::Use>(&derive)
+    semigroup::impl_semigroup::<constant::Internal>(&derive)
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
@@ -47,7 +47,7 @@ pub fn properties(
 ) -> proc_macro::TokenStream {
     let meta = syn::parse_macro_input!(attr);
     let item_struct = syn::parse_macro_input!(item);
-    properties::impl_properties::<constant::Absolute>(&meta, &item_struct)
+    properties::impl_properties::<constant::External>(&meta, &item_struct)
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }

@@ -17,8 +17,8 @@ pub struct Constant {
 pub trait ConstantExt {
     fn constant() -> Constant;
 }
-pub enum Absolute {}
-impl ConstantExt for Absolute {
+pub enum External {}
+impl ConstantExt for External {
     fn constant() -> Constant {
         Constant {
             path_semigroup: parse_quote! {::semigroup::Semigroup},
@@ -33,18 +33,18 @@ impl ConstantExt for Absolute {
     }
 }
 #[cfg(feature = "use_scope")]
-pub enum Use {}
+pub enum Internal {}
 #[cfg(feature = "use_scope")]
-impl ConstantExt for Use {
+impl ConstantExt for Internal {
     fn constant() -> Constant {
         Constant {
-            path_semigroup: parse_quote! {Semigroup},
-            path_annotated_semigroup: parse_quote! {AnnotatedSemigroup},
-            path_annotated: parse_quote! {Annotated},
-            path_annotate: parse_quote! {Annotate},
-            path_commutative: parse_quote! {Commutative},
-            path_construction_trait: parse_quote! {Construction},
-            path_construction_annotated: parse_quote! {ConstructionAnnotated},
+            path_semigroup: parse_quote! {crate::Semigroup},
+            path_annotated_semigroup: parse_quote! {crate::AnnotatedSemigroup},
+            path_annotated: parse_quote! {crate::Annotated},
+            path_annotate: parse_quote! {crate::Annotate},
+            path_commutative: parse_quote! {crate::Commutative},
+            path_construction_trait: parse_quote! {crate::Construction},
+            path_construction_annotated: parse_quote! {crate::ConstructionAnnotated},
             default_type_param: parse_quote! { A },
         }
     }
