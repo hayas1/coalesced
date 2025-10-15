@@ -1,4 +1,4 @@
-use crate::annotate::Annotated;
+use crate::Annotated;
 
 pub trait Semigroup {
     fn op(base: Self, other: Self) -> Self;

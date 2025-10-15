@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use crate::semigroup::{AnnotatedSemigroup, Semigroup};
+use crate::{AnnotatedSemigroup, Semigroup};
 
 pub trait Annotate<A>: Sized {
     type Annotation;

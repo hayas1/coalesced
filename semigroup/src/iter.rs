@@ -1,4 +1,4 @@
-use crate::semigroup::Semigroup;
+use crate::Semigroup;
 
 pub trait SemigroupIterator: Sized + Iterator {
     fn fold_final(mut self, fin: Self::Item) -> Self::Item

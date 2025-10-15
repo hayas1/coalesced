@@ -1,4 +1,4 @@
-use crate::semigroup::Semigroup;
+use crate::Semigroup;
 
 pub trait Commutative: Semigroup {}
 

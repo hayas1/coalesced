@@ -1,9 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use crate::{
-    annotate::{Annotate, Annotated},
-    semigroup::{AnnotatedSemigroup, Semigroup},
-};
+use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 
 pub mod coalesce;
 pub mod concat;

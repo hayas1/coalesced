@@ -1,6 +1,6 @@
 use std::ops::{Bound, Range, RangeBounds};
 
-use crate::monoid::Monoid;
+use crate::Monoid;
 
 pub mod index;
 pub mod iter;
