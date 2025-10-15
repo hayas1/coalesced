@@ -24,7 +24,7 @@ impl<'a> PropertiesTable<'a> {
         self.attr.attributes()
     }
     pub fn row(&self) -> [&str; 3] {
-        self.attr.fields().map(Self::cell)
+        self.attr.properties().map(Self::cell)
     }
     pub fn cell(is: bool) -> &'a str {
         if is {

@@ -31,7 +31,7 @@ impl ContainerAttr {
         ]
         .map(|Name(name)| name)
     }
-    pub fn fields(&self) -> [bool; 3] {
+    pub fn properties(&self) -> [bool; 3] {
         [self.is_annotated(), self.is_monoid(), self.is_commutative()]
     }
     pub fn is_annotated(&self) -> bool {
