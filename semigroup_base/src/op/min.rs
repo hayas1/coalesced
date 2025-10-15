@@ -39,7 +39,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_min_as_semigroup_op() {
+    fn test_min_as_semigroup() {
         let (a, b, c) = (Min(1), Min(2), Min(3));
         assert_semigroup!(a, b, c);
     }

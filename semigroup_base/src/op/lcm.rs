@@ -39,7 +39,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_lcm_as_semigroup_op() {
+    fn test_lcm_as_semigroup() {
         let (a, b, c) = (Lcm(4u32), Lcm(6), Lcm(9));
         assert_semigroup!(a, b, c);
     }

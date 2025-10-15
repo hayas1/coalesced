@@ -39,7 +39,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_gcd_as_semigroup_op() {
+    fn test_gcd_as_semigroup() {
         let (a, b, c) = (Gcd(12u32), Gcd(18), Gcd(27));
         assert_semigroup!(a, b, c);
     }

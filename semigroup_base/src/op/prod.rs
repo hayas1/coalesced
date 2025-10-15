@@ -41,7 +41,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_prod_as_semigroup_op() {
+    fn test_prod_as_semigroup() {
         let (a, b, c) = (Prod(1), Prod(2), Prod(3));
         assert_semigroup!(a, b, c);
     }

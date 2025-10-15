@@ -46,7 +46,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_coalesce_as_semigroup_op() {
+    fn test_coalesce_as_semigroup() {
         let (a, b, c) = (Coalesce(Some(1)), Coalesce(Some(2)), Coalesce(Some(3)));
         assert_semigroup!(a, b, c);
         let (a, b, c) = (Coalesce(None), Coalesce(Some(2)), Coalesce(Some(3)));

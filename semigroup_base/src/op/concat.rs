@@ -85,7 +85,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_concat_as_semigroup_op() {
+    fn test_concat_as_semigroup() {
         let (a, b, c) = (Concat(vec![1]), Concat(vec![2]), Concat(vec![3]));
         assert_semigroup!(a, b, c);
     }
