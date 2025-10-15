@@ -39,7 +39,7 @@ mod tests {
         "construction_not_annotated",
         impl_construction::<Internal>,
         syn::parse_quote! {
-            #[derive(ConstructionInternal)]
+            #[derive(ConstructionPriv)]
             #[construction(commutative)]
             pub struct Sum<T: std::ops::Add>(pub T);
         },

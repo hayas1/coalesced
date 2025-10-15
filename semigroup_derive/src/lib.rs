@@ -15,7 +15,7 @@ pub fn derive_construction(input: proc_macro::TokenStream) -> proc_macro::TokenS
 }
 
 #[cfg(feature = "use_scope")]
-#[proc_macro_derive(ConstructionInternal, attributes(construction))]
+#[proc_macro_derive(ConstructionPriv, attributes(construction))]
 pub fn derive_construction_internal(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let derive = syn::parse_macro_input!(input);
     construction::impl_construction::<constant::Internal>(&derive)

@@ -1,5 +1,5 @@
 use hdrhistogram::{Counter, Histogram};
-use semigroup_derive::{properties, ConstructionInternal};
+use semigroup_derive::{properties, ConstructionPriv};
 
 use crate::Semigroup;
 
@@ -23,7 +23,7 @@ pub const DEFAULT_SIGFIG: u8 = 3;
 /// assert_eq!(h.mean(), 3.5);
 /// assert_eq!(h.value_at_quantile(0.9), 6);
 /// ```
-#[derive(Debug, Clone, PartialEq, ConstructionInternal)]
+#[derive(Debug, Clone, PartialEq, ConstructionPriv)]
 #[construction(commutative)]
 #[properties(monoid, commutative)]
 pub struct HdrHistogram<T: Counter>(pub Histogram<T>);

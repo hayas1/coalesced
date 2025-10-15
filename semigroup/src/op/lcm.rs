@@ -1,5 +1,5 @@
 use num::{Integer, Unsigned};
-use semigroup_derive::{properties, ConstructionInternal};
+use semigroup_derive::{properties, ConstructionPriv};
 
 use crate::Semigroup;
 
@@ -16,9 +16,7 @@ use crate::Semigroup;
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 36);
 /// ```
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionInternal,
-)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(commutative)]
 #[properties(monoid, commutative)]
