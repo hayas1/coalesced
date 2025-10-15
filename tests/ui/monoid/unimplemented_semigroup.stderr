@@ -1,16 +1,3 @@
-error[E0433]: failed to resolve: could not find `annotation` in `op`
- --> tests/ui/monoid/unimplemented_semigroup.rs:6:24
-  |
-6 |     #[semigroup(with = "semigroup::op::annotation::coalesce::Coalesce")]
-  |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ could not find `annotation` in `op`
-  |
-help: consider importing one of these modules
-  |
-1 + use semigroup::op::coalesce;
-  |
-1 + use semigroup_base::op::coalesce;
-  |
-
 error[E0277]: the trait bound `Option<u32>: Semigroup` is not satisfied
  --> tests/ui/monoid/unimplemented_semigroup.rs:3:35
   |
