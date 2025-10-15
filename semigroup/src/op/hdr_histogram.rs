@@ -14,7 +14,7 @@ pub const DEFAULT_SIGFIG: u8 = 3;
 ///
 /// # Examples
 /// ```
-/// use semigroup_base::{semigroup::Semigroup, op::{Construction, hdr_histogram::HdrHistogram}};
+/// use semigroup::{semigroup::Semigroup, op::{Construction, hdr_histogram::HdrHistogram}};
 ///
 /// let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
 /// let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();

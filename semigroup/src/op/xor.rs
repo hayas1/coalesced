@@ -10,7 +10,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup_base::{semigroup::Semigroup, op::{Construction, xor::Xor}};
+/// use semigroup::{semigroup::Semigroup, op::{Construction, xor::Xor}};
 ///
 /// let a = Xor(0b101);
 /// let b = Xor(0b100);

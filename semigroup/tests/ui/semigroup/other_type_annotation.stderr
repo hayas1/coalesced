@@ -16,7 +16,7 @@ help: the return type of this call is `Annotated<Coalesce<{integer}>, String>` d
    |                         |
    |                         this argument influences the return type of `semigroup`
 note: method defined here
-  --> semigroup_base/src/semigroup.rs
+  --> src/semigroup.rs
    |
    |     fn semigroup(self, other: Self) -> Self
    |        ^^^^^^^^^

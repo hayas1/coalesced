@@ -3,15 +3,15 @@ use std::path::Path;
 #[test]
 fn test_ui() {
     let t = trybuild::TestCases::new();
-    #[cfg(not(feature = "monoid"))]
+    #[cfg(not(feature = "histogram"))]
     {
         prepare_rs_file("tests/ui/compile_fail", "tests/ui/semigroup").unwrap();
         t.compile_fail("tests/ui/semigroup/**/*.rs");
     }
-    #[cfg(feature = "monoid")]
+    #[cfg(feature = "histogram")]
     {
-        prepare_rs_file("tests/ui/compile_fail", "tests/ui/monoid").unwrap();
-        t.compile_fail("tests/ui/monoid/**/*.rs");
+        prepare_rs_file("tests/ui/compile_fail", "tests/ui/histogram").unwrap();
+        t.compile_fail("tests/ui/histogram/**/*.rs");
     }
 }
 

@@ -12,7 +12,7 @@ use crate::{
 ///
 /// # Examples
 /// ```
-/// use semigroup_base::{semigroup::Semigroup, op::{Construction, overwrite::Overwrite}};
+/// use semigroup::{semigroup::Semigroup, op::{Construction, overwrite::Overwrite}};
 ///
 /// let a = Overwrite(1);
 /// let b = Overwrite(2);

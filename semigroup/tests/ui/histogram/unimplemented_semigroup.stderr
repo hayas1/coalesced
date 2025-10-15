@@ -1,5 +1,5 @@
 error[E0277]: the trait bound `Option<u32>: Semigroup` is not satisfied
- --> tests/ui/monoid/unimplemented_semigroup.rs:3:35
+ --> tests/ui/histogram/unimplemented_semigroup.rs:3:35
   |
 3 | #[derive(Debug, Clone, PartialEq, Semigroup)]
   |                                   ^^^^^^^^^ the trait `Semigroup` is not implemented for `Option<u32>`

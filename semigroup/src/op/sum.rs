@@ -1,34 +1,36 @@
+use std::ops::Add;
+
 use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 
-/// A semigroup construction that returns the minimum value.
+/// A semigroup construction that returns the sum.
 /// # Properties
 /// <!-- properties -->
 ///
 /// # Examples
 /// ```
-/// use semigroup_base::{semigroup::Semigroup, op::{Construction, min::Min}};
+/// use semigroup::{semigroup::Semigroup, op::{Construction, sum::Sum}};
 ///
-/// let a = Min(1);
-/// let b = Min(2);
+/// let a = Sum(1);
+/// let b = Sum(2);
 ///
-/// assert_eq!(a.semigroup(b).into_inner(), 1);
+/// assert_eq!(a.semigroup(b).into_inner(), 3);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(commutative)]
 #[properties(monoid, commutative)]
-pub struct Min<T: Ord>(pub T);
-impl<T: Ord> Semigroup for Min<T> {
+pub struct Sum<T: Add<Output = T>>(pub T);
+impl<T: Add<Output = T>> Semigroup for Sum<T> {
     fn op(base: Self, other: Self) -> Self {
-        Self(std::cmp::min(base.0, other.0))
+        Self(base.0 + other.0)
     }
 }
 #[cfg(feature = "monoid")]
-impl<T: Ord + num::Bounded> crate::monoid::Monoid for Min<T> {
+impl<T: Add<Output = T> + num::Zero> crate::monoid::Monoid for Sum<T> {
     fn unit() -> Self {
-        Self(T::max_value())
+        Self(T::zero())
     }
 }
 
@@ -39,27 +41,27 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_min_as_semigroup() {
-        let (a, b, c) = (Min(1), Min(2), Min(3));
+    fn test_sum_as_semigroup() {
+        let (a, b, c) = (Sum(1), Sum(2), Sum(3));
         assert_semigroup!(a, b, c);
     }
 
     #[test]
-    fn test_min_as_monoid() {
-        let (a, b, c) = (Min(1), Min(2), Min(3));
+    fn test_sum_as_monoid() {
+        let (a, b, c) = (Sum(1), Sum(2), Sum(3));
         assert_monoid!(a, b, c);
     }
 
     #[test]
-    fn test_min_commutative() {
-        let (a, b, c) = (Min(1), Min(2), Min(3));
+    fn test_sum_commutative() {
+        let (a, b, c) = (Sum(1), Sum(2), Sum(3));
         assert_commutative!(a, b, c);
     }
 
     #[test]
-    fn test_min() {
-        let (a, b) = (Min(1), Min(2));
-        assert_eq!(a.semigroup(b).into_inner(), 1);
-        assert_eq!(b.semigroup(a).into_inner(), 1);
+    fn test_sum() {
+        let (a, b) = (Sum(1), Sum(2));
+        assert_eq!(a.semigroup(b).into_inner(), 3);
+        assert_eq!(b.semigroup(a).into_inner(), 3);
     }
 }

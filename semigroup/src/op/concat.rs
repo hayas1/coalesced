@@ -12,7 +12,7 @@ use crate::{
 ///
 /// # Examples
 /// ```
-/// use semigroup_base::{semigroup::Semigroup, op::{Construction, concat::Concat}};
+/// use semigroup::{semigroup::Semigroup, op::{Construction, concat::Concat}};
 ///
 /// let a = Concat(vec![1, 2]);
 /// let b = Concat(vec![3, 4]);

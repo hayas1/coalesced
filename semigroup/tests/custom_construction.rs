@@ -1,4 +1,4 @@
-#![cfg(feature = "monoid")]
+#![cfg(all(feature = "monoid", feature = "test"))]
 use semigroup::{
     assert_monoid, assert_semigroup, monoid::Monoid, op::Construction, properties, Construction,
     Semigroup,

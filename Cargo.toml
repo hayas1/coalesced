@@ -8,37 +8,4 @@ license-file = "LICENSE"
 readme = "README.md"
 
 [workspace]
-members = ["semigroup_derive", "semigroup_base"]
-
-[package]
-name = "semigroup"
-version.workspace = true
-authors.workspace = true
-edition.workspace = true
-repository.workspace = true
-license-file.workspace = true
-readme.workspace = true
-
-[features]
-derive = ["semigroup_derive"]
-test = ["semigroup_base/test"]
-serde = ["semigroup_base/serde"]
-clap = ["semigroup_base/clap"]
-monoid = ["semigroup_base/monoid"]
-histogram = ["semigroup_base/histogram"]
-
-[dependencies]
-semigroup_base = { path = "semigroup_base", default-features = false }
-semigroup_derive = { path = "semigroup_derive", default-features = false, optional = true }
-
-[dev-dependencies]
-semigroup = { path = ".", features = ["derive", "test"] }
-trybuild = { version = "1.0.111", features = ["diff"] }
-
-
-[lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(doc_cfg)'] }
-
-[package.metadata.docs.rs]
-all-features = true
-rustdoc-args = ["--cfg", "doc_cfg"]
+members = ["semigroup", "semigroup_derive"]
