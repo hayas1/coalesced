@@ -18,11 +18,11 @@ semigroup = { git = "https://github.com/hayas1/semigroup", features = ["derive",
 ```rust
 use semigroup::{Annotate, Semigroup};
 #[derive(Debug, Clone, PartialEq, Semigroup)]
-#[semigroup(annotated, with = "semigroup::op::annotation::coalesce::Coalesce")]
+#[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
 pub struct Config<'a> {
     pub num: Option<u32>,
     pub str: Option<&'a str>,
-    #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
+    #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
     pub boolean: bool,
 }
 
@@ -42,11 +42,11 @@ assert_eq!(config.annotation().boolean, "Cli");
 ```rust
 use semigroup::{Annotate, Semigroup};
 #[derive(Debug, Clone, PartialEq, Semigroup)]
-#[semigroup(annotated, with = "semigroup::op::annotation::coalesce::Coalesce")]
+#[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
 pub struct Config<'a> {
     pub num: Option<u32>,
     pub str: Option<&'a str>,
-    #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
+    #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
     pub boolean: bool,
 }
 #[derive(Debug, Clone, PartialEq)]
@@ -73,11 +73,11 @@ assert_eq!(config.annotation().boolean, Source::Cli);
 ```rust
 use semigroup::{Annotate, Semigroup};
 #[derive(Debug, Clone, PartialEq, Semigroup)]
-#[semigroup(annotated, with = "semigroup::op::annotation::coalesce::Coalesce")]
+#[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
 pub struct Config<'a> {
     pub num: Option<u32>,
     pub str: Option<&'a str>,
-    #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
+    #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
     pub boolean: bool,
 }
 
@@ -99,11 +99,11 @@ assert_eq!(config.as_ref().unwrap().annotation().boolean, "Cli");
 ```rust
 use semigroup::{Annotate, Semigroup, SemigroupIterator};
 #[derive(Debug, Clone, PartialEq, Semigroup)]
-#[semigroup(annotated, with = "semigroup::op::annotation::coalesce::Coalesce")]
+#[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
 pub struct Config<'a> {
     pub num: Option<u32>,
     pub str: Option<&'a str>,
-    #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
+    #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
     pub boolean: bool,
 }
 
