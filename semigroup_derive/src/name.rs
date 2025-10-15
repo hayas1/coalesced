@@ -36,9 +36,4 @@ mod tests {
         assert_eq!(var_name!(bar), Name("bar"));
         assert_eq!(var_name!(baz), Name("baz"));
     }
-
-    // #[test]
-    // fn test_type_name() {
-    //     assert_eq!(name!(Attr), Name("Attr"));
-    // }
 }

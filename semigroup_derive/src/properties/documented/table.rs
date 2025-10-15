@@ -20,15 +20,11 @@ impl<'a> PropertiesTable<'a> {
             .add_row(self.row());
         table
     }
-    pub fn header(&self) -> Vec<&str> {
-        vec!["annotated", "monoid", "commutative"]
+    pub fn header(&self) -> [&str; 3] {
+        self.attr.attributes()
     }
-    pub fn row(&self) -> Vec<&str> {
-        vec![
-            Self::cell(self.attr.is_annotated()),
-            Self::cell(self.attr.is_monoid()),
-            Self::cell(self.attr.is_commutative()),
-        ]
+    pub fn row(&self) -> [&str; 3] {
+        self.attr.fields().map(Self::cell)
     }
     pub fn cell(is: bool) -> &'a str {
         if is {
