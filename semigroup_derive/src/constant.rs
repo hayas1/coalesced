@@ -32,9 +32,7 @@ impl ConstantExt for External {
         }
     }
 }
-#[cfg(feature = "use_scope")]
 pub enum Internal {}
-#[cfg(feature = "use_scope")]
 impl ConstantExt for Internal {
     fn constant() -> Constant {
         Constant {

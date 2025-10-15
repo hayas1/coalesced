@@ -701,7 +701,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "rstest",
- "semigroup_derive",
  "syn",
 ]
 
