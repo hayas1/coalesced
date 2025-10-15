@@ -2,6 +2,7 @@ mod annotation;
 mod constant;
 mod construction;
 mod error;
+mod name;
 mod properties;
 mod semigroup;
 

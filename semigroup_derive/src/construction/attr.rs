@@ -1,11 +1,7 @@
 use darling::FromDeriveInput;
 use syn::{parse_quote, DeriveInput, Expr, TypeParam};
 
-use crate::{
-    annotation::Annotation,
-    constant::Constant,
-    error::{attr_name, ConstructionError},
-};
+use crate::{annotation::Annotation, constant::Constant, error::ConstructionError, name::var_name};
 
 #[derive(Debug, Clone, PartialEq, FromDeriveInput)]
 #[darling(attributes(construction), and_then = Self::validate)]
@@ -37,13 +33,13 @@ impl ContainerAttr {
         } = &self;
         if !annotated {
             let err_attr_name = if unit.is_some() {
-                Some(attr_name!(unit))
+                Some(var_name!(unit))
             } else if annotation_type_param.is_some() {
-                Some(attr_name!(annotation_type_param))
+                Some(var_name!(annotation_type_param))
             } else if annotation_where.is_some() {
-                Some(attr_name!(annotation_where))
+                Some(var_name!(annotation_where))
             } else if *without_annotate_impl {
-                Some(attr_name!(without_annotate_impl))
+                Some(var_name!(without_annotate_impl))
             } else {
                 None
             };

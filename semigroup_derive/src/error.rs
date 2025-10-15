@@ -3,12 +3,15 @@ use std::{
     fmt::{Display, Formatter},
 };
 
-use crate::constant::{DERIVE_CONSTRUCTION, DERIVE_SEMIGROUP};
+use crate::{
+    constant::{DERIVE_CONSTRUCTION, DERIVE_SEMIGROUP},
+    name::Name,
+};
 
 #[derive(Debug, Clone)]
 pub enum ConstructionError {
     OnlyNewType,
-    OnlyAnnotated(AttrName),
+    OnlyAnnotated(Name),
 }
 impl Error for ConstructionError {}
 impl Display for ConstructionError {
@@ -20,7 +23,7 @@ impl Display for ConstructionError {
                     "derive {DERIVE_CONSTRUCTION} only supports newtype structs",
                 )
             }
-            Self::OnlyAnnotated(AttrName(name)) => {
+            Self::OnlyAnnotated(Name(name)) => {
                 write!(f, "attribute `{name}` are supported only with `annotated`")
             }
         }
@@ -31,7 +34,7 @@ impl Display for ConstructionError {
 pub enum SemigroupError {
     UnsupportedEnum,
     UnsupportedUnion,
-    OnlyAnnotated(AttrName),
+    OnlyAnnotated(Name),
 }
 impl Error for SemigroupError {}
 impl Display for SemigroupError {
@@ -43,7 +46,7 @@ impl Display for SemigroupError {
             Self::UnsupportedUnion => {
                 write!(f, "derive {DERIVE_SEMIGROUP} does not support unions")
             }
-            Self::OnlyAnnotated(AttrName(name)) => {
+            Self::OnlyAnnotated(Name(name)) => {
                 write!(f, "attribute `{name}` are supported only with `annotated`")
             }
         }
@@ -60,30 +63,5 @@ impl Display for PropertiesError {
         match self {
             Self::InvalidDocAttr => write!(f, "invalid doc attribute"),
         }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct AttrName(pub &'static str);
-macro_rules! attr_name {
-    ($var:ident) => {{
-        let _ = &$var; // to follow the renaming
-        crate::error::AttrName(stringify!($var))
-    }};
-}
-pub(crate) use attr_name;
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_attr_name() {
-        let foo = ();
-        assert_eq!(attr_name!(foo), AttrName("foo"));
-        let bar = ();
-        assert_eq!(attr_name!(bar), AttrName("bar"));
-        let baz = ();
-        assert_eq!(attr_name!(baz), AttrName("baz"));
     }
 }
