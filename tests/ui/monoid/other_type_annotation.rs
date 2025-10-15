@@ -1,5 +1,5 @@
 use semigroup::{
-    op::{annotation::coalesce::Coalesce, Construction},
+    op::{coalesce::Coalesce, Construction},
     Annotate, Semigroup,
 };
 

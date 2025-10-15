@@ -50,7 +50,7 @@ impl<T, I: SliceIndex<[T]>> SegmentTreeIndex<T> for I {
 mod tests {
     use rstest::rstest;
 
-    use crate::{monoid::OptionMonoid, op::annotation::overwrite::Overwrite};
+    use crate::{monoid::OptionMonoid, op::overwrite::Overwrite};
 
     use super::*;
 

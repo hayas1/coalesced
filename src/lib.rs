@@ -17,11 +17,11 @@
 //! ```
 //! use semigroup::{Annotate, Semigroup};
 //! #[derive(Debug, Clone, PartialEq, Semigroup)]
-//! #[semigroup(annotated, with = "semigroup::op::annotation::coalesce::Coalesce")]
+//! #[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
 //! pub struct Config<'a> {
 //!     pub num: Option<u32>,
 //!     pub str: Option<&'a str>,
-//!     #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
+//!     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
 //!     pub boolean: bool,
 //! }
 //!
@@ -41,11 +41,11 @@
 //! ```
 //! use semigroup::{Annotate, Semigroup};
 //! #[derive(Debug, Clone, PartialEq, Semigroup)]
-//! #[semigroup(annotated, with = "semigroup::op::annotation::coalesce::Coalesce")]
+//! #[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
 //! pub struct Config<'a> {
 //!     pub num: Option<u32>,
 //!     pub str: Option<&'a str>,
-//!     #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
+//!     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
 //!     pub boolean: bool,
 //! }
 //! #[derive(Debug, Clone, PartialEq)]
@@ -72,11 +72,11 @@
 //! ```
 //! use semigroup::{Annotate, Semigroup};
 //! #[derive(Debug, Clone, PartialEq, Semigroup)]
-//! #[semigroup(annotated, with = "semigroup::op::annotation::coalesce::Coalesce")]
+//! #[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
 //! pub struct Config<'a> {
 //!     pub num: Option<u32>,
 //!     pub str: Option<&'a str>,
-//!     #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
+//!     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
 //!     pub boolean: bool,
 //! }
 //!
@@ -98,11 +98,11 @@
 //! ```
 //! use semigroup::{Annotate, Semigroup, SemigroupIterator};
 //! #[derive(Debug, Clone, PartialEq, Semigroup)]
-//! #[semigroup(annotated, with = "semigroup::op::annotation::coalesce::Coalesce")]
+//! #[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
 //! pub struct Config<'a> {
 //!     pub num: Option<u32>,
 //!     pub str: Option<&'a str>,
-//!     #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
+//!     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
 //!     pub boolean: bool,
 //! }
 //!
@@ -174,7 +174,7 @@ pub use semigroup_base::{
 
 #[cfg(feature = "derive")]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "derive")))]
-pub use semigroup_derive::{Construction, Semigroup};
+pub use semigroup_derive::{properties, Construction, Semigroup};
 
 #[cfg(feature = "test")]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "test")))]

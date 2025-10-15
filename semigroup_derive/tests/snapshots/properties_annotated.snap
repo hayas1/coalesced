@@ -1,0 +1,13 @@
+---
+source: semigroup_derive/src/properties.rs
+assertion_line: 77
+expression: formatted
+---
+/// A semigroup construction that returns the first non-`None` value.
+/// # Properties
+/// <!-- properties start -->
+///| annotated | monoid | commutative |
+///|-----------|--------|-------------|
+///| ✅        | ✅     | ❌          |
+///<!-- properties end -->
+pub struct Coalesce<T>(pub Option<T>);

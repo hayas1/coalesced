@@ -1,10 +1,24 @@
-use semigroup_derive::ConstructionUse;
+use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 
+/// A semigroup construction that returns the minimum value.
+/// # Properties
+/// <!-- properties -->
+///
+/// # Examples
+/// ```
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, min::Min}};
+///
+/// let a = Min(1);
+/// let b = Min(2);
+///
+/// assert_eq!(a.semigroup(b).into_inner(), 1);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(commutative)]
+#[properties(monoid, commutative)]
 pub struct Min<T: Ord>(pub T);
 impl<T: Ord> Semigroup for Min<T> {
     fn op(base: Self, other: Self) -> Self {

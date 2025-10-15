@@ -1,11 +1,25 @@
 use num::{Integer, Unsigned};
-use semigroup_derive::ConstructionUse;
+use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 
+/// A semigroup construction that returns the greatest common divisor.
+/// # Properties
+/// <!-- properties -->
+///
+/// # Examples
+/// ```
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, gcd::Gcd}};
+///
+/// let a = Gcd(12u32);
+/// let b = Gcd(18);
+///
+/// assert_eq!(a.semigroup(b).into_inner(), 6);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(commutative)]
+#[properties(monoid, commutative)]
 pub struct Gcd<T: Unsigned + Integer + Clone>(pub T);
 impl<T: Unsigned + Integer + Clone> Semigroup for Gcd<T> {
     fn op(base: Self, other: Self) -> Self {

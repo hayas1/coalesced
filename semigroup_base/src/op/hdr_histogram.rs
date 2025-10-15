@@ -1,12 +1,31 @@
 use hdrhistogram::{Counter, Histogram};
-use semigroup_derive::ConstructionUse;
+use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 
 pub const DEFAULT_SIGFIG: u8 = 3;
 
+/// A semigroup construction merging two `HdrHistogram`s.
+/// - mean
+/// - quantile
+/// - and more...
+/// # Properties
+/// <!-- properties -->
+///
+/// # Examples
+/// ```
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, hdr_histogram::HdrHistogram}};
+///
+/// let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
+/// let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();
+///
+/// let h = a.semigroup(b);
+/// assert_eq!(h.mean(), 3.5);
+/// assert_eq!(h.value_at_quantile(0.9), 6);
+/// ```
 #[derive(Debug, Clone, PartialEq, ConstructionUse)]
 #[construction(commutative)]
+#[properties(monoid, commutative)]
 pub struct HdrHistogram<T: Counter>(pub Histogram<T>);
 impl<T: Counter> Semigroup for HdrHistogram<T> {
     fn op(mut base: Self, other: Self) -> Self {

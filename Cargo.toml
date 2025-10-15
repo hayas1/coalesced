@@ -25,6 +25,7 @@ test = ["semigroup_base/test"]
 serde = ["semigroup_base/serde"]
 clap = ["semigroup_base/clap"]
 monoid = ["semigroup_base/monoid"]
+histogram = ["semigroup_base/histogram"]
 
 [dependencies]
 semigroup_base = { path = "semigroup_base", default-features = false }

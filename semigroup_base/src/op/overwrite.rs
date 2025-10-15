@@ -1,4 +1,4 @@
-use semigroup_derive::ConstructionUse;
+use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{
     annotate::{Annotate, Annotated},
@@ -6,9 +6,23 @@ use crate::{
     semigroup::{AnnotatedSemigroup, Semigroup},
 };
 
+/// A semigroup construction that returns the second value.
+/// # Properties
+/// <!-- properties -->
+///
+/// # Examples
+/// ```
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, overwrite::Overwrite}};
+///
+/// let a = Overwrite(1);
+/// let b = Overwrite(2);
+///
+/// assert_eq!(a.semigroup(b).into_inner(), 2);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(annotated)]
+#[properties(annotated)]
 pub struct Overwrite<T>(pub T);
 impl<T, A> AnnotatedSemigroup<A> for Overwrite<T> {
     fn annotated_op(_base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A> {

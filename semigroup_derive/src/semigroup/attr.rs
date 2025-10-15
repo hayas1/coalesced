@@ -1,11 +1,7 @@
 use darling::{FromDeriveInput, FromField};
 use syn::{parse_quote, DeriveInput, Field, Ident, Path};
 
-use crate::{
-    annotation::Annotation,
-    constant::Constant,
-    error::{attr_name, SemigroupError},
-};
+use crate::{annotation::Annotation, constant::Constant, error::SemigroupError, name::var_name};
 
 #[derive(Debug, Clone, PartialEq, FromDeriveInput)]
 #[darling(attributes(semigroup), and_then = Self::validate)]
@@ -31,7 +27,7 @@ impl ContainerAttr {
         } = &self;
         if !annotated {
             let err_attr_name = if annotation_param.is_some() {
-                Some(attr_name!(annotation_param))
+                Some(var_name!(annotation_param))
             } else {
                 None
             };

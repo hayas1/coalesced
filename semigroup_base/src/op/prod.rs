@@ -1,12 +1,26 @@
 use std::ops::Mul;
 
-use semigroup_derive::ConstructionUse;
+use semigroup_derive::{properties, ConstructionUse};
 
 use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 
+/// A semigroup construction that returns the product.
+/// # Properties
+/// <!-- properties -->
+///
+/// # Examples
+/// ```
+/// use semigroup_base::{semigroup::Semigroup, op::{Construction, prod::Prod}};
+///
+/// let a = Prod(1);
+/// let b = Prod(2);
+///
+/// assert_eq!(a.semigroup(b).into_inner(), 2);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(commutative)]
+#[properties(monoid, commutative)]
 pub struct Prod<T: Mul<Output = T>>(pub T);
 impl<T: Mul<Output = T>> Semigroup for Prod<T> {
     fn op(base: Self, other: Self) -> Self {
