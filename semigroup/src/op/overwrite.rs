@@ -12,7 +12,7 @@ use crate::{
 ///
 /// # Examples
 /// ```
-/// use semigroup::{semigroup::Semigroup, op::{Construction, overwrite::Overwrite}};
+/// use semigroup::{Semigroup, op::{Construction, overwrite::Overwrite}};
 ///
 /// let a = Overwrite(1);
 /// let b = Overwrite(2);
@@ -32,7 +32,7 @@ impl<T, A> AnnotatedSemigroup<A> for Overwrite<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::semigroup::tests::assert_semigroup;
+    use crate::semigroup::test_semigroup::assert_semigroup;
 
     use super::*;
 

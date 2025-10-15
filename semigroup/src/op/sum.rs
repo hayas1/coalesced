@@ -10,7 +10,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{semigroup::Semigroup, op::{Construction, sum::Sum}};
+/// use semigroup::{Semigroup, op::{Construction, sum::Sum}};
 ///
 /// let a = Sum(1);
 /// let b = Sum(2);
@@ -36,7 +36,7 @@ impl<T: Add<Output = T> + num::Zero> crate::monoid::Monoid for Sum<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
+    use crate::{assert_commutative, assert_monoid, semigroup::test_semigroup::assert_semigroup};
 
     use super::*;
 

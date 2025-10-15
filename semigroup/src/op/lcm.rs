@@ -9,7 +9,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{semigroup::Semigroup, op::{Construction, lcm::Lcm}};
+/// use semigroup::{Semigroup, op::{Construction, lcm::Lcm}};
 ///
 /// let a = Lcm(12u32);
 /// let b = Lcm(18);
@@ -34,7 +34,7 @@ impl<T: Unsigned + Integer + Clone> crate::monoid::Monoid for Lcm<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
+    use crate::{assert_commutative, assert_monoid, semigroup::test_semigroup::assert_semigroup};
 
     use super::*;
 

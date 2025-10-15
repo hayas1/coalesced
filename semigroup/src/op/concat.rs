@@ -12,7 +12,7 @@ use crate::{
 ///
 /// # Examples
 /// ```
-/// use semigroup::{semigroup::Semigroup, op::{Construction, concat::Concat}};
+/// use semigroup::{Semigroup, op::{Construction, concat::Concat}};
 ///
 /// let a = Concat(vec![1, 2]);
 /// let b = Concat(vec![3, 4]);
@@ -80,7 +80,7 @@ impl<T: IntoIterator + FromIterator<T::Item>> crate::monoid::Monoid for Concat<T
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_monoid, semigroup::tests::assert_semigroup};
+    use crate::{assert_monoid, semigroup::test_semigroup::assert_semigroup};
 
     use super::*;
 

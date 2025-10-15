@@ -13,10 +13,10 @@ impl<T: Semigroup> Semigroup for Reverse<T> {
 }
 
 #[cfg(any(test, feature = "test"))]
-pub mod tests {
+pub mod test_commutative {
     use std::fmt::Debug;
 
-    use crate::semigroup::tests::assert_associative_law;
+    use crate::semigroup::test_semigroup::assert_associative_law;
 
     use super::*;
 
@@ -25,13 +25,13 @@ pub mod tests {
         ($a:expr, $b: expr, $($tail: expr),*) => {
             {
                 let v = vec![$a, $b, $($tail),*];
-                $crate::commutative::tests::assert_commutative!(&v)
+                $crate::test_commutative::assert_commutative!(&v)
             }
         };
         ($v:expr) => {
             {
-                let (a, b, c) = $crate::semigroup::tests::pick3($v);
-                $crate::commutative::tests::assert_commutative_impl(a.clone(), b.clone(), c.clone());
+                let (a, b, c) = $crate::semigroup::test_semigroup::pick3($v);
+                $crate::test_commutative::assert_commutative_impl(a.clone(), b.clone(), c.clone());
             }
         };
     }

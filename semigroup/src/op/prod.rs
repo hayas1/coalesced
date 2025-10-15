@@ -10,7 +10,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{semigroup::Semigroup, op::{Construction, prod::Prod}};
+/// use semigroup::{Semigroup, op::{Construction, prod::Prod}};
 ///
 /// let a = Prod(1);
 /// let b = Prod(2);
@@ -36,7 +36,7 @@ impl<T: Mul<Output = T> + num::One> crate::monoid::Monoid for Prod<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
+    use crate::{assert_commutative, assert_monoid, semigroup::test_semigroup::assert_semigroup};
 
     use super::*;
 

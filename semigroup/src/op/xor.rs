@@ -10,7 +10,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{semigroup::Semigroup, op::{Construction, xor::Xor}};
+/// use semigroup::{Semigroup, op::{Construction, xor::Xor}};
 ///
 /// let a = Xor(0b101);
 /// let b = Xor(0b100);
@@ -35,7 +35,7 @@ impl<T: BitXor<Output = T> + num::Zero> crate::monoid::Monoid for Xor<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
+    use crate::{assert_commutative, assert_monoid, semigroup::test_semigroup::assert_semigroup};
 
     use super::*;
 

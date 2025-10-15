@@ -14,14 +14,14 @@ pub trait AnnotatedSemigroup<A>: Sized + Semigroup {
 }
 
 #[cfg(any(test, feature = "test"))]
-pub mod tests {
+pub mod test_semigroup {
     use std::fmt::Debug;
 
     use rand::seq::IndexedRandom;
 
     use crate::{
-        commutative::tests::{assert_reverse_associative_law, assert_reverse_reverse},
-        iter::tests::assert_lazy_evaluation_iter,
+        commutative::test_commutative::{assert_reverse_associative_law, assert_reverse_reverse},
+        iter::test_iter::assert_lazy_evaluation_iter,
     };
 
     use super::*;
@@ -31,14 +31,14 @@ pub mod tests {
         ($a:expr, $b: expr, $($tail: expr),*) => {
             {
                 let v = vec![$a, $b, $($tail),*];
-                $crate::semigroup::tests::assert_semigroup!(&v)
+                $crate::test_semigroup::assert_semigroup!(&v)
             }
         };
         ($v:expr) => {
             {
-                let (a, b, c) = $crate::semigroup::tests::pick3($v);
-                $crate::semigroup::tests::assert_semigroup_impl(a.clone(), b.clone(), c.clone());
-                $crate::monoid::tests::assert_option_monoid(a.clone(), b.clone(), c.clone());
+                let (a, b, c) = $crate::test_semigroup::pick3($v);
+                $crate::test_semigroup::assert_semigroup_impl(a.clone(), b.clone(), c.clone());
+                $crate::test_monoid::assert_option_monoid(a.clone(), b.clone(), c.clone());
             }
         };
     }

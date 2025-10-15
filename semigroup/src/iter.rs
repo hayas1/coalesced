@@ -33,7 +33,7 @@ pub trait SemigroupDoubleEndedIterator: Sized + DoubleEndedIterator {
 impl<I: DoubleEndedIterator> SemigroupDoubleEndedIterator for I {}
 
 #[cfg(any(test, feature = "test"))]
-pub mod tests {
+pub mod test_iter {
     use std::fmt::Debug;
 
     use super::*;

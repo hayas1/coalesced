@@ -126,7 +126,7 @@
 //! ```
 //! # #[cfg(feature="monoid")]
 //! # {
-//! use semigroup::{Semigroup, Construction, segment_tree::SegmentTree, monoid::Monoid};
+//! use semigroup::{Semigroup, Construction, segment_tree::SegmentTree, Monoid};
 //! #[derive(
 //!     Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction,
 //! )]
@@ -164,22 +164,20 @@
 //! <https://hayas1.github.io/semigroup/semigroup/tarpaulin-report.html>
 //!
 
-pub mod annotate;
-pub mod commutative;
-pub mod iter;
+mod annotate;
+mod commutative;
+mod iter;
 #[cfg(feature = "monoid")]
-pub mod monoid;
+mod monoid;
 pub mod op;
 #[cfg(feature = "monoid")]
 pub mod segment_tree;
-pub mod semigroup;
+mod semigroup;
 
-pub use self::{
-    annotate::{Annotate, Annotated},
-    commutative::{Commutative, Reverse},
-    iter::{SemigroupDoubleEndedIterator, SemigroupIterator},
-    semigroup::{AnnotatedSemigroup, Semigroup},
-};
+pub use self::{annotate::*, commutative::*, iter::*, semigroup::*};
+
+#[cfg(feature = "monoid")]
+pub use self::monoid::*;
 
 #[cfg(feature = "derive")]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "derive")))]

@@ -12,7 +12,7 @@ use crate::{
 ///
 /// # Examples
 /// ```
-/// use semigroup::{semigroup::Semigroup, op::{Construction, coalesce::Coalesce}};
+/// use semigroup::{Semigroup, op::{Construction, coalesce::Coalesce}};
 ///
 /// let a = Coalesce(None);
 /// let b = Coalesce(Some(2));
@@ -41,7 +41,7 @@ impl<T> crate::monoid::Monoid for Coalesce<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::semigroup::tests::assert_semigroup;
+    use crate::semigroup::test_semigroup::assert_semigroup;
 
     use super::*;
 

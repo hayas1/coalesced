@@ -68,10 +68,10 @@ impl<T: AnnotatedSemigroup<A> + Annotate<A>, A> Annotate<Option<A>> for OptionMo
 }
 
 #[cfg(any(test, feature = "test"))]
-pub mod tests {
+pub mod test_monoid {
     use std::fmt::Debug;
 
-    use crate::semigroup::tests::{assert_associative_law, assert_semigroup_impl};
+    use crate::semigroup::test_semigroup::{assert_associative_law, assert_semigroup_impl};
 
     use super::*;
 
@@ -80,13 +80,13 @@ pub mod tests {
         ($a:expr, $b: expr, $($tail: expr),*) => {
             {
                 let v = vec![$a, $b, $($tail),*];
-                $crate::monoid::tests::assert_monoid!(&v)
+                $crate::test_monoid::assert_monoid!(&v)
             }
         };
         ($v:expr) => {
             {
-                let (a, b, c) = $crate::semigroup::tests::pick3($v);
-                $crate::monoid::tests::assert_monoid_impl(a.clone(), b.clone(), c.clone());
+                let (a, b, c) = $crate::test_semigroup::pick3($v);
+                $crate::test_monoid::assert_monoid_impl(a.clone(), b.clone(), c.clone());
             }
         };
     }

@@ -8,7 +8,7 @@ use crate::{commutative::Commutative, op::Construction, semigroup::Semigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{semigroup::Semigroup, op::{Construction, max::Max}};
+/// use semigroup::{Semigroup, op::{Construction, max::Max}};
 ///
 /// let a = Max(1);
 /// let b = Max(2);
@@ -34,7 +34,7 @@ impl<T: Ord + num::Bounded> crate::monoid::Monoid for Max<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
+    use crate::{assert_commutative, assert_monoid, semigroup::test_semigroup::assert_semigroup};
 
     use super::*;
 

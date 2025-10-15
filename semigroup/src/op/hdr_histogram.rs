@@ -14,7 +14,7 @@ pub const DEFAULT_SIGFIG: u8 = 3;
 ///
 /// # Examples
 /// ```
-/// use semigroup::{semigroup::Semigroup, op::{Construction, hdr_histogram::HdrHistogram}};
+/// use semigroup::{Semigroup, op::{Construction, hdr_histogram::HdrHistogram}};
 ///
 /// let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
 /// let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();
@@ -58,7 +58,7 @@ impl<T: Counter> FromIterator<u64> for HdrHistogram<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
+    use crate::{assert_commutative, assert_monoid, semigroup::test_semigroup::assert_semigroup};
 
     use super::*;
 
