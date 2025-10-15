@@ -34,14 +34,14 @@ impl<T: Unsigned + Integer + Clone> crate::monoid::Monoid for Gcd<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
 
     use super::*;
 
     #[test]
     fn test_gcd_as_semigroup_op() {
         let (a, b, c) = (Gcd(12u32), Gcd(18), Gcd(27));
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
     }
 
     #[test]

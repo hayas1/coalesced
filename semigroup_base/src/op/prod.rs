@@ -36,14 +36,14 @@ impl<T: Mul<Output = T> + num::One> crate::monoid::Monoid for Prod<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
 
     use super::*;
 
     #[test]
     fn test_prod_as_semigroup_op() {
         let (a, b, c) = (Prod(1), Prod(2), Prod(3));
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
     }
 
     #[test]

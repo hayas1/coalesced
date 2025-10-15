@@ -178,7 +178,7 @@ pub use semigroup_derive::{properties, Construction, Semigroup};
 
 #[cfg(feature = "test")]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "test")))]
-pub use semigroup_base::{monoid::tests::assert_monoid, semigroup::tests::assert_semigroup_op};
+pub use semigroup_base::{monoid::tests::assert_monoid, semigroup::tests::assert_semigroup};
 
 #[cfg(feature = "monoid")]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "monoid")))]

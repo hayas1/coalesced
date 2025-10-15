@@ -1,6 +1,6 @@
 #![cfg(feature = "monoid")]
 use semigroup::{
-    assert_monoid, assert_semigroup_op, monoid::Monoid, op::Construction, properties, Construction,
+    assert_monoid, assert_semigroup, monoid::Monoid, op::Construction, properties, Construction,
     Semigroup,
 };
 
@@ -30,7 +30,7 @@ fn test_join_as_semigroup_op() {
         Join("b".to_string()),
         Join("c".to_string()),
     );
-    assert_semigroup_op!(a, b, c);
+    assert_semigroup!(a, b, c);
 }
 
 #[test]

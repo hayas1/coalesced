@@ -34,14 +34,14 @@ impl<T: Ord + num::Bounded> crate::monoid::Monoid for Min<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
 
     use super::*;
 
     #[test]
     fn test_min_as_semigroup_op() {
         let (a, b, c) = (Min(1), Min(2), Min(3));
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
     }
 
     #[test]

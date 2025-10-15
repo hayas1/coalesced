@@ -34,14 +34,14 @@ impl<T: Unsigned + Integer + Clone> crate::monoid::Monoid for Lcm<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
 
     use super::*;
 
     #[test]
     fn test_lcm_as_semigroup_op() {
         let (a, b, c) = (Lcm(4u32), Lcm(6), Lcm(9));
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
     }
 
     #[test]
