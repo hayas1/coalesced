@@ -9,7 +9,7 @@ pub struct NamedStruct {
 }
 
 #[test]
-fn test_named_struct_semigroup_op() {
+fn test_named_struct_semigroup() {
     let a = NamedStruct {
         name: "A".to_string(),
         value: Some(10),
@@ -43,7 +43,7 @@ pub struct UnnamedStruct(
 );
 
 #[test]
-fn test_unnamed_struct_semigroup_op() {
+fn test_unnamed_struct_semigroup() {
     let a = UnnamedStruct("A".to_string(), Some(10));
     let b = UnnamedStruct("B".to_string(), None);
 
@@ -60,7 +60,7 @@ fn test_unnamed_struct_semigroup_op() {
 #[derive(Debug, Clone, PartialEq, Semigroup)]
 pub struct UnitStruct;
 #[test]
-fn test_unit_struct_semigroup_op() {
+fn test_unit_struct_semigroup() {
     let a = UnitStruct;
     let b = UnitStruct;
     assert_eq!(UnitStruct::op(a.clone(), b.clone()), UnitStruct);

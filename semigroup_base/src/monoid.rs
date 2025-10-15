@@ -71,7 +71,7 @@ impl<T: AnnotatedSemigroup<A> + Annotate<A>, A> Annotate<Option<A>> for OptionMo
 pub mod tests {
     use std::fmt::Debug;
 
-    use crate::semigroup::tests::{assert_associative_law, assert_semigroup_op_impl};
+    use crate::semigroup::tests::{assert_associative_law, assert_semigroup_impl};
 
     use super::*;
 
@@ -93,7 +93,7 @@ pub mod tests {
     pub use assert_monoid;
 
     pub fn assert_monoid_impl<T: Monoid + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
-        assert_semigroup_op_impl(a.clone(), b.clone(), c.clone());
+        assert_semigroup_impl(a.clone(), b.clone(), c.clone());
         assert_monoid_unit_associative_law(a.clone(), b.clone(), c.clone());
     }
 

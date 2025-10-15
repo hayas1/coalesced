@@ -27,22 +27,22 @@ pub mod tests {
     use super::*;
 
     #[macro_export]
-    macro_rules! assert_semigroup_op {
+    macro_rules! assert_semigroup {
         ($a:expr, $b: expr, $($tail: expr),*) => {
             {
                 let v = vec![$a, $b, $($tail),*];
-                $crate::semigroup::tests::assert_semigroup_op!(&v)
+                $crate::semigroup::tests::assert_semigroup!(&v)
             }
         };
         ($v:expr) => {
             {
                 let (a, b, c) = $crate::semigroup::tests::pick3($v);
-                $crate::semigroup::tests::assert_semigroup_op_impl(a.clone(), b.clone(), c.clone());
+                $crate::semigroup::tests::assert_semigroup_impl(a.clone(), b.clone(), c.clone());
                 $crate::monoid::tests::assert_option_monoid(a.clone(), b.clone(), c.clone());
             }
         };
     }
-    pub use assert_semigroup_op;
+    pub use assert_semigroup;
 
     pub fn pick3<T: Clone>(data: &[T]) -> (T, T, T) {
         data.choose_multiple_array(&mut rand::rng())
@@ -50,7 +50,7 @@ pub mod tests {
             .expect("failed to pick 3 items")
     }
 
-    pub fn assert_semigroup_op_impl<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
+    pub fn assert_semigroup_impl<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
         assert_associative_law(a.clone(), b.clone(), c.clone());
         assert_reverse_reverse(a.clone(), b.clone(), c.clone());
         assert_reverse_associative_law(a.clone(), b.clone(), c.clone());

@@ -34,14 +34,14 @@ impl<T: Ord + num::Bounded> crate::monoid::Monoid for Max<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
 
     use super::*;
 
     #[test]
-    fn test_max_as_semigroup_op() {
+    fn test_max_as_semigroup() {
         let (a, b, c) = (Max(1), Max(2), Max(3));
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
     }
 
     #[test]

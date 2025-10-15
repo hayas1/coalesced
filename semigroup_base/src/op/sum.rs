@@ -36,14 +36,14 @@ impl<T: Add<Output = T> + num::Zero> crate::monoid::Monoid for Sum<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
 
     use super::*;
 
     #[test]
-    fn test_sum_as_semigroup_op() {
+    fn test_sum_as_semigroup() {
         let (a, b, c) = (Sum(1), Sum(2), Sum(3));
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
     }
 
     #[test]

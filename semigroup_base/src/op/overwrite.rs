@@ -32,14 +32,14 @@ impl<T, A> AnnotatedSemigroup<A> for Overwrite<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::semigroup::tests::assert_semigroup_op;
+    use crate::semigroup::tests::assert_semigroup;
 
     use super::*;
 
     #[test]
-    fn test_overwrite_as_semigroup_op() {
+    fn test_overwrite_as_semigroup() {
         let (a, b, c) = (Overwrite(1), Overwrite(2), Overwrite(3));
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
     }
 
     #[test]

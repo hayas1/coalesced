@@ -58,16 +58,16 @@ impl<T: Counter> FromIterator<u64> for HdrHistogram<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
 
     use super::*;
 
     #[test]
-    fn test_hdr_histogram_as_semigroup_op() {
+    fn test_hdr_histogram_as_semigroup() {
         let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
         let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();
         let c: HdrHistogram<u32> = [7, 8, 9].into_iter().collect();
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
     }
 
     #[test]

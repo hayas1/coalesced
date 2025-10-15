@@ -41,20 +41,20 @@ impl<T> crate::monoid::Monoid for Coalesce<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::semigroup::tests::assert_semigroup_op;
+    use crate::semigroup::tests::assert_semigroup;
 
     use super::*;
 
     #[test]
-    fn test_coalesce_as_semigroup_op() {
+    fn test_coalesce_as_semigroup() {
         let (a, b, c) = (Coalesce(Some(1)), Coalesce(Some(2)), Coalesce(Some(3)));
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
         let (a, b, c) = (Coalesce(None), Coalesce(Some(2)), Coalesce(Some(3)));
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
         let (a, b, c) = (Coalesce(None), Coalesce(Some(2)), Coalesce(None));
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
         let (a, b, c) = (Coalesce::<u32>(None), Coalesce(None), Coalesce(None));
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
     }
 
     #[test]

@@ -35,14 +35,14 @@ impl<T: BitXor<Output = T> + num::Zero> crate::monoid::Monoid for Xor<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup_op};
+    use crate::{assert_commutative, assert_monoid, semigroup::tests::assert_semigroup};
 
     use super::*;
 
     #[test]
-    fn test_xor_as_semigroup_op() {
+    fn test_xor_as_semigroup() {
         let (a, b, c) = (Xor(0b111), Xor(0b101), Xor(0b100));
-        assert_semigroup_op!(a, b, c);
+        assert_semigroup!(a, b, c);
     }
 
     #[test]
