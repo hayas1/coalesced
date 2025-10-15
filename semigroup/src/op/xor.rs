@@ -1,8 +1,8 @@
 use std::ops::BitXor;
 
-use semigroup_derive::{properties, ConstructionUse};
+use semigroup_derive::{properties, ConstructionInternal};
 
-use crate::{Commutative, Construction, Semigroup};
+use crate::Semigroup;
 
 /// A semigroup construction that returns the exclusive or.
 /// # Properties
@@ -16,7 +16,9 @@ use crate::{Commutative, Construction, Semigroup};
 /// let b = Xor(0b100);
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 0b001);
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionInternal,
+)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(commutative)]
 #[properties(monoid, commutative)]
@@ -35,7 +37,7 @@ impl<T: BitXor<Output = T> + num::Zero> crate::monoid::Monoid for Xor<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::test_semigroup::assert_semigroup};
+    use crate::{assert_commutative, assert_monoid, assert_semigroup, Construction, Semigroup};
 
     use super::*;
 

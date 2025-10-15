@@ -1,8 +1,8 @@
 use std::ops::Add;
 
-use semigroup_derive::{properties, ConstructionUse};
+use semigroup_derive::{properties, ConstructionInternal};
 
-use crate::{Commutative, Construction, Semigroup};
+use crate::Semigroup;
 
 /// A semigroup construction that returns the sum.
 /// # Properties
@@ -17,7 +17,9 @@ use crate::{Commutative, Construction, Semigroup};
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 3);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionInternal,
+)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(commutative)]
 #[properties(monoid, commutative)]
@@ -36,7 +38,7 @@ impl<T: Add<Output = T> + num::Zero> crate::monoid::Monoid for Sum<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::test_semigroup::assert_semigroup};
+    use crate::{assert_commutative, assert_monoid, assert_semigroup, Construction, Semigroup};
 
     use super::*;
 

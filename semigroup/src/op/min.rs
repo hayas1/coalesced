@@ -1,6 +1,6 @@
-use semigroup_derive::{properties, ConstructionUse};
+use semigroup_derive::{properties, ConstructionInternal};
 
-use crate::{Commutative, Construction, Semigroup};
+use crate::Semigroup;
 
 /// A semigroup construction that returns the minimum value.
 /// # Properties
@@ -15,7 +15,9 @@ use crate::{Commutative, Construction, Semigroup};
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 1);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionInternal,
+)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(commutative)]
 #[properties(monoid, commutative)]
@@ -34,7 +36,7 @@ impl<T: Ord + num::Bounded> crate::monoid::Monoid for Min<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::test_semigroup::assert_semigroup};
+    use crate::{assert_commutative, assert_monoid, assert_semigroup, Construction, Semigroup};
 
     use super::*;
 

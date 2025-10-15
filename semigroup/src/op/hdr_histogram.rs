@@ -1,7 +1,7 @@
 use hdrhistogram::{Counter, Histogram};
-use semigroup_derive::{properties, ConstructionUse};
+use semigroup_derive::{properties, ConstructionInternal};
 
-use crate::{Commutative, Construction, Semigroup};
+use crate::Semigroup;
 
 pub const DEFAULT_SIGFIG: u8 = 3;
 
@@ -23,7 +23,7 @@ pub const DEFAULT_SIGFIG: u8 = 3;
 /// assert_eq!(h.mean(), 3.5);
 /// assert_eq!(h.value_at_quantile(0.9), 6);
 /// ```
-#[derive(Debug, Clone, PartialEq, ConstructionUse)]
+#[derive(Debug, Clone, PartialEq, ConstructionInternal)]
 #[construction(commutative)]
 #[properties(monoid, commutative)]
 pub struct HdrHistogram<T: Counter>(pub Histogram<T>);
@@ -58,7 +58,7 @@ impl<T: Counter> FromIterator<u64> for HdrHistogram<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, semigroup::test_semigroup::assert_semigroup};
+    use crate::{assert_commutative, assert_monoid, assert_semigroup, Semigroup};
 
     use super::*;
 

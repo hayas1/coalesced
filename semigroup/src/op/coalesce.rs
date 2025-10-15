@@ -1,8 +1,6 @@
-use semigroup_derive::{properties, ConstructionUse};
+use semigroup_derive::{properties, ConstructionInternal};
 
-use crate::{
-    Annotate, Annotated, AnnotatedSemigroup, Construction, ConstructionAnnotated, Semigroup,
-};
+use crate::{Annotated, AnnotatedSemigroup};
 
 /// A semigroup construction that returns the first non-`None` value.
 /// # Properties
@@ -17,7 +15,9 @@ use crate::{
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), Some(2));
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionInternal,
+)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(annotated)]
 #[properties(annotated, monoid)]
@@ -39,7 +39,7 @@ impl<T> crate::monoid::Monoid for Coalesce<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::semigroup::test_semigroup::assert_semigroup;
+    use crate::{assert_monoid, assert_semigroup, Construction, Semigroup};
 
     use super::*;
 
@@ -53,6 +53,18 @@ mod tests {
         assert_semigroup!(a, b, c);
         let (a, b, c) = (Coalesce::<u32>(None), Coalesce(None), Coalesce(None));
         assert_semigroup!(a, b, c);
+    }
+
+    #[test]
+    fn test_coalesce_as_monoid() {
+        let (a, b, c) = (Coalesce(Some(1)), Coalesce(Some(2)), Coalesce(Some(3)));
+        assert_monoid!(a, b, c);
+        let (a, b, c) = (Coalesce(None), Coalesce(Some(2)), Coalesce(Some(3)));
+        assert_monoid!(a, b, c);
+        let (a, b, c) = (Coalesce(None), Coalesce(Some(2)), Coalesce(None));
+        assert_monoid!(a, b, c);
+        let (a, b, c) = (Coalesce::<u32>(None), Coalesce(None), Coalesce(None));
+        assert_monoid!(a, b, c);
     }
 
     #[test]

@@ -1,8 +1,6 @@
-use semigroup_derive::{properties, ConstructionUse};
+use semigroup_derive::{properties, ConstructionInternal};
 
-use crate::{
-    Annotate, Annotated, AnnotatedSemigroup, Construction, ConstructionAnnotated, Semigroup,
-};
+use crate::{Annotated, AnnotatedSemigroup};
 
 /// A semigroup construction that returns the second value.
 /// # Properties
@@ -17,7 +15,9 @@ use crate::{
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 2);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionInternal,
+)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(annotated)]
 #[properties(annotated)]
@@ -30,7 +30,7 @@ impl<T, A> AnnotatedSemigroup<A> for Overwrite<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::semigroup::test_semigroup::assert_semigroup;
+    use crate::{assert_semigroup, Construction, Semigroup};
 
     use super::*;
 

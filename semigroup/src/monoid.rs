@@ -1,6 +1,6 @@
-use semigroup_derive::ConstructionUse;
+use semigroup_derive::ConstructionInternal;
 
-use crate::{Annotate, Annotated, AnnotatedSemigroup, Construction, Semigroup};
+use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 
 pub trait Monoid: Semigroup {
     fn unit() -> Self;
@@ -9,7 +9,9 @@ pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
     fn annotated_unit() -> Annotated<Self, A>;
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionInternal,
+)]
 pub struct OptionMonoid<T: Semigroup>(pub Option<T>);
 impl<T: Semigroup> From<T> for OptionMonoid<T> {
     fn from(value: T) -> Self {

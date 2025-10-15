@@ -1,6 +1,6 @@
-use semigroup_derive::{properties, ConstructionUse};
+use semigroup_derive::{properties, ConstructionInternal};
 
-use crate::{Annotated, AnnotatedSemigroup, Construction, ConstructionAnnotated, Semigroup};
+use crate::{Annotated, AnnotatedSemigroup};
 
 /// A semigroup construction that concatenates two values.
 /// # Properties
@@ -15,7 +15,9 @@ use crate::{Annotated, AnnotatedSemigroup, Construction, ConstructionAnnotated, 
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), vec![1, 2, 3, 4]);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionUse)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionInternal,
+)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(
     annotated,
@@ -76,7 +78,7 @@ impl<T: IntoIterator + FromIterator<T::Item>> crate::monoid::Monoid for Concat<T
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_monoid, semigroup::test_semigroup::assert_semigroup};
+    use crate::{assert_monoid, assert_semigroup, Construction, Semigroup};
 
     use super::*;
 
