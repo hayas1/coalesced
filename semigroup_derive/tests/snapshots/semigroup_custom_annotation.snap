@@ -9,13 +9,13 @@ impl ::semigroup::Semigroup for NamedStruct {
         Self {
             foo: <semigroup::op::annotation::overwrite::Overwrite<
                 _,
-            > as ::semigroup::op::Construction<_>>::lift_op(base.foo, other.foo),
+            > as ::semigroup::Construction<_>>::lift_op(base.foo, other.foo),
             bar: <semigroup::op::annotation::overwrite::Overwrite<
                 _,
-            > as ::semigroup::op::Construction<_>>::lift_op(base.bar, other.bar),
+            > as ::semigroup::Construction<_>>::lift_op(base.bar, other.bar),
             baz: <semigroup::op::annotation::overwrite::Overwrite<
                 _,
-            > as ::semigroup::op::Construction<_>>::lift_op(base.baz, other.baz),
+            > as ::semigroup::Construction<_>>::lift_op(base.baz, other.baz),
         }
     }
 }
@@ -36,7 +36,7 @@ for NamedStruct {
         let (other_value, other_annotation) = other.into_parts();
         let (foo_value, foo_annotation) = <semigroup::op::annotation::overwrite::Overwrite<
             _,
-        > as ::semigroup::op::ConstructionAnnotated<
+        > as ::semigroup::ConstructionAnnotated<
             _,
             _,
         >>::lift_annotated_op(
@@ -46,7 +46,7 @@ for NamedStruct {
             .into_parts();
         let (bar_value, bar_annotation) = <semigroup::op::annotation::overwrite::Overwrite<
             _,
-        > as ::semigroup::op::ConstructionAnnotated<
+        > as ::semigroup::ConstructionAnnotated<
             _,
             _,
         >>::lift_annotated_op(
@@ -56,7 +56,7 @@ for NamedStruct {
             .into_parts();
         let (baz_value, baz_annotation) = <semigroup::op::annotation::overwrite::Overwrite<
             _,
-        > as ::semigroup::op::ConstructionAnnotated<
+        > as ::semigroup::ConstructionAnnotated<
             _,
             _,
         >>::lift_annotated_op(

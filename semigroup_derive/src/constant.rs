@@ -26,8 +26,8 @@ impl ConstantExt for Absolute {
             path_annotated: parse_quote! {::semigroup::Annotated},
             path_annotate: parse_quote! {::semigroup::Annotate},
             path_commutative: parse_quote! {::semigroup::Commutative},
-            path_construction_trait: parse_quote! {::semigroup::op::Construction},
-            path_construction_annotated: parse_quote! {::semigroup::op::ConstructionAnnotated},
+            path_construction_trait: parse_quote! {::semigroup::Construction},
+            path_construction_annotated: parse_quote! {::semigroup::ConstructionAnnotated},
             default_type_param: parse_quote! { A },
         }
     }
