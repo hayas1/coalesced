@@ -80,7 +80,7 @@ impl<T: IntoIterator + FromIterator<T::Item>> crate::monoid::Monoid for Concat<T
 
 #[cfg(test)]
 mod tests {
-    use crate::semigroup::tests::assert_semigroup_op;
+    use crate::{assert_monoid, semigroup::tests::assert_semigroup_op};
 
     use super::*;
 
@@ -88,6 +88,12 @@ mod tests {
     fn test_concat_as_semigroup_op() {
         let (a, b, c) = (Concat(vec![1]), Concat(vec![2]), Concat(vec![3]));
         assert_semigroup_op!(a, b, c);
+    }
+
+    #[test]
+    fn test_concat_as_monoid() {
+        let (a, b, c) = (Concat(vec![1]), Concat(vec![2]), Concat(vec![3]));
+        assert_monoid!(a, b, c)
     }
 
     #[test]
