@@ -13,11 +13,11 @@
 //! # Examples
 //!
 //! ## Reading configs from multiple sources
-//! ### With simple string annotation
+//! ### Simple coalesce
 //! ```
-//! use semigroup::{Annotate, Semigroup};
+//! use semigroup::Semigroup;
 //! #[derive(Debug, Clone, PartialEq, Semigroup)]
-//! #[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
+//! #[semigroup(with = "semigroup::op::coalesce::Coalesce")]
 //! pub struct Config<'a> {
 //!     pub num: Option<u32>,
 //!     pub str: Option<&'a str>,
@@ -25,19 +25,16 @@
 //!     pub boolean: bool,
 //! }
 //!
-//! let file = Config { num: Some(1), str: None, boolean: true }.annotated("File");
-//! let env = Config { num: None, str: Some("ten"), boolean: false }.annotated("Env");
-//! let cli = Config { num: Some(100), str: None, boolean: true }.annotated("Cli");
+//! let file = Config { num: Some(1), str: None, boolean: true };
+//! let env = Config { num: None, str: Some("ten"), boolean: false };
+//! let cli = Config { num: Some(100), str: None, boolean: false };
 //!
 //! let config = file.semigroup(env).semigroup(cli);
 //!
-//! assert_eq!(config.value(), &Config { num: Some(1), str: Some("ten"), boolean: true });
-//! assert_eq!(config.annotation().num, "File");
-//! assert_eq!(config.annotation().str, "Env");
-//! assert_eq!(config.annotation().boolean, "Cli");
+//! assert_eq!(config, Config { num: Some(1), str: Some("ten"), boolean: false });
 //! ```
 //!
-//! ### With rich enum annotation
+//! ### Coalesce with rich enum annotation
 //! ```
 //! use semigroup::{Annotate, Semigroup};
 //! #[derive(Debug, Clone, PartialEq, Semigroup)]
@@ -57,71 +54,52 @@
 //!
 //! let file = Config { num: Some(1), str: None, boolean: true }.annotated(Source::File);
 //! let env = Config { num: None, str: Some("ten"), boolean: false }.annotated(Source::Env);
-//! let cli = Config { num: Some(100), str: None, boolean: true }.annotated(Source::Cli);
+//! let cli = Config { num: Some(100), str: None, boolean: false }.annotated(Source::Cli);
 //!
 //! let config = file.semigroup(env).semigroup(cli);
 //!
-//! assert_eq!(config.value(), &Config { num: Some(1), str: Some("ten"), boolean: true });
+//! assert_eq!(config.value(), &Config { num: Some(1), str: Some("ten"), boolean: false });
 //! assert_eq!(config.annotation().num, Source::File);
 //! assert_eq!(config.annotation().str, Source::Env);
 //! assert_eq!(config.annotation().boolean, Source::Cli);
 //! ```
 //!
-//! ## Lazy Evaluation
-//! ### Reduce
+//! ## Statistically aggregation
+//! ### Aggregate with histogram
+//! Only available with the `histogram` feature
 //! ```
-//! use semigroup::{Annotate, Semigroup};
-//! #[derive(Debug, Clone, PartialEq, Semigroup)]
-//! #[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
-//! pub struct Config<'a> {
-//!     pub num: Option<u32>,
-//!     pub str: Option<&'a str>,
-//!     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
-//!     pub boolean: bool,
-//! }
+//! # #[cfg(feature="histogram")]
+//! # {
+//! use semigroup::{op::hdr_histogram::HdrHistogram, Semigroup};
 //!
-//! let lazy = vec![
-//!     Config { num: Some(1), str: None, boolean: true }.annotated("File"),
-//!     Config { num: None, str: Some("ten"), boolean: false }.annotated("Env"),
-//!     Config { num: Some(100), str: None, boolean: true }.annotated("Cli"),
-//! ];
+//! let histogram1 = (1..100).collect::<HdrHistogram<u32>>();
+//! let histogram2 = (100..1000).collect::<HdrHistogram<u32>>();
 //!
+//! let histogram = histogram1.semigroup(histogram2);
 //!
-//! let config = lazy.into_iter().reduce(|acc, item| acc.semigroup(item));
-//!
-//! assert_eq!(config.as_ref().unwrap().value(), &Config { num: Some(1), str: Some("ten"), boolean: true });
-//! assert_eq!(config.as_ref().unwrap().annotation().num, "File");
-//! assert_eq!(config.as_ref().unwrap().annotation().str, "Env");
-//! assert_eq!(config.as_ref().unwrap().annotation().boolean, "Cli");
-//! ```
-//! ### Fold with final default
-//! ```
-//! use semigroup::{Annotate, Semigroup, SemigroupIterator};
-//! #[derive(Debug, Clone, PartialEq, Semigroup)]
-//! #[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
-//! pub struct Config<'a> {
-//!     pub num: Option<u32>,
-//!     pub str: Option<&'a str>,
-//!     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
-//!     pub boolean: bool,
-//! }
-//!
-//! let lazy = vec![
-//!     Config { num: Some(1), str: None, boolean: true }.annotated("File"),
-//!     Config { num: None, str: None, boolean: false }.annotated("Env"),
-//!     Config { num: Some(100), str: None, boolean: true }.annotated("Cli"),
-//! ];
-//!
-//!
-//! let config = lazy.into_iter().fold_final(Config { num: Some(1000), str: Some("thousand"), boolean: true }.annotated("Default"));
-//!
-//! assert_eq!(config.value(), &Config { num: Some(1), str: Some("thousand"), boolean: true });
-//! assert_eq!(config.annotation().num, "File");
-//! assert_eq!(config.annotation().str, "Default");
-//! assert_eq!(config.annotation().boolean, "Default");
+//! assert_eq!(histogram.mean(), 499.9999999999999);
+//! assert_eq!(histogram.value_at_quantile(0.9), 900);
+//! # }
 //! ```
 //!
 //! ## Segment tree
+//! ### Range sum
+//! Only available with the `monoid` feature
+//! ```
+//! # #[cfg(feature="monoid")]
+//! # {
+//! use semigroup::{op::sum::Sum, Semigroup, Construction, segment_tree::SegmentTree};
+//! let data = 0..=10000;
+//! let mut sum_tree: SegmentTree<_> = data.into_iter().map(Sum).collect();
+//! assert_eq!(sum_tree.fold(3..6).into_inner(), 12);
+//! assert_eq!(sum_tree.fold(..).into_inner(), 50005000);
+//! sum_tree.update_with(4, |Sum(x)| Sum(x + 50));
+//! sum_tree.update_with(9999, |Sum(x)| Sum(x + 500000));
+//! assert_eq!(sum_tree.fold(3..6).into_inner(), 62);
+//! assert_eq!(sum_tree.fold(..).into_inner(), 50505050);
+//! # }
+//! ```
+//! ### Custom monoid operator
 //! Only available with the `monoid` feature
 //! ```
 //! # #[cfg(feature="monoid")]
