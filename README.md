@@ -1,6 +1,6 @@
 <!-- cargo-rdme start -->
 
-Semigroup trait is useful
+[`Semigroup`] trait is useful for
 - reading configs from multiple sources
 - statistically aggregation
 - fast range queries using segment tree
@@ -36,6 +36,8 @@ assert_eq!(config, Config { num: Some(1), str: Some("ten"), boolean: false });
 ```
 
 #### Coalesce with rich enum annotation
+Some [`Semigroup`] such as [`op::coalesce::Coalesce`] can have an annotation.
+More detail is in [`Annotate`].
 ```rust
 use semigroup::{Annotate, Semigroup};
 #[derive(Debug, Clone, PartialEq, Semigroup)]
@@ -67,7 +69,7 @@ assert_eq!(config.annotation().boolean, Source::Cli);
 
 ### Statistically aggregation
 #### Aggregate with histogram
-Only available with the `histogram` feature
+Only available with the `histogram` feature. More detail is in [`op::hdr_histogram::HdrHistogram`].
 ```rust
 use semigroup::{op::hdr_histogram::HdrHistogram, Semigroup};
 
@@ -81,6 +83,7 @@ assert_eq!(histogram.value_at_quantile(0.9), 900);
 ```
 
 ### Segment tree
+More detail is in [`segment_tree::SegmentTree`] that requires [`Monoid`].
 #### Range sum
 Only available with the `monoid` feature
 ```rust
