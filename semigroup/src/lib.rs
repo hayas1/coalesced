@@ -3,6 +3,7 @@
 //! - reading configs from multiple sources
 //! - statistically aggregation
 //! - fast range queries using segment tree
+//! - and so on...
 //!
 //! # Usage
 //! ```toml
