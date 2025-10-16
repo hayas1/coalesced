@@ -1,5 +1,19 @@
 use crate::Semigroup;
 
+/// [`Commutative`] represents a binary operation that satisfies the following property
+/// 1. *Commutativity*: `op(a, b) = op(b, a)`
+///
+/// The *semigroup* set that satisfies the *commutativity* property is often called *commutative semigroup*.
+///
+/// And the *monoid* set that satisfies the *commutativity* property is often called *commutative monoid*.
+///
+/// # Testing
+/// Use [`crate::assert_commutative!`] macro.
+/// This is marker trait.
+///
+/// The *commutativity* property is not guaranteed by Rust’s type system,
+/// so it must be verified manually using [`crate::assert_commutative!`].
+///
 pub trait Commutative: Semigroup {}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]

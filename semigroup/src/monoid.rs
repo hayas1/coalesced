@@ -2,7 +2,7 @@ use semigroup_derive::ConstructionPriv;
 
 use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 
-/// [`Monoid`] represents represents a binary operation that satisfies the following properties
+/// [`Monoid`] represents a binary operation that satisfies the following properties
 /// 1. *Closure*: `op: T × T → T`
 /// 2. *Associativity*: `op(op(a, b), c) = op(a, op(b, c))`
 /// 3. Existence of *identity element*: `op(unit(), a) = a = op(a, unit())`
