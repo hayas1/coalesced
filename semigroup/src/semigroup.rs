@@ -31,7 +31,7 @@ pub mod test_semigroup {
         ($a:expr, $b: expr, $($tail: expr),*) => {
             {
                 let v = vec![$a, $b, $($tail),*];
-                $crate::test_semigroup::assert_semigroup!(&v)
+                $crate::assert_semigroup!(&v)
             }
         };
         ($v:expr) => {
@@ -42,7 +42,6 @@ pub mod test_semigroup {
             }
         };
     }
-    pub use assert_semigroup;
 
     pub fn pick3<T: Clone>(data: &[T]) -> (T, T, T) {
         data.choose_multiple_array(&mut rand::rng())

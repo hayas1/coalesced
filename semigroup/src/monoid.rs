@@ -76,7 +76,7 @@ pub mod test_monoid {
         ($a:expr, $b: expr, $($tail: expr),*) => {
             {
                 let v = vec![$a, $b, $($tail),*];
-                $crate::test_monoid::assert_monoid!(&v)
+                $crate::assert_monoid!(&v)
             }
         };
         ($v:expr) => {
@@ -86,7 +86,6 @@ pub mod test_monoid {
             }
         };
     }
-    pub use assert_monoid;
 
     pub fn assert_monoid_impl<T: Monoid + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
         assert_semigroup_impl(a.clone(), b.clone(), c.clone());

@@ -25,7 +25,7 @@ pub mod test_commutative {
         ($a:expr, $b: expr, $($tail: expr),*) => {
             {
                 let v = vec![$a, $b, $($tail),*];
-                $crate::test_commutative::assert_commutative!(&v)
+                $crate::assert_commutative!(&v)
             }
         };
         ($v:expr) => {
@@ -35,7 +35,6 @@ pub mod test_commutative {
             }
         };
     }
-    pub use assert_commutative;
 
     pub fn assert_commutative_impl<T: Commutative + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
         assert_commutative_law(a.clone(), b.clone(), c.clone());
