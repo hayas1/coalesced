@@ -33,7 +33,7 @@ jobs:
     - name: Release test with features
       run: cargo test --all --release --all-features
     - name: Run doc
-      run: cargo doc --all --no-deps
+      run: cargo +nightly rustdoc --manifest-path semigroup/Cargo.toml --all-features -- --cfg doc_cfg
     - name: Coverage
       run: >
         cargo install cargo-tarpaulin &&
