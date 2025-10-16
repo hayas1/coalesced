@@ -115,6 +115,9 @@
 //!             latency: HdrHistogram::from_iter([latency.as_millis() as u64]),
 //!         }
 //!     }
+//!     pub fn count(&self) -> u64 {
+//!         self.count.into_inner()
+//!     }
 //!     pub fn pass_rate(&self) -> f64 {
 //!         self.pass.into_inner() as f64 / self.count.into_inner() as f64
 //!     }
@@ -136,7 +139,7 @@
 //! }
 //!
 //! let request_aggregate = agg.into_inner().unwrap();
-//! assert_eq!(request_aggregate.count.into_inner(), 10000);
+//! assert_eq!(request_aggregate.count(), 10000);
 //! assert_eq!(request_aggregate.pass_rate(), 0.5);
 //! assert_eq!(request_aggregate.duration(), Duration::from_millis(9999));
 //! assert_eq!(request_aggregate.rps(), 1000.1000100010001);
