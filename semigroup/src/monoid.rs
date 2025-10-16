@@ -8,10 +8,12 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// 3. Existence of *identity element*: `op(unit(), a) = a = op(a, unit())`
 ///
 /// # Testing
+/// Use [`crate::assert_monoid!`] macro.
+///
 /// The *closure* and *associativity* properties are same as [`Semigroup`],
 /// so they are guaranteed by [`crate::assert_semigroup!`].
-/// However, existence of *identity element* is not guaranteed by Rust’s type system and the macro.
-/// but it must be verified manually using [`crate::assert_monoid!`].
+/// However, existence of *identity element* is not guaranteed the macro,
+/// so it must be verified manually using [`crate::assert_monoid!`].
 pub trait Monoid: Semigroup {
     fn unit() -> Self;
 }

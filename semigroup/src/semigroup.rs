@@ -5,6 +5,8 @@ use crate::Annotated;
 /// 2. *Associativity*: `op(op(a, b), c) = op(a, op(b, c))`
 ///
 /// # Testing
+/// Use [`crate::assert_semigroup!`] macro.
+///
 /// The *closure* property is guaranteed by Rust’s type system,
 /// but *associativity* must be verified manually using [`crate::assert_semigroup!`].
 pub trait Semigroup {
