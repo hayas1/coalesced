@@ -1,5 +1,12 @@
 use crate::Annotated;
 
+/// [`Semigroup`] represents a binary operation that satisfies the following properties
+/// 1. *Closure*: `op: T × T → T`
+/// 2. *Associativity*: `op(op(a, b), c) = op(a, op(b, c))`
+///
+/// # Testing
+/// The *closure* property is guaranteed by Rust’s type system,
+/// but *associativity* must be verified manually using [`crate::assert_semigroup!`].
 pub trait Semigroup {
     fn op(base: Self, other: Self) -> Self;
     fn semigroup(self, other: Self) -> Self
@@ -26,6 +33,35 @@ pub mod test_semigroup {
 
     use super::*;
 
+    /// Assert that the given function satisfies the *semigroup* property.
+    ///
+    /// # Usage
+    /// - 1 argument: iterator of more than 3 items that implements [`Semigroup`].
+    /// - More than 3 arguments: items that implements [`Semigroup`].
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{assert_semigroup, op::coalesce::Coalesce};
+    ///
+    /// let a = Coalesce(Some(1));
+    /// let b = Coalesce(None);
+    /// let c = Coalesce(Some(3));
+    /// assert_semigroup!(a, b, c);
+    ///
+    /// let v = vec![a, b, c];
+    /// assert_semigroup!(&v);
+    /// ```
+    ///
+    /// # Panics
+    /// - If the given function does not satisfy the *semigroup* property.
+    /// - The input iterator has less than 3 items.
+    ///
+    /// ```compile_fail
+    /// use semigroup::{assert_semigroup, op::coalesce::Coalesce};
+    /// let a = Coalesce(Some(1));
+    /// let b = Coalesce(None);
+    /// assert_semigroup!(a, b);
+    /// ```
     #[macro_export]
     macro_rules! assert_semigroup {
         ($a:expr, $b: expr, $($tail: expr),*) => {
