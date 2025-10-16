@@ -21,14 +21,14 @@ pub fn impl_semigroup<C: ConstantExt>(derive: &DeriveInput) -> syn::Result<Token
 mod tests {
     use rstest::rstest;
 
-    use crate::constant::{Absolute, Use};
+    use crate::constant::{External, Internal};
 
     use super::*;
 
     #[rstest]
     #[case::semigroup_annotated(
         "semigroup_annotated",
-        impl_semigroup::<Absolute>,
+        impl_semigroup::<External>,
         syn::parse_quote! {
             #[derive(Semigroup)]
             #[semigroup(annotated)]
@@ -42,9 +42,9 @@ mod tests {
     )]
     #[case::semigroup_not_annotated(
         "semigroup_not_annotated",
-        impl_semigroup::<Use>,
+        impl_semigroup::<Internal>,
         syn::parse_quote! {
-            #[derive(SemigroupUse)]
+            #[derive(SemigroupInternal)]
             #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
             pub struct UnnamedStruct<T: std::ops::Add> (
                 #[semigroup(with = "semigroup::op::semigroup::add::Added")]
@@ -55,7 +55,7 @@ mod tests {
     )]
     #[case::semigroup_custom_annotation(
         "semigroup_custom_annotation",
-        impl_semigroup::<Absolute>,
+        impl_semigroup::<External>,
         syn::parse_quote! {
             #[derive(Semigroup)]
             #[semigroup(annotated, annotation_param = X, with = "semigroup::op::annotation::overwrite::Overwrite")]

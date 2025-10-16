@@ -125,7 +125,7 @@ assert_eq!(config.annotation().boolean, "Default");
 ### Segment tree
 Only available with the `monoid` feature
 ```rust
-use semigroup::{Semigroup, Construction, segment_tree::SegmentTree, monoid::Monoid};
+use semigroup::{Semigroup, Construction, segment_tree::SegmentTree, Monoid};
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction,
 )]

@@ -11,7 +11,6 @@ readme.workspace = true
 proc-macro = true
 
 [features]
-use_scope = []
 
 [dependencies]
 comfy-table = { version = "7.2.1", default-features = false }
@@ -22,7 +21,6 @@ quote = "1.0.41"
 syn = { version = "2.0.104", features = ["full"] }
 
 [dev-dependencies]
-semigroup_derive = { path = ".", features = ["use_scope"] }
 insta = "1.43.2"
-prettyplease = "0.2.37"                                     # rustfmt is cli only
+prettyplease = "0.2.37" # rustfmt is cli only
 rstest = "0.26.1"

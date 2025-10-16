@@ -4,7 +4,7 @@ assertion_line: 69
 expression: formatted
 ---
 #[automatically_derived]
-impl<T: std::ops::Add> Commutative for Sum<T> {}
+impl<T: std::ops::Add> crate::Commutative for Sum<T> {}
 #[automatically_derived]
 impl<T: std::ops::Add> From<T> for Sum<T> {
     fn from(value: T) -> Self {
@@ -25,7 +25,7 @@ impl<T: std::ops::Add> std::ops::DerefMut for Sum<T> {
     }
 }
 #[automatically_derived]
-impl<T: std::ops::Add> Construction<T> for Sum<T> {
+impl<T: std::ops::Add> crate::Construction<T> for Sum<T> {
     fn into_inner(self) -> T {
         self.0
     }

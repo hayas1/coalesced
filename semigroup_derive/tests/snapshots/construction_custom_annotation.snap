@@ -45,7 +45,7 @@ impl<T: IntoIterator + FromIterator<T::Item>> std::ops::DerefMut for Concat<T> {
     }
 }
 #[automatically_derived]
-impl<T: IntoIterator + FromIterator<T::Item>> ::semigroup::op::Construction<T>
+impl<T: IntoIterator + FromIterator<T::Item>> ::semigroup::Construction<T>
 for Concat<T> {
     fn into_inner(self) -> T {
         self.0
@@ -55,7 +55,7 @@ for Concat<T> {
 impl<
     T: IntoIterator + FromIterator<T::Item>,
     X: IntoIterator + FromIterator<X::Item>,
-> ::semigroup::op::ConstructionAnnotated<T, X> for Concat<T>
+> ::semigroup::ConstructionAnnotated<T, X> for Concat<T>
 where
     X::Item: Clone,
 {}

@@ -21,14 +21,14 @@ pub fn impl_construction<C: ConstantExt>(derive: &DeriveInput) -> syn::Result<To
 mod tests {
     use rstest::rstest;
 
-    use crate::constant::{Absolute, Use};
+    use crate::constant::{External, Internal};
 
     use super::*;
 
     #[rstest]
     #[case::construction_annotated(
         "construction_annotated",
-        impl_construction::<Absolute>,
+        impl_construction::<External>,
         syn::parse_quote! {
             #[derive(Construction)]
             #[construction(annotated)]
@@ -37,16 +37,16 @@ mod tests {
     )]
     #[case::construction_not_annotated(
         "construction_not_annotated",
-        impl_construction::<Use>,
+        impl_construction::<Internal>,
         syn::parse_quote! {
-            #[derive(ConstructionUse)]
+            #[derive(ConstructionPriv)]
             #[construction(commutative)]
             pub struct Sum<T: std::ops::Add>(pub T);
         },
     )]
     #[case::construction_custom_annotation(
         "construction_custom_annotation",
-        impl_construction::<Absolute>,
+        impl_construction::<External>,
         syn::parse_quote! {
             #[derive(Construction)]
             #[construction(

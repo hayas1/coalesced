@@ -4,15 +4,15 @@ assertion_line: 77
 expression: formatted
 ---
 #[automatically_derived]
-impl<T: std::ops::Add> Semigroup for UnnamedStruct<T> {
+impl<T: std::ops::Add> crate::Semigroup for UnnamedStruct<T> {
     fn op(base: Self, other: Self) -> Self {
         Self {
             0: <semigroup::op::semigroup::add::Added<
                 _,
-            > as Construction<_>>::lift_op(base.0, other.0),
+            > as crate::Construction<_>>::lift_op(base.0, other.0),
             1: <semigroup::op::annotation::overwrite::Overwrite<
                 _,
-            > as Construction<_>>::lift_op(base.1, other.1),
+            > as crate::Construction<_>>::lift_op(base.1, other.1),
         }
     }
 }
