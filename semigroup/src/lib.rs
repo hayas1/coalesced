@@ -84,6 +84,65 @@
 //! # }
 //! ```
 //!
+//! ### Aggregate request-response result
+//! Only available with the `histogram` feature. More detail is in [`op::hdr_histogram::HdrHistogram`].
+//! ```
+//! # #[cfg(feature="histogram")]
+//! # {
+//! use std::time::{Duration, Instant};
+//! use semigroup::{
+//!     op::{hdr_histogram::HdrHistogram, sum::Sum, min::Min, max::Max},
+//!     Construction, Commutative, Semigroup, OptionMonoid, Monoid
+//! };
+//!
+//! #[derive(Debug, Clone, PartialEq, Semigroup)]
+//! #[semigroup(commutative)]
+//! pub struct RequestAggregate {
+//!     count: Sum<u64>,
+//!     pass: Sum<u64>,
+//!     start: Min<Instant>,
+//!     end: Max<Instant>,
+//!     latency: HdrHistogram<u32>,
+//! }
+//! impl RequestAggregate {
+//!     pub fn new(pass: bool, time: Instant, latency: Duration) -> Self {
+//!         Self {
+//!             count: Sum(1),
+//!             pass: Sum(if pass { 1 } else { 0 }),
+//!             start: Min(time),
+//!             end: Max(time),
+//!             latency: HdrHistogram::from_iter([latency.as_millis() as u64]),
+//!         }
+//!     }
+//!     pub fn pass_rate(&self) -> f64 {
+//!         self.pass.into_inner() as f64 / self.count.into_inner() as f64
+//!     }
+//!     pub fn duration(&self) -> Duration {
+//!         self.end.into_inner() - self.start.into_inner()
+//!     }
+//!     pub fn rps(&self) -> f64 {
+//!         self.count.into_inner() as f64 / self.duration().as_secs_f64()
+//!     }
+//!     pub fn p99_latency(&self) -> Duration {
+//!         Duration::from_millis(self.latency.value_at_quantile(0.99) as u64)
+//!     }
+//! }
+//!
+//! let (now, mut agg) = (Instant::now(), OptionMonoid::unit());
+//! for i in 0..10000 {
+//!     let duration = Duration::from_millis(i);
+//!     agg = agg.semigroup(RequestAggregate::new(i % 2 == 0, now + duration, duration).into());
+//! }
+//!
+//! let request_aggregate = agg.into_inner().unwrap();
+//! assert_eq!(request_aggregate.count.into_inner(), 10000);
+//! assert_eq!(request_aggregate.pass_rate(), 0.5);
+//! assert_eq!(request_aggregate.duration(), Duration::from_millis(9999));
+//! assert_eq!(request_aggregate.rps(), 1000.1000100010001);
+//! assert_eq!(request_aggregate.p99_latency(), Duration::from_millis(9903));
+//! # }
+//! ```
+//!
 //! ## Segment tree
 //! More detail is in [`segment_tree::SegmentTree`] that requires [`Monoid`].
 //! ### Range sum
