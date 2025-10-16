@@ -35,6 +35,8 @@
 //! ```
 //!
 //! ### Coalesce with rich enum annotation
+//! Some [`Semigroup`] such as [`op::coalesce::Coalesce`] can have an annotation.
+//! More detail is in [`Annotate`].
 //! ```
 //! use semigroup::{Annotate, Semigroup};
 //! #[derive(Debug, Clone, PartialEq, Semigroup)]
@@ -66,7 +68,7 @@
 //!
 //! ## Statistically aggregation
 //! ### Aggregate with histogram
-//! Only available with the `histogram` feature
+//! Only available with the `histogram` feature. More detail is in [`op::hdr_histogram::HdrHistogram`].
 //! ```
 //! # #[cfg(feature="histogram")]
 //! # {
@@ -83,7 +85,7 @@
 //! ```
 //!
 //! ## Segment tree
-//! More detail [`segment_tree::SegmentTree`] that requires [`Monoid`].
+//! More detail is in [`segment_tree::SegmentTree`] that requires [`Monoid`].
 //! ### Range sum
 //! Only available with the `monoid` feature
 //! ```

@@ -2,11 +2,47 @@ use std::ops::{Deref, DerefMut};
 
 use crate::{AnnotatedSemigroup, Semigroup};
 
+/// Some [`Semigroup`] such as [`crate::op::coalesce::Coalesce`] can have an annotation.
+/// The annotated value is represented by a type [`Annotated`].
+///
+/// # Examples
+/// ```
+/// use semigroup::{op::coalesce::Coalesce, Annotate, Semigroup};
+///
+/// let a = Coalesce(Some(1)).annotated("first");
+/// let b = Coalesce(None).annotated("second");
+/// let c = Coalesce(Some(3)).annotated("third");
+///
+/// let ab = a.semigroup(b);
+/// assert_eq!(ab.value(), &Coalesce(Some(1)));
+/// assert_eq!(ab.annotation(), &"first");
+///
+/// let bc = b.semigroup(c);
+/// assert_eq!(bc.value(), &Coalesce(Some(3)));
+/// assert_eq!(bc.annotation(), &"third");
+///
+/// let ca = c.semigroup(a);
+/// assert_eq!(ca.value(), &Coalesce(Some(3)));
+/// assert_eq!(ca.annotation(), &"third");
+/// ```
 pub trait Annotate<A>: Sized {
     type Annotation;
     fn annotated(self, annotation: Self::Annotation) -> Annotated<Self, A>;
 }
 
+/// [`Annotated`] represents a value with an annotation.
+/// The value will be annotated by [`Annotate`] trait.
+///
+/// # Examples
+/// ```
+/// use semigroup::{op::coalesce::Coalesce, Annotate, Annotated};
+///
+/// let a = Coalesce(Some(1)).annotated("first");
+///
+/// assert_eq!(a.value(), &Coalesce(Some(1)));
+/// assert_eq!(a.annotation(), &"first");
+/// assert_eq!(a, Annotated::new(Coalesce(Some(1)), "first"));
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Annotated<T, A> {
     value: T,

@@ -18,6 +18,8 @@ pub trait Semigroup {
         Semigroup::op(self, other)
     }
 }
+
+/// [`AnnotatedSemigroup`] is a [`Semigroup`] that has an annotation.
 pub trait AnnotatedSemigroup<A>: Sized + Semigroup {
     fn annotated_op(base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A>;
 }
