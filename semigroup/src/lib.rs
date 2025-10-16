@@ -83,6 +83,7 @@
 //! ```
 //!
 //! ## Segment tree
+//! More detail [`crate::segment_tree::SegmentTree`]
 //! ### Range sum
 //! Only available with the `monoid` feature
 //! ```

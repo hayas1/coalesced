@@ -5,6 +5,18 @@ use crate::Monoid;
 pub mod index;
 pub mod iter;
 
+/// [`SegmentTree`] is a data structure for efficient range queries based on perfect binary tree.
+/// It requires the underlying operation on the data to form a [`Monoid`].
+///
+/// # Examples
+/// ```
+/// use semigroup::{op::sum::Sum, segment_tree::SegmentTree};
+/// let data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+/// let mut sum_tree: SegmentTree<_> = data.into_iter().map(Sum).collect();
+/// assert_eq!(sum_tree.fold(3..=5).0, 12);
+/// sum_tree.update(4, 8.into());
+/// assert_eq!(sum_tree.fold(3..=5).0, 16);
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct SegmentTree<T> {
     tree: Vec<T>, // 1-indexed perfect binary tree, left child: 2i, right child: 2i+1, parent: i/2
