@@ -33,7 +33,7 @@ pub mod test_semigroup {
 
     use super::*;
 
-    /// Assert that the given function satisfies the *semigroup* property.
+    /// Assert that the given type satisfies the *semigroup* property.
     ///
     /// # Usage
     /// - 1 argument: iterator of more than 3 items that implements [`Semigroup`].
