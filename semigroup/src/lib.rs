@@ -86,7 +86,7 @@
 //! ```
 //!
 //! ### Aggregate request-response result
-//! Only available with the `histogram` feature. More detail is in [`op::hdr_histogram::HdrHistogram`].
+//! Only available with the `histogram` feature.
 //! ```
 //! # #[cfg(feature="histogram")]
 //! # {
