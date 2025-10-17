@@ -14,6 +14,7 @@ pub struct OpTrait<'a> {
 }
 impl ToTokens for OpTrait<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.impl_monoid().iter().for_each(|i| i.to_tokens(tokens));
         self.impl_commutative()
             .iter()
             .for_each(|i| i.to_tokens(tokens));
@@ -39,6 +40,31 @@ impl<'a> OpTrait<'a> {
             derive,
             attr,
             annotation,
+        })
+    }
+
+    pub fn impl_monoid(&self) -> Option<ItemImpl> {
+        let Self {
+            constant,
+            derive,
+            attr,
+            ..
+        } = self;
+        let Constant {
+            path_monoid,
+            attr_feature_monoid,
+            ..
+        } = constant;
+        let DeriveInput {
+            ident, generics, ..
+        } = derive;
+        let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+        attr.is_monoid().then(|| {
+            parse_quote! {
+                #[automatically_derived]
+                #attr_feature_monoid
+                impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {}
+            }
         })
     }
 

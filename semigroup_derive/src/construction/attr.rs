@@ -11,6 +11,9 @@ pub struct ContainerAttr {
     unit: Option<Expr>,
 
     #[darling(default)]
+    monoid: bool,
+
+    #[darling(default)]
     commutative: bool,
 
     annotation_type_param: Option<TypeParam>,
@@ -52,6 +55,10 @@ impl ContainerAttr {
 
     pub fn is_annotated(&self) -> bool {
         self.annotated
+    }
+
+    pub fn is_monoid(&self) -> bool {
+        self.monoid
     }
 
     pub fn is_commutative(&self) -> bool {

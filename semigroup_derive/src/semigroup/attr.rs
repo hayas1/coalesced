@@ -10,6 +10,9 @@ pub struct ContainerAttr {
     annotated: bool,
 
     #[darling(default)]
+    monoid: bool,
+
+    #[darling(default)]
     commutative: bool,
 
     with: Option<Path>,
@@ -37,8 +40,13 @@ impl ContainerAttr {
         }
         Ok(self)
     }
+
     pub fn is_annotated(&self) -> bool {
         self.annotated
+    }
+
+    pub fn is_monoid(&self) -> bool {
+        self.monoid
     }
 
     pub fn is_commutative(&self) -> bool {
