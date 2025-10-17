@@ -1,9 +1,10 @@
 <!-- cargo-rdme start -->
 
-Semigroup trait is useful
+[`Semigroup`] trait is useful for
 - reading configs from multiple sources
 - statistically aggregation
 - fast range queries using segment tree
+- and so on...
 
 ## Usage
 ```toml
@@ -14,11 +15,11 @@ semigroup = { git = "https://github.com/hayas1/semigroup", features = ["derive",
 ## Examples
 
 ### Reading configs from multiple sources
-#### With simple string annotation
+#### Simple coalesce
 ```rust
-use semigroup::{Annotate, Semigroup};
+use semigroup::Semigroup;
 #[derive(Debug, Clone, PartialEq, Semigroup)]
-#[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
+#[semigroup(with = "semigroup::op::coalesce::Coalesce")]
 pub struct Config<'a> {
     pub num: Option<u32>,
     pub str: Option<&'a str>,
@@ -26,19 +27,18 @@ pub struct Config<'a> {
     pub boolean: bool,
 }
 
-let file = Config { num: Some(1), str: None, boolean: true }.annotated("File");
-let env = Config { num: None, str: Some("ten"), boolean: false }.annotated("Env");
-let cli = Config { num: Some(100), str: None, boolean: true }.annotated("Cli");
+let file = Config { num: Some(1), str: None, boolean: true };
+let env = Config { num: None, str: Some("ten"), boolean: false };
+let cli = Config { num: Some(100), str: None, boolean: false };
 
 let config = file.semigroup(env).semigroup(cli);
 
-assert_eq!(config.value(), &Config { num: Some(1), str: Some("ten"), boolean: true });
-assert_eq!(config.annotation().num, "File");
-assert_eq!(config.annotation().str, "Env");
-assert_eq!(config.annotation().boolean, "Cli");
+assert_eq!(config, Config { num: Some(1), str: Some("ten"), boolean: false });
 ```
 
-#### With rich enum annotation
+#### Coalesce with rich enum annotation
+Some [`Semigroup`] such as [`op::coalesce::Coalesce`] can have an annotation.
+More detail is in [`Annotate`].
 ```rust
 use semigroup::{Annotate, Semigroup};
 #[derive(Debug, Clone, PartialEq, Semigroup)]
@@ -58,71 +58,106 @@ pub enum Source {
 
 let file = Config { num: Some(1), str: None, boolean: true }.annotated(Source::File);
 let env = Config { num: None, str: Some("ten"), boolean: false }.annotated(Source::Env);
-let cli = Config { num: Some(100), str: None, boolean: true }.annotated(Source::Cli);
+let cli = Config { num: Some(100), str: None, boolean: false }.annotated(Source::Cli);
 
 let config = file.semigroup(env).semigroup(cli);
 
-assert_eq!(config.value(), &Config { num: Some(1), str: Some("ten"), boolean: true });
+assert_eq!(config.value(), &Config { num: Some(1), str: Some("ten"), boolean: false });
 assert_eq!(config.annotation().num, Source::File);
 assert_eq!(config.annotation().str, Source::Env);
 assert_eq!(config.annotation().boolean, Source::Cli);
 ```
 
-### Lazy Evaluation
-#### Reduce
+### Statistically aggregation
+#### Aggregate with histogram
+Only available with the `histogram` feature. More detail is in [`op::hdr_histogram::HdrHistogram`].
 ```rust
-use semigroup::{Annotate, Semigroup};
-#[derive(Debug, Clone, PartialEq, Semigroup)]
-#[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
-pub struct Config<'a> {
-    pub num: Option<u32>,
-    pub str: Option<&'a str>,
-    #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
-    pub boolean: bool,
-}
+use semigroup::{op::hdr_histogram::HdrHistogram, Semigroup};
 
-let lazy = vec![
-    Config { num: Some(1), str: None, boolean: true }.annotated("File"),
-    Config { num: None, str: Some("ten"), boolean: false }.annotated("Env"),
-    Config { num: Some(100), str: None, boolean: true }.annotated("Cli"),
-];
+let histogram1 = (1..100).collect::<HdrHistogram<u32>>();
+let histogram2 = (100..1000).collect::<HdrHistogram<u32>>();
 
+let histogram = histogram1.semigroup(histogram2);
 
-let config = lazy.into_iter().reduce(|acc, item| acc.semigroup(item));
-
-assert_eq!(config.as_ref().unwrap().value(), &Config { num: Some(1), str: Some("ten"), boolean: true });
-assert_eq!(config.as_ref().unwrap().annotation().num, "File");
-assert_eq!(config.as_ref().unwrap().annotation().str, "Env");
-assert_eq!(config.as_ref().unwrap().annotation().boolean, "Cli");
+assert_eq!(histogram.mean(), 499.9999999999999);
+assert_eq!(histogram.value_at_quantile(0.9), 900);
 ```
-#### Fold with final default
+
+#### Aggregate request-response result
+Only available with the `histogram` feature.
 ```rust
-use semigroup::{Annotate, Semigroup, SemigroupIterator};
+use std::time::{Duration, Instant};
+use semigroup::{
+    op::{hdr_histogram::HdrHistogram, sum::Sum, min::Min, max::Max},
+    Construction, Commutative, Semigroup, OptionMonoid, Monoid
+};
+
 #[derive(Debug, Clone, PartialEq, Semigroup)]
-#[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
-pub struct Config<'a> {
-    pub num: Option<u32>,
-    pub str: Option<&'a str>,
-    #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
-    pub boolean: bool,
+#[semigroup(commutative)]
+pub struct RequestAggregate {
+    count: Sum<u64>,
+    pass: Sum<u64>,
+    start: Min<Instant>,
+    end: Max<Instant>,
+    latency: HdrHistogram<u32>,
+}
+impl RequestAggregate {
+    pub fn new(pass: bool, time: Instant, latency: Duration) -> Self {
+        Self {
+            count: Sum(1),
+            pass: Sum(if pass { 1 } else { 0 }),
+            start: Min(time),
+            end: Max(time),
+            latency: HdrHistogram::from_iter([latency.as_millis() as u64]),
+        }
+    }
+    pub fn count(&self) -> u64 {
+        self.count.into_inner()
+    }
+    pub fn pass_rate(&self) -> f64 {
+        self.pass.into_inner() as f64 / self.count.into_inner() as f64
+    }
+    pub fn duration(&self) -> Duration {
+        self.end.into_inner() - self.start.into_inner()
+    }
+    pub fn rps(&self) -> f64 {
+        self.count.into_inner() as f64 / self.duration().as_secs_f64()
+    }
+    pub fn p99_latency(&self) -> Duration {
+        Duration::from_millis(self.latency.value_at_quantile(0.99) as u64)
+    }
 }
 
-let lazy = vec![
-    Config { num: Some(1), str: None, boolean: true }.annotated("File"),
-    Config { num: None, str: None, boolean: false }.annotated("Env"),
-    Config { num: Some(100), str: None, boolean: true }.annotated("Cli"),
-];
+let (now, mut agg) = (Instant::now(), OptionMonoid::unit());
+for i in 0..10000 {
+    let duration = Duration::from_millis(i);
+    agg = agg.semigroup(RequestAggregate::new(i % 2 == 0, now + duration, duration).into());
+}
 
-
-let config = lazy.into_iter().fold_final(Config { num: Some(1000), str: Some("thousand"), boolean: true }.annotated("Default"));
-
-assert_eq!(config.value(), &Config { num: Some(1), str: Some("thousand"), boolean: true });
-assert_eq!(config.annotation().num, "File");
-assert_eq!(config.annotation().str, "Default");
-assert_eq!(config.annotation().boolean, "Default");
+let request_aggregate = agg.into_inner().unwrap();
+assert_eq!(request_aggregate.count(), 10000);
+assert_eq!(request_aggregate.pass_rate(), 0.5);
+assert_eq!(request_aggregate.duration(), Duration::from_millis(9999));
+assert_eq!(request_aggregate.rps(), 1000.1000100010001);
+assert_eq!(request_aggregate.p99_latency(), Duration::from_millis(9903));
 ```
 
 ### Segment tree
+More detail is in [`segment_tree::SegmentTree`] that requires [`Monoid`].
+#### Range sum
+Only available with the `monoid` feature
+```rust
+use semigroup::{op::sum::Sum, Semigroup, Construction, segment_tree::SegmentTree};
+let data = 0..=10000;
+let mut sum_tree: SegmentTree<_> = data.into_iter().map(Sum).collect();
+assert_eq!(sum_tree.fold(3..6).into_inner(), 12);
+assert_eq!(sum_tree.fold(..).into_inner(), 50005000);
+sum_tree.update_with(4, |Sum(x)| Sum(x + 50));
+sum_tree.update_with(9999, |Sum(x)| Sum(x + 500000));
+assert_eq!(sum_tree.fold(3..6).into_inner(), 62);
+assert_eq!(sum_tree.fold(..).into_inner(), 50505050);
+```
+#### Custom monoid operator
 Only available with the `monoid` feature
 ```rust
 use semigroup::{Semigroup, Construction, segment_tree::SegmentTree, Monoid};

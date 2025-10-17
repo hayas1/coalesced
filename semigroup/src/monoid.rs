@@ -2,6 +2,18 @@ use semigroup_derive::ConstructionPriv;
 
 use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 
+/// [`Monoid`] represents a binary operation that satisfies the following properties
+/// 1. *Closure*: `op: T × T → T`
+/// 2. *Associativity*: `op(op(a, b), c) = op(a, op(b, c))`
+/// 3. Existence of *identity element*: `op(unit(), a) = a = op(a, unit())`
+///
+/// # Testing
+/// Use [`crate::assert_monoid!`] macro.
+///
+/// The *closure* and *associativity* properties are same as [`Semigroup`],
+/// so they are guaranteed by [`crate::assert_semigroup!`].
+/// However, existence of *identity element* is not guaranteed the macro,
+/// so it must be verified manually using [`crate::assert_monoid!`].
 pub trait Monoid: Semigroup {
     fn unit() -> Self;
 }
@@ -71,6 +83,10 @@ pub mod test_monoid {
 
     use super::*;
 
+    /// Assert that the given type satisfies the *monoid* property.
+    ///
+    /// # Usage
+    /// Same to [`crate::assert_semigroup!`].
     #[macro_export]
     macro_rules! assert_monoid {
         ($a:expr, $b: expr, $($tail: expr),*) => {

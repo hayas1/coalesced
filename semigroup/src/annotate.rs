@@ -2,11 +2,88 @@ use std::ops::{Deref, DerefMut};
 
 use crate::{AnnotatedSemigroup, Semigroup};
 
+/// Some [`Semigroup`] such as [`crate::op::coalesce::Coalesce`] can have an annotation.
+/// [`Annotate`] trait will be derived by [`Semigroup`].
+/// The annotated value is represented by a type [`Annotated`].
+///
+/// # Examples
+/// ## constructed semigroup
+/// ```
+/// use semigroup::{op::coalesce::Coalesce, Annotate, Semigroup};
+///
+/// let a = Coalesce(Some(1)).annotated("first");
+/// let b = Coalesce(None).annotated("second");
+/// let c = Coalesce(Some(3)).annotated("third");
+///
+/// let ab = a.semigroup(b);
+/// assert_eq!(ab.value(), &Coalesce(Some(1)));
+/// assert_eq!(ab.annotation(), &"first");
+///
+/// let bc = b.semigroup(c);
+/// assert_eq!(bc.value(), &Coalesce(Some(3)));
+/// assert_eq!(bc.annotation(), &"third");
+///
+/// let ca = c.semigroup(a);
+/// assert_eq!(ca.value(), &Coalesce(Some(3)));
+/// assert_eq!(ca.annotation(), &"third");
+/// ```
+///
+/// ## derived semigroup
+/// ```
+/// use semigroup::{op::coalesce::Coalesce, Annotate, Annotated, Semigroup};
+///
+/// #[derive(Debug, Clone, Copy, PartialEq, Semigroup)]
+/// #[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
+/// struct ExampleStruct<'a> {
+///     num: Option<u32>,
+///     str: Option<&'a str>,
+///     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
+///     boolean: bool,
+/// }
+///
+/// let a = ExampleStruct { num: Some(1), str: None, boolean: true }.annotated("first");
+/// let b = ExampleStruct { num: None, str: Some("ten"), boolean: false }.annotated("second");
+/// let c = ExampleStruct { num: Some(100), str: None, boolean: false }.annotated("third");
+///
+/// let ab = a.semigroup(b);
+/// assert_eq!(ab.value(), &ExampleStruct { num: Some(1), str: Some("ten"), boolean: false });
+/// assert_eq!(ab.annotation().num, "first");
+/// assert_eq!(ab.annotation().str, "second");
+/// assert_eq!(ab.annotation().boolean, "second");
+/// assert_eq!(ab.annotation(), &ExampleStructAnnotation{ num: "first", str: "second", boolean: "second" });
+///
+/// let bc = b.semigroup(c);
+/// assert_eq!(bc.value(), &ExampleStruct { num: Some(100), str: Some("ten"), boolean: false });
+/// assert_eq!(bc.annotation().num, "third");
+/// assert_eq!(bc.annotation().str, "second");
+/// assert_eq!(bc.annotation().boolean, "third");
+/// assert_eq!(bc.annotation(), &ExampleStructAnnotation{ num: "third", str: "second", boolean: "third" });
+///
+/// let ca = c.semigroup(a);
+/// assert_eq!(ca.value(), &ExampleStruct { num: Some(100), str: None, boolean: true });
+/// assert_eq!(ca.annotation().num, "third");
+/// assert_eq!(ca.annotation().str, "third");
+/// assert_eq!(ca.annotation().boolean, "first");
+/// assert_eq!(ca.annotation(), &ExampleStructAnnotation{ num: "third", str: "third", boolean: "first" });
+/// ```
 pub trait Annotate<A>: Sized {
     type Annotation;
     fn annotated(self, annotation: Self::Annotation) -> Annotated<Self, A>;
 }
 
+/// [`Annotated`] represents a value with an annotation.
+/// The value will be annotated by [`Annotate`] trait.
+///
+/// # Examples
+/// ```
+/// use semigroup::{op::coalesce::Coalesce, Annotate, Annotated};
+///
+/// let annotated = Coalesce(Some(1)).annotated("first");
+///
+/// assert_eq!(annotated.value(), &Coalesce(Some(1)));
+/// assert_eq!(annotated.annotation(), &"first");
+/// assert_eq!(annotated, Annotated::new(Coalesce(Some(1)), "first"));
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
 pub struct Annotated<T, A> {
     value: T,

@@ -28,7 +28,7 @@ jobs:
     - run: cargo test --all
     - run: cargo test --all --all-features
     - run: cargo fmt --check
-    - run: RUSTDOCFLAGS="-D warnings" cargo doc --no-deps
+    - run: RUSTDOCFLAGS="-D warnings" cargo +nightly rustdoc --manifest-path semigroup/Cargo.toml --all-features -- --cfg doc_cfg
     - run: cargo clippy --version && cargo clippy --tests -- --deny warnings
     - run: cargo install cargo-rdme && cargo rdme --check
 
