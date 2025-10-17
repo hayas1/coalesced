@@ -15,9 +15,9 @@ use crate::Semigroup;
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 2);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(commutative)]
+#[construction(monoid, commutative)]
 #[properties(monoid, commutative)]
 pub struct Max<T: Ord>(pub T);
 impl<T: Ord> Semigroup for Max<T> {
@@ -26,8 +26,8 @@ impl<T: Ord> Semigroup for Max<T> {
     }
 }
 #[cfg(feature = "monoid")]
-impl<T: Ord + num::Bounded> crate::monoid::Monoid for Max<T> {
-    fn unit() -> Self {
+impl<T: Ord + num::Bounded> Default for Max<T> {
+    fn default() -> Self {
         Self(T::min_value())
     }
 }

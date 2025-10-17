@@ -15,10 +15,11 @@ use crate::{Annotated, AnnotatedSemigroup};
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), vec![1, 2, 3, 4]);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(
     annotated,
+    monoid,
     annotation_type_param = "A: IntoIterator + FromIterator<A::Item>",
     annotation_where = "A::Item: Clone",
     unit = "vec![(); 0]",
@@ -67,10 +68,9 @@ where
         }
     }
 }
-#[cfg(feature = "monoid")]
-impl<T: IntoIterator + FromIterator<T::Item>> crate::monoid::Monoid for Concat<T> {
-    fn unit() -> Self {
-        Concat(std::iter::empty().collect())
+impl<T: IntoIterator + FromIterator<T::Item>> Default for Concat<T> {
+    fn default() -> Self {
+        Self(std::iter::empty().collect())
     }
 }
 

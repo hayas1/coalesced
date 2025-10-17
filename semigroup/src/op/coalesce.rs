@@ -15,9 +15,9 @@ use crate::{Annotated, AnnotatedSemigroup};
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), Some(2));
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(annotated)]
+#[construction(annotated, monoid)]
 #[properties(annotated, monoid)]
 pub struct Coalesce<T>(pub Option<T>);
 impl<T, A> AnnotatedSemigroup<A> for Coalesce<T> {
@@ -28,10 +28,9 @@ impl<T, A> AnnotatedSemigroup<A> for Coalesce<T> {
         }
     }
 }
-#[cfg(feature = "monoid")]
-impl<T> crate::monoid::Monoid for Coalesce<T> {
-    fn unit() -> Self {
-        Coalesce(None)
+impl<T> Default for Coalesce<T> {
+    fn default() -> Self {
+        Self(None)
     }
 }
 
