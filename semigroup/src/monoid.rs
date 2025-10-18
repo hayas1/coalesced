@@ -12,7 +12,7 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// ```
 /// use semigroup::{Semigroup, Monoid};
 /// #[derive(Debug, Clone, PartialEq, Default, Semigroup)]
-/// #[semigroup(monoid, default_unit, with = "semigroup::op::coalesce::Coalesce")]
+/// #[semigroup(monoid, unit = Default::default(), with = "semigroup::op::coalesce::Coalesce")]
 /// pub struct ExampleStruct<'a> {
 ///     pub str: Option<&'a str>,
 ///     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
