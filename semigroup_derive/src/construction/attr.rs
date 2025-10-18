@@ -12,6 +12,8 @@ pub struct ContainerAttr {
 
     #[darling(default)]
     monoid: bool,
+    #[darling(default)]
+    default_unit: bool,
 
     #[darling(default)]
     commutative: bool,
@@ -32,6 +34,8 @@ impl ContainerAttr {
             annotation_type_param,
             annotation_where,
             without_annotate_impl,
+            monoid,
+            default_unit,
             ..
         } = &self;
         if !annotated {
@@ -50,6 +54,16 @@ impl ContainerAttr {
                 Err(darling::Error::custom(ConstructionError::OnlyAnnotated(a)))
             })?;
         }
+        if !monoid {
+            let err_attr_name = if *default_unit {
+                Some(var_name!(default_unit))
+            } else {
+                None
+            };
+            err_attr_name.map_or(Ok(()), |a| {
+                Err(darling::Error::custom(ConstructionError::OnlyMonoid(a)))
+            })?;
+        }
         Ok(self)
     }
 
@@ -59,6 +73,9 @@ impl ContainerAttr {
 
     pub fn is_monoid(&self) -> bool {
         self.monoid
+    }
+    pub fn is_default_unit(&self) -> bool {
+        self.default_unit
     }
 
     pub fn is_commutative(&self) -> bool {
