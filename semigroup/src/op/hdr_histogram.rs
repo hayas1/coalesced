@@ -33,8 +33,9 @@ impl<T: Counter> Semigroup for HdrHistogram<T> {
         base
     }
 }
-impl<T: Counter> Default for HdrHistogram<T> {
-    fn default() -> Self {
+#[cfg(feature = "monoid")]
+impl<T: Counter> crate::Monoid for HdrHistogram<T> {
+    fn unit() -> Self {
         Self(Histogram::new(DEFAULT_SIGFIG).unwrap_or_else(|_| unreachable!()))
     }
 }

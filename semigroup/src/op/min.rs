@@ -15,7 +15,7 @@ use crate::Semigroup;
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 1);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(monoid, commutative)]
 #[properties(monoid, commutative)]
@@ -26,8 +26,8 @@ impl<T: Ord> Semigroup for Min<T> {
     }
 }
 #[cfg(feature = "monoid")]
-impl<T: Ord + num::Bounded> Default for Min<T> {
-    fn default() -> Self {
+impl<T: Ord + num::Bounded> crate::Monoid for Min<T> {
+    fn unit() -> Self {
         Self(T::max_value())
     }
 }
