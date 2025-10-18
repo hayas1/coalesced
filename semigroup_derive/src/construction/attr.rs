@@ -147,6 +147,14 @@ mod tests {
         },
         Err("attribute `unit_annotation` are supported only with `annotated`"),
     )]
+    #[case::invalid_monoid_attr(
+        syn::parse_quote! {
+            #[derive(Construction)]
+            #[construction(unit = ())]
+            pub struct Construct<T>(T);
+        },
+        Err("attribute `unit` are supported only with `monoid`"),
+    )]
     fn test_construction_container_attr(
         #[case] input: DeriveInput,
         #[case] expected: Result<ContainerAttr, &str>,

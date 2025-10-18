@@ -139,6 +139,14 @@ mod tests {
         },
         Err("attribute `annotation_param` are supported only with `annotated`"),
     )]
+    #[case::invalid_monoid_attr(
+        syn::parse_quote! {
+            #[derive(Semigroup)]
+            #[semigroup(unit = ())]
+            pub struct UnnamedStruct();
+        },
+        Err("attribute `unit` are supported only with `monoid`"),
+    )]
     fn test_semigroup_container_attr(
         #[case] input: DeriveInput,
         #[case] expected: Result<ContainerAttr, &str>,
