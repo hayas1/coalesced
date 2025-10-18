@@ -7,6 +7,28 @@ use crate::Semigroup;
 ///
 /// And the *monoid* set that satisfies the *commutativity* property is often called *commutative monoid*.
 ///
+/// # Deriving
+/// [`Commutative`] can be derived like [`Semigroup`], use `commutative` attribute.
+/// ```
+/// use semigroup::Semigroup;
+/// #[derive(Debug, Clone, PartialEq, Default, Semigroup)]
+/// #[semigroup(commutative)]
+/// pub struct ExampleStruct {
+///     #[semigroup(with = "semigroup::op::sum::Sum")]
+///     pub sum: u32,
+///     #[semigroup(with = "semigroup::op::min::Min")]
+///     pub min: u32,
+/// }
+///
+/// let a = ExampleStruct { sum: 1, min: 1  };
+/// let b = ExampleStruct { sum: 10, min: 10 };
+/// let c = ExampleStruct { sum: 100, min: 100 };
+///
+/// // #[test]
+/// semigroup::assert_commutative!(&a, &b, &c);
+/// assert_eq!(a.semigroup(b).semigroup(c), ExampleStruct { sum: 111, min: 1 });
+/// ```
+///
 /// # Testing
 /// Use [`crate::assert_commutative!`] macro.
 /// This is marker trait.
@@ -44,7 +66,7 @@ pub mod test_commutative {
         };
         ($v:expr) => {
             {
-                let (a, b, c) = $crate::semigroup::test_semigroup::pick3($v);
+                let (a, b, c) = $crate::test_semigroup::pick3($v);
                 $crate::test_commutative::assert_commutative_impl(a.clone(), b.clone(), c.clone());
             }
         };
