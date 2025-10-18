@@ -54,7 +54,7 @@ mod tests {
                 monoid,
                 annotation_type_param = "X: IntoIterator + FromIterator<X::Item>",
                 annotation_where = "X::Item: Clone",
-                unit = "vec![(); 0]"
+                unit_annotation = "vec![(); 0]"
             )]
             pub struct Concat<T: IntoIterator + FromIterator<T::Item>>(pub T);
         },

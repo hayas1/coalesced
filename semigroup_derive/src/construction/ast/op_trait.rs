@@ -113,12 +113,12 @@ impl<'a> OpTrait<'a> {
 
         attr.is_annotated().then(|| {
             let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-            let unit = attr.unit_annotate();
+            let unit_annotation = attr.unit_annotate();
             parse_quote! {
                 #[automatically_derived]
                 impl #impl_generics #path_semigroup for #ident #ty_generics #where_clause {
                     fn op(base: Self, other: Self) -> Self {
-                        #path_annotated::lift_unit_annotated_op((base, #unit), (other, #unit))
+                        #path_annotated::lift_unit_annotated_op((base, #unit_annotation), (other, #unit_annotation))
                     }
                 }
             }

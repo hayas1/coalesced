@@ -22,7 +22,7 @@ use crate::{Annotated, AnnotatedSemigroup};
     monoid,
     annotation_type_param = "A: IntoIterator + FromIterator<A::Item>",
     annotation_where = "A::Item: Clone",
-    unit = "vec![(); 0]",
+    unit_annotation = "vec![(); 0]",
     without_annotate_impl
 )]
 #[properties(annotated, monoid)]

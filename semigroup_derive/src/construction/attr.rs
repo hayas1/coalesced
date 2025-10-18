@@ -8,7 +8,7 @@ use crate::{annotation::Annotation, constant::Constant, error::ConstructionError
 pub struct ContainerAttr {
     #[darling(default)]
     annotated: bool,
-    unit: Option<Expr>,
+    unit_annotation: Option<Expr>,
 
     #[darling(default)]
     monoid: bool,
@@ -30,7 +30,7 @@ impl ContainerAttr {
     pub fn validate(self) -> darling::Result<Self> {
         let Self {
             annotated,
-            unit,
+            unit_annotation,
             annotation_type_param,
             annotation_where,
             without_annotate_impl,
@@ -39,8 +39,8 @@ impl ContainerAttr {
             ..
         } = &self;
         if !annotated {
-            let err_attr_name = if unit.is_some() {
-                Some(var_name!(unit))
+            let err_attr_name = if unit_annotation.is_some() {
+                Some(var_name!(unit_annotation))
             } else if annotation_type_param.is_some() {
                 Some(var_name!(annotation_type_param))
             } else if annotation_where.is_some() {
@@ -83,7 +83,9 @@ impl ContainerAttr {
     }
 
     pub fn unit_annotate(&self) -> Expr {
-        self.unit.clone().unwrap_or_else(|| parse_quote!(()))
+        self.unit_annotation
+            .clone()
+            .unwrap_or_else(|| parse_quote!(()))
     }
 
     pub fn annotation(&self, constant: &Constant) -> Annotation {
@@ -140,10 +142,10 @@ mod tests {
     #[case::invalid_annotated_attr(
         syn::parse_quote! {
             #[derive(Construction)]
-            #[construction(unit = ())]
+            #[construction(unit_annotation = ())]
             pub struct Construct<T>(T);
         },
-        Err("attribute `unit` are supported only with `annotated`"),
+        Err("attribute `unit_annotation` are supported only with `annotated`"),
     )]
     fn test_construction_container_attr(
         #[case] input: DeriveInput,
