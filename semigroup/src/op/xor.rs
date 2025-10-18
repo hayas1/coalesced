@@ -16,7 +16,7 @@ use crate::Semigroup;
 /// let b = Xor(0b100);
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 0b001);
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(monoid, commutative)]
 #[properties(monoid, commutative)]
@@ -27,8 +27,8 @@ impl<T: BitXor<Output = T>> Semigroup for Xor<T> {
     }
 }
 #[cfg(feature = "monoid")]
-impl<T: BitXor<Output = T> + num::Zero> Default for Xor<T> {
-    fn default() -> Self {
+impl<T: BitXor<Output = T> + num::Zero> crate::Monoid for Xor<T> {
+    fn unit() -> Self {
         Self(T::zero())
     }
 }

@@ -12,6 +12,7 @@ use crate::{
 pub enum ConstructionError {
     OnlyNewType,
     OnlyAnnotated(Name),
+    OnlyMonoid(Name),
 }
 impl Error for ConstructionError {}
 impl Display for ConstructionError {
@@ -26,6 +27,9 @@ impl Display for ConstructionError {
             Self::OnlyAnnotated(Name(name)) => {
                 write!(f, "attribute `{name}` are supported only with `annotated`")
             }
+            Self::OnlyMonoid(Name(name)) => {
+                write!(f, "attribute `{name}` are supported only with `monoid`")
+            }
         }
     }
 }
@@ -35,6 +39,7 @@ pub enum SemigroupError {
     UnsupportedEnum,
     UnsupportedUnion,
     OnlyAnnotated(Name),
+    OnlyMonoid(Name),
 }
 impl Error for SemigroupError {}
 impl Display for SemigroupError {
@@ -48,6 +53,9 @@ impl Display for SemigroupError {
             }
             Self::OnlyAnnotated(Name(name)) => {
                 write!(f, "attribute `{name}` are supported only with `annotated`")
+            }
+            Self::OnlyMonoid(Name(name)) => {
+                write!(f, "attribute `{name}` are supported only with `monoid`")
             }
         }
     }

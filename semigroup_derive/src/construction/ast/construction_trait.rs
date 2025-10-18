@@ -22,6 +22,9 @@ impl ToTokens for ConstructionTrait<'_> {
         self.impl_construction_annotated()
             .into_iter()
             .for_each(|i| i.to_tokens(tokens));
+        self.impl_construction_monoid()
+            .into_iter()
+            .for_each(|i| i.to_tokens(tokens));
     }
 }
 impl<'a> ConstructionTrait<'a> {
@@ -106,6 +109,34 @@ impl<'a> ConstructionTrait<'a> {
             parse_quote! {
                 #[automatically_derived]
                 impl #impl_generics #path_construction_annotated<#ty, #annotated_type> for #ident #ty_generics #where_clause {}
+            }
+        })
+    }
+    pub fn impl_construction_monoid(&self) -> Option<ItemImpl> {
+        let Self {
+            constant:
+                Constant {
+                    path_monoid,
+                    path_construction_monoid,
+                    attr_feature_monoid,
+                    ..
+                },
+            derive: DeriveInput {
+                ident, generics, ..
+            },
+            field: Field { ty, .. },
+            attr,
+            ..
+        } = self;
+
+        attr.is_monoid().then(|| {
+            let mut g = generics.clone();
+            g.make_where_clause().predicates.push(parse_quote!{ Self: #path_monoid });
+            let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
+            parse_quote! {
+                #[automatically_derived]
+                #attr_feature_monoid
+                impl #impl_generics #path_construction_monoid<#ty> for #ident #ty_generics #where_clause {}
             }
         })
     }

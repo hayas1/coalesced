@@ -17,3 +17,10 @@ pub trait ConstructionAnnotated<T, A>:
             .map(Self::into_inner)
     }
 }
+
+#[cfg(feature = "monoid")]
+pub trait ConstructionMonoid<T>: Construction<T> + crate::Monoid {
+    fn lift_unit() -> T {
+        Self::unit().into_inner()
+    }
+}

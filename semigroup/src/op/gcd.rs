@@ -16,7 +16,7 @@ use crate::Semigroup;
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 6);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(monoid, commutative)]
 #[properties(monoid, commutative)]
@@ -26,8 +26,9 @@ impl<T: Unsigned + Integer + Clone> Semigroup for Gcd<T> {
         Self(num::integer::gcd(base.0, other.0))
     }
 }
-impl<T: Unsigned + Integer + Clone> Default for Gcd<T> {
-    fn default() -> Self {
+#[cfg(feature = "monoid")]
+impl<T: Unsigned + Integer + Clone> crate::Monoid for Gcd<T> {
+    fn unit() -> Self {
         Self(T::zero())
     }
 }

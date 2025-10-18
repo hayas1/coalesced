@@ -64,15 +64,40 @@ impl<'a> FieldSemigroupOp<'a> {
         } = self;
         let with = field_attr.with(container_attr);
         with.map(|path| {
-                parse_quote! {
-                    #member: <#path<_> as #path_construction_trait<_>>::lift_op(base.#member, other.#member)
-                }
-            })
-            .unwrap_or_else(|| {
-                parse_quote! {
-                    #member: #path_semigroup::op(base.#member, other.#member)
-                }
-            })
+            parse_quote! {
+                #member: <#path<_> as #path_construction_trait<_>>::lift_op(base.#member, other.#member)
+            }
+        })
+        .unwrap_or_else(|| {
+            parse_quote! {
+                #member: #path_semigroup::op(base.#member, other.#member)
+            }
+        })
+    }
+    pub fn impl_field_monoid_unit(&self) -> FieldValue {
+        let Self {
+            constant:
+                Constant {
+                    path_monoid,
+                    path_construction_monoid,
+                    ..
+                },
+            container_attr,
+            member,
+            field_attr,
+            ..
+        } = self;
+        let with = field_attr.with(container_attr);
+        with.map(|path| {
+            parse_quote! {
+                #member: <#path<_> as #path_construction_monoid<_>>::lift_unit()
+            }
+        })
+        .unwrap_or_else(|| {
+            parse_quote! {
+                #member: #path_monoid::unit()
+            }
+        })
     }
 }
 
