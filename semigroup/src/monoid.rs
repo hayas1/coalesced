@@ -12,22 +12,20 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// ```
 /// use semigroup::{Semigroup, Monoid};
 /// #[derive(Debug, Clone, PartialEq, Default, Semigroup)]
-/// #[semigroup(monoid, unit = Default::default(), with = "semigroup::op::coalesce::Coalesce")]
+/// #[semigroup(monoid, with = "semigroup::op::coalesce::Coalesce")]
 /// pub struct ExampleStruct<'a> {
 ///     pub str: Option<&'a str>,
-///     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
-///     pub boolean: bool,
 ///     #[semigroup(with = "semigroup::op::sum::Sum")]
 ///     pub sum: u32,
 /// }
 ///
 /// let a = ExampleStruct::unit();
-/// let b = ExampleStruct { str: Some("ten"), boolean: false, sum: 10 };
-/// let c = ExampleStruct { str: None, boolean: false, sum: 100 };
+/// let b = ExampleStruct { str: Some("ten"), sum: 10 };
+/// let c = ExampleStruct { str: None, sum: 100 };
 ///
 /// // #[test]
 /// semigroup::assert_monoid!(&a, &b, &c);
-/// assert_eq!(a.semigroup(b).semigroup(c), ExampleStruct { str: Some("ten"), boolean: false, sum: 110 });
+/// assert_eq!(a.semigroup(b).semigroup(c), ExampleStruct { str: Some("ten"), sum: 110 });
 /// ```
 ///
 /// # Testing
