@@ -19,7 +19,7 @@ where
     Self: Default,
 {
     fn unit() -> Self {
-        Self::default()
+        Default::default()
     }
 }
 #[automatically_derived]
