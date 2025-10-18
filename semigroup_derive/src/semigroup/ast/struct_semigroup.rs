@@ -83,7 +83,9 @@ impl<'a> StructSemigroup<'a> {
         let DeriveInput {
             ident, generics, ..
         } = derive;
-        let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+        let mut g = generics.clone();
+        attr.push_monoid_where(g.make_where_clause());
+        let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
         attr.is_monoid().then(|| {
             parse_quote! {
                 #[automatically_derived]

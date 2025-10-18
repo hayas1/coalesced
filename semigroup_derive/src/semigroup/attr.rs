@@ -1,5 +1,5 @@
 use darling::{FromDeriveInput, FromField};
-use syn::{parse_quote, DeriveInput, Field, Ident, Path};
+use syn::{parse_quote, DeriveInput, Field, Ident, Path, WhereClause};
 
 use crate::{annotation::Annotation, constant::Constant, error::SemigroupError, name::var_name};
 
@@ -63,6 +63,14 @@ impl ContainerAttr {
             Some(parse_quote! { #annotation_ident<#a> }),
             None,
         )
+    }
+
+    pub fn push_monoid_where(&self, where_clause: &mut WhereClause) {
+        self.is_monoid().then(|| {
+            where_clause.predicates.push(parse_quote! {
+                Self: Default
+            });
+        });
     }
 }
 
