@@ -1,8 +1,14 @@
 ---
 source: semigroup_derive/src/construction.rs
-assertion_line: 69
+assertion_line: 70
 expression: formatted
 ---
+#[automatically_derived]
+#[cfg(feature = "monoid")]
+impl<T: std::ops::Add> crate::Monoid for Sum<T>
+where
+    Self: Default,
+{}
 #[automatically_derived]
 impl<T: std::ops::Add> crate::Commutative for Sum<T> {}
 #[automatically_derived]

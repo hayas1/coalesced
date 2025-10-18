@@ -1,8 +1,13 @@
 ---
 source: semigroup_derive/src/construction.rs
-assertion_line: 69
+assertion_line: 70
 expression: formatted
 ---
+#[automatically_derived]
+impl<T: IntoIterator + FromIterator<T::Item>> ::semigroup::Monoid for Concat<T>
+where
+    Self: Default,
+{}
 #[automatically_derived]
 impl<T: IntoIterator + FromIterator<T::Item>> ::semigroup::Semigroup for Concat<T> {
     fn op(base: Self, other: Self) -> Self {

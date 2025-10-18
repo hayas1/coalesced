@@ -1,0 +1,22 @@
+---
+source: semigroup_derive/src/semigroup.rs
+assertion_line: 89
+expression: formatted
+---
+#[automatically_derived]
+impl ::semigroup::Semigroup for MonoidStruct {
+    fn op(base: Self, other: Self) -> Self {
+        Self {
+            sum: <semigroup::op::semigroup::sum::Sum<
+                _,
+            > as ::semigroup::Construction<_>>::lift_op(base.sum, other.sum),
+        }
+    }
+}
+#[automatically_derived]
+impl ::semigroup::Monoid for MonoidStruct
+where
+    Self: Default,
+{}
+#[automatically_derived]
+impl ::semigroup::Commutative for MonoidStruct {}
