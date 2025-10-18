@@ -9,6 +9,29 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 ///
 /// Identity element is provided by [`Monoid::unit`], which defaults to [`Default::default()`].
 ///
+/// # Deriving
+/// [`Monoid`] can be derived like [`Semigroup`], use `monoid` attribute.
+/// ```
+/// use semigroup::{Semigroup, Monoid};
+/// #[derive(Debug, Clone, PartialEq, Default, Semigroup)]
+/// #[semigroup(monoid, with = "semigroup::op::coalesce::Coalesce")]
+/// pub struct ExampleStruct<'a> {
+///     pub str: Option<&'a str>,
+///     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
+///     pub boolean: bool,
+///     #[semigroup(with = "semigroup::op::sum::Sum")]
+///     pub sum: u32,
+/// }
+///
+/// let a = ExampleStruct::unit();
+/// let b = ExampleStruct { str: Some("ten"), boolean: false, sum: 10 };
+/// let c = ExampleStruct { str: None, boolean: false, sum: 100 };
+///
+/// // #[test]
+/// semigroup::assert_monoid!(&a, &b, &c);
+/// assert_eq!(a.semigroup(b).semigroup(c), ExampleStruct { str: Some("ten"), boolean: false, sum: 110 });
+/// ```
+///
 /// # Testing
 /// Use [`crate::assert_monoid!`] macro.
 ///
