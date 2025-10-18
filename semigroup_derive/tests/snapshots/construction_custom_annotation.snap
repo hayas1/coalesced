@@ -59,3 +59,9 @@ impl<
 where
     X::Item: Clone,
 {}
+#[automatically_derived]
+impl<T: IntoIterator + FromIterator<T::Item>> ::semigroup::ConstructionMonoid<T>
+for Concat<T>
+where
+    Self: ::semigroup::Monoid,
+{}
