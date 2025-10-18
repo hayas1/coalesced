@@ -3,9 +3,9 @@ use crate::Semigroup;
 /// [`Commutative`] represents a binary operation that satisfies the following property
 /// 1. *Commutativity*: `op(a, b) = op(b, a)`
 ///
-/// The *semigroup* set that satisfies the *commutativity* property is often called *commutative semigroup*.
+/// The [*semigroup*](crate::Semigroup) set that satisfies the *commutativity* property is often called *commutative semigroup*.
 ///
-/// And the *monoid* set that satisfies the *commutativity* property is often called *commutative monoid*.
+/// And the [*monoid*](crate::Monoid) set that satisfies the *commutativity* property is often called *commutative monoid*.
 ///
 /// # Deriving
 /// [`Commutative`] can be derived like [`Semigroup`], use `commutative` attribute.
