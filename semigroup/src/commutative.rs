@@ -20,7 +20,7 @@ use crate::Semigroup;
 ///     pub min: u32,
 /// }
 ///
-/// let a = ExampleStruct { sum: 1, min: 1  };
+/// let a = ExampleStruct { sum: 1, min: 1 };
 /// let b = ExampleStruct { sum: 10, min: 10 };
 /// let c = ExampleStruct { sum: 100, min: 100 };
 ///
