@@ -1,4 +1,4 @@
-use syn::{parse_quote, Path, TypeParam};
+use syn::{parse_quote, Attribute, Path, TypeParam};
 
 pub const DERIVE_CONSTRUCTION: &str = "Construction";
 pub const DERIVE_SEMIGROUP: &str = "Semigroup";
@@ -9,10 +9,12 @@ pub struct Constant {
     pub path_annotated_semigroup: Path,
     pub path_annotated: Path,
     pub path_annotate: Path,
+    pub path_monoid: Path,
     pub path_commutative: Path,
     pub path_construction_trait: Path,
     pub path_construction_annotated: Path,
     pub default_type_param: TypeParam,
+    pub attr_feature_monoid: Option<Attribute>,
 }
 pub trait ConstantExt {
     fn constant() -> Constant;
@@ -25,10 +27,12 @@ impl ConstantExt for External {
             path_annotated_semigroup: parse_quote! {::semigroup::AnnotatedSemigroup},
             path_annotated: parse_quote! {::semigroup::Annotated},
             path_annotate: parse_quote! {::semigroup::Annotate},
+            path_monoid: parse_quote! {::semigroup::Monoid},
             path_commutative: parse_quote! {::semigroup::Commutative},
             path_construction_trait: parse_quote! {::semigroup::Construction},
             path_construction_annotated: parse_quote! {::semigroup::ConstructionAnnotated},
             default_type_param: parse_quote! { A },
+            attr_feature_monoid: None,
         }
     }
 }
@@ -40,10 +44,12 @@ impl ConstantExt for Internal {
             path_annotated_semigroup: parse_quote! {crate::AnnotatedSemigroup},
             path_annotated: parse_quote! {crate::Annotated},
             path_annotate: parse_quote! {crate::Annotate},
+            path_monoid: parse_quote! {crate::Monoid},
             path_commutative: parse_quote! {crate::Commutative},
             path_construction_trait: parse_quote! {crate::Construction},
             path_construction_annotated: parse_quote! {crate::ConstructionAnnotated},
             default_type_param: parse_quote! { A },
+            attr_feature_monoid: Some(parse_quote! {#[cfg(feature = "monoid")]}),
         }
     }
 }

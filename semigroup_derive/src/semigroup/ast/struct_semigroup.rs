@@ -23,6 +23,7 @@ pub struct StructSemigroup<'a> {
 impl ToTokens for StructSemigroup<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         self.impl_semigroup().to_tokens(tokens);
+        self.impl_monoid().iter().for_each(|s| s.to_tokens(tokens));
         self.impl_commutative()
             .iter()
             .for_each(|s| s.to_tokens(tokens));
@@ -66,6 +67,32 @@ impl<'a> StructSemigroup<'a> {
                 }
             }
         }
+    }
+    pub fn impl_monoid(&self) -> Option<ItemImpl> {
+        let Self {
+            constant,
+            derive,
+            attr,
+            ..
+        } = self;
+        let Constant {
+            path_monoid,
+            attr_feature_monoid,
+            ..
+        } = constant;
+        let DeriveInput {
+            ident, generics, ..
+        } = derive;
+        let mut g = generics.clone();
+        attr.push_monoid_where(g.make_where_clause());
+        let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
+        attr.is_monoid().then(|| {
+            parse_quote! {
+                #[automatically_derived]
+                #attr_feature_monoid
+                impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {}
+            }
+        })
     }
     pub fn impl_commutative(&self) -> Option<ItemImpl> {
         let Self {

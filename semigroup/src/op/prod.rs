@@ -17,9 +17,9 @@ use crate::Semigroup;
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 2);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(commutative)]
+#[construction(monoid, commutative)]
 #[properties(monoid, commutative)]
 pub struct Prod<T: Mul<Output = T>>(pub T);
 impl<T: Mul<Output = T>> Semigroup for Prod<T> {
@@ -28,8 +28,8 @@ impl<T: Mul<Output = T>> Semigroup for Prod<T> {
     }
 }
 #[cfg(feature = "monoid")]
-impl<T: Mul<Output = T> + num::One> crate::monoid::Monoid for Prod<T> {
-    fn unit() -> Self {
+impl<T: Mul<Output = T> + num::One> Default for Prod<T> {
+    fn default() -> Self {
         Self(T::one())
     }
 }

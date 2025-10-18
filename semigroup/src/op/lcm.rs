@@ -16,9 +16,9 @@ use crate::Semigroup;
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 36);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(commutative)]
+#[construction(monoid, commutative)]
 #[properties(monoid, commutative)]
 pub struct Lcm<T: Unsigned + Integer + Clone>(pub T);
 impl<T: Unsigned + Integer + Clone> Semigroup for Lcm<T> {
@@ -26,8 +26,8 @@ impl<T: Unsigned + Integer + Clone> Semigroup for Lcm<T> {
         Self(num::integer::lcm(base.0, other.0))
     }
 }
-impl<T: Unsigned + Integer + Clone> crate::monoid::Monoid for Lcm<T> {
-    fn unit() -> Self {
+impl<T: Unsigned + Integer + Clone> Default for Lcm<T> {
+    fn default() -> Self {
         Self(T::one())
     }
 }

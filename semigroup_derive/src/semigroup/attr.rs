@@ -1,5 +1,5 @@
 use darling::{FromDeriveInput, FromField};
-use syn::{parse_quote, DeriveInput, Field, Ident, Path};
+use syn::{parse_quote, DeriveInput, Field, Ident, Path, WhereClause};
 
 use crate::{annotation::Annotation, constant::Constant, error::SemigroupError, name::var_name};
 
@@ -8,6 +8,9 @@ use crate::{annotation::Annotation, constant::Constant, error::SemigroupError, n
 pub struct ContainerAttr {
     #[darling(default)]
     annotated: bool,
+
+    #[darling(default)]
+    monoid: bool,
 
     #[darling(default)]
     commutative: bool,
@@ -37,8 +40,13 @@ impl ContainerAttr {
         }
         Ok(self)
     }
+
     pub fn is_annotated(&self) -> bool {
         self.annotated
+    }
+
+    pub fn is_monoid(&self) -> bool {
+        self.monoid
     }
 
     pub fn is_commutative(&self) -> bool {
@@ -55,6 +63,14 @@ impl ContainerAttr {
             Some(parse_quote! { #annotation_ident<#a> }),
             None,
         )
+    }
+
+    pub fn push_monoid_where(&self, where_clause: &mut WhereClause) {
+        self.is_monoid().then(|| {
+            where_clause.predicates.push(parse_quote! {
+                Self: Default
+            });
+        });
     }
 }
 

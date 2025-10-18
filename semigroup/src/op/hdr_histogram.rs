@@ -24,7 +24,7 @@ pub const DEFAULT_SIGFIG: u8 = 3;
 /// assert_eq!(h.value_at_quantile(0.9), 6);
 /// ```
 #[derive(Debug, Clone, PartialEq, ConstructionPriv)]
-#[construction(commutative)]
+#[construction(monoid, commutative)]
 #[properties(monoid, commutative)]
 pub struct HdrHistogram<T: Counter>(pub Histogram<T>);
 impl<T: Counter> Semigroup for HdrHistogram<T> {
@@ -33,9 +33,8 @@ impl<T: Counter> Semigroup for HdrHistogram<T> {
         base
     }
 }
-#[cfg(feature = "monoid")]
-impl<T: Counter> crate::monoid::Monoid for HdrHistogram<T> {
-    fn unit() -> Self {
+impl<T: Counter> Default for HdrHistogram<T> {
+    fn default() -> Self {
         Self(Histogram::new(DEFAULT_SIGFIG).unwrap_or_else(|_| unreachable!()))
     }
 }

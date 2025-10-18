@@ -17,9 +17,9 @@ use crate::Semigroup;
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 3);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(commutative)]
+#[construction(monoid, commutative)]
 #[properties(monoid, commutative)]
 pub struct Sum<T: Add<Output = T>>(pub T);
 impl<T: Add<Output = T>> Semigroup for Sum<T> {
@@ -28,8 +28,8 @@ impl<T: Add<Output = T>> Semigroup for Sum<T> {
     }
 }
 #[cfg(feature = "monoid")]
-impl<T: Add<Output = T> + num::Zero> crate::monoid::Monoid for Sum<T> {
-    fn unit() -> Self {
+impl<T: Add<Output = T> + num::Zero> Default for Sum<T> {
+    fn default() -> Self {
         Self(T::zero())
     }
 }

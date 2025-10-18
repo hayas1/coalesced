@@ -1,5 +1,5 @@
 use darling::FromDeriveInput;
-use syn::{parse_quote, DeriveInput, Expr, TypeParam};
+use syn::{parse_quote, DeriveInput, Expr, TypeParam, WhereClause};
 
 use crate::{annotation::Annotation, constant::Constant, error::ConstructionError, name::var_name};
 
@@ -9,6 +9,9 @@ pub struct ContainerAttr {
     #[darling(default)]
     annotated: bool,
     unit: Option<Expr>,
+
+    #[darling(default)]
+    monoid: bool,
 
     #[darling(default)]
     commutative: bool,
@@ -54,6 +57,10 @@ impl ContainerAttr {
         self.annotated
     }
 
+    pub fn is_monoid(&self) -> bool {
+        self.monoid
+    }
+
     pub fn is_commutative(&self) -> bool {
         self.commutative
     }
@@ -76,6 +83,14 @@ impl ContainerAttr {
     }
     pub fn with_annotate_impl(&self) -> bool {
         !self.without_annotate_impl
+    }
+
+    pub fn push_monoid_where(&self, where_clause: &mut WhereClause) {
+        self.is_monoid().then(|| {
+            where_clause.predicates.push(parse_quote! {
+                Self: Default
+            });
+        });
     }
 }
 

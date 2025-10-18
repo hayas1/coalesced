@@ -66,6 +66,18 @@ mod tests {
             }
         },
     )]
+    #[case::semigroup_monoid(
+        "semigroup_monoid",
+        impl_semigroup::<External>,
+        syn::parse_quote! {
+            #[derive(Semigroup)]
+            #[semigroup(monoid, commutative)]
+            pub struct MonoidStruct{
+                #[semigroup(with = "semigroup::op::semigroup::sum::Sum")]
+                pub sum: u32,
+            }
+        },
+    )]
     fn test_derive_semigroup_snapshot(
         #[case] case: &str,
         #[case] f: impl Fn(&DeriveInput) -> syn::Result<TokenStream>,

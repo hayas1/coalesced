@@ -7,6 +7,8 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// 2. *Associativity*: `op(op(a, b), c) = op(a, op(b, c))`
 /// 3. Existence of *identity element*: `op(unit(), a) = a = op(a, unit())`
 ///
+/// Identity element is provided by [`Monoid::unit`], which defaults to [`Default::default()`].
+///
 /// # Testing
 /// Use [`crate::assert_monoid!`] macro.
 ///
@@ -14,22 +16,25 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// so they are guaranteed by [`crate::assert_semigroup!`].
 /// However, existence of *identity element* is not guaranteed the macro,
 /// so it must be verified manually using [`crate::assert_monoid!`].
-pub trait Monoid: Semigroup {
-    fn unit() -> Self;
+pub trait Monoid: Semigroup + Default {
+    fn unit() -> Self {
+        Default::default()
+    }
 }
 pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
     fn annotated_unit() -> Annotated<Self, A>;
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
+#[construction(monoid)]
 pub struct OptionMonoid<T: Semigroup>(pub Option<T>);
 impl<T: Semigroup> From<T> for OptionMonoid<T> {
     fn from(value: T) -> Self {
         Self(Some(value))
     }
 }
-impl<T: Semigroup> Monoid for OptionMonoid<T> {
-    fn unit() -> Self {
+impl<T: Semigroup> Default for OptionMonoid<T> {
+    fn default() -> Self {
         Self(None)
     }
 }
