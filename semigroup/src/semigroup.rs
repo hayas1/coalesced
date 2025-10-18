@@ -4,6 +4,29 @@ use crate::Annotated;
 /// 1. *Closure*: `op: T × T → T`
 /// 2. *Associativity*: `op(op(a, b), c) = op(a, op(b, c))`
 ///
+/// # Deriving
+/// When fields do not implement [`Semigroup`], use `with` attribute.
+/// ```
+/// use semigroup::Semigroup;
+/// #[derive(Debug, Clone, PartialEq, Semigroup)]
+/// #[semigroup(with = "semigroup::op::coalesce::Coalesce")]
+/// pub struct ExampleStruct<'a> {
+///     pub str: Option<&'a str>,
+///     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
+///     pub boolean: bool,
+///     #[semigroup(with = "semigroup::op::sum::Sum")]
+///     pub sum: u32,
+/// }
+///
+/// let a = ExampleStruct { str: None, boolean: true, sum: 1 };
+/// let b = ExampleStruct { str: Some("ten"), boolean: false, sum: 10 };
+/// let c = ExampleStruct { str: None, boolean: false, sum: 100 };
+///
+/// // #[test]
+/// semigroup::assert_semigroup!(&a, &b, &c);
+/// assert_eq!(a.semigroup(b).semigroup(c), ExampleStruct { str: Some("ten"), boolean: false, sum: 111 });
+/// ```
+///
 /// # Testing
 /// Use [`crate::assert_semigroup!`] macro.
 ///
