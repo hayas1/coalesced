@@ -17,6 +17,10 @@ impl ::semigroup::Semigroup for MonoidStruct {
 impl ::semigroup::Monoid for MonoidStruct
 where
     Self: Default,
-{}
+{
+    fn unit() -> Self {
+        Self::default()
+    }
+}
 #[automatically_derived]
 impl ::semigroup::Commutative for MonoidStruct {}

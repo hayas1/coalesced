@@ -8,7 +8,11 @@ expression: formatted
 impl<T: std::ops::Add> crate::Monoid for Sum<T>
 where
     Self: Default,
-{}
+{
+    fn unit() -> Self {
+        Default::default()
+    }
+}
 #[automatically_derived]
 impl<T: std::ops::Add> crate::Commutative for Sum<T> {}
 #[automatically_derived]
