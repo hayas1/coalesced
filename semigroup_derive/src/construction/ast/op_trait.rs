@@ -61,13 +61,13 @@ impl<'a> OpTrait<'a> {
         let mut g = generics.clone();
         attr.push_monoid_where(g.make_where_clause());
         let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
-        (attr.is_monoid() && attr.is_default_unit()).then(|| {
+        attr.unit().filter(|_| attr.is_monoid()).map(|expr| {
             parse_quote! {
                 #[automatically_derived]
                 #attr_feature_monoid
                 impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
                     fn unit() -> Self {
-                        Default::default()
+                        #expr
                     }
                 }
             }
