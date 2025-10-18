@@ -11,8 +11,9 @@ pub struct ContainerAttr {
 
     #[darling(default)]
     monoid: bool,
-    #[darling(default)]
     unit: Option<Expr>,
+    #[darling(default)]
+    without_monoid_impl: bool,
 
     #[darling(default)]
     commutative: bool,
@@ -64,6 +65,9 @@ impl ContainerAttr {
     }
     pub fn unit(&self) -> Option<&Expr> {
         self.unit.as_ref()
+    }
+    pub fn with_monoid_impl(&self) -> bool {
+        !self.without_monoid_impl
     }
 
     pub fn is_commutative(&self) -> bool {

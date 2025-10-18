@@ -12,8 +12,10 @@ pub struct ContainerAttr {
 
     #[darling(default)]
     monoid: bool,
+    unit: Option<Expr>,
+    // TODO unit_where: Option<String>,
     #[darling(default)]
-    unit: Option<Expr>, // TODO unit_where: Option<String>,
+    with_monoid_impl: bool,
 
     #[darling(default)]
     commutative: bool,
@@ -36,6 +38,7 @@ impl ContainerAttr {
             without_annotate_impl,
             monoid,
             unit,
+            with_monoid_impl,
             ..
         } = &self;
         if !annotated {
@@ -57,6 +60,8 @@ impl ContainerAttr {
         if !monoid {
             let err_attr_name = if unit.is_some() {
                 Some(var_name!(unit))
+            } else if *with_monoid_impl {
+                Some(var_name!(with_monoid_impl))
             } else {
                 None
             };
@@ -76,6 +81,9 @@ impl ContainerAttr {
     }
     pub fn unit(&self) -> Option<&Expr> {
         self.unit.as_ref()
+    }
+    pub fn with_monoid_impl(&self) -> bool {
+        self.with_monoid_impl
     }
 
     pub fn is_commutative(&self) -> bool {

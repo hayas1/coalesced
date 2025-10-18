@@ -58,17 +58,35 @@ impl<'a> OpTrait<'a> {
         let DeriveInput {
             ident, generics, ..
         } = derive;
-        let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-        attr.unit().filter(|_| attr.is_monoid()).map(|expr| {
-            parse_quote! {
-                #[automatically_derived]
-                #attr_feature_monoid
-                impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
-                    fn unit() -> Self {
-                        #expr
+        (attr.is_monoid() && attr.with_monoid_impl()).then(|| {
+            attr.unit()
+                .map(|expr| {
+                    let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+                    parse_quote! {
+                        #[automatically_derived]
+                        #attr_feature_monoid
+                        impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
+                            fn unit() -> Self {
+                                #expr
+                            }
+                        }
                     }
-                }
-            }
+                })
+                .unwrap_or_else(|| {
+                    let where_default = parse_quote! { Self: Default };
+                    let mut g = generics.clone();
+                    g.make_where_clause().predicates.push(where_default);
+                    let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
+                    parse_quote! {
+                        #[automatically_derived]
+                        #attr_feature_monoid
+                        impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
+                            fn unit() -> Self {
+                                Default::default()
+                            }
+                        }
+                    }
+                })
         })
     }
 

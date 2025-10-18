@@ -85,7 +85,7 @@ impl<'a> StructSemigroup<'a> {
             ident, generics, ..
         } = derive;
         let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-        attr.is_monoid().then(|| {
+        (attr.is_monoid() && attr.with_monoid_impl()).then(|| {
             attr.unit()
                 .map(|expr| {
                     parse_quote! {
