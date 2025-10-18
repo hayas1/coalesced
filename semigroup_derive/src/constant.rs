@@ -13,6 +13,7 @@ pub struct Constant {
     pub path_commutative: Path,
     pub path_construction_trait: Path,
     pub path_construction_annotated: Path,
+    pub path_construction_monoid: Path,
     pub default_type_param: TypeParam,
     pub attr_feature_monoid: Option<Attribute>,
 }
@@ -31,6 +32,7 @@ impl ConstantExt for External {
             path_commutative: parse_quote! {::semigroup::Commutative},
             path_construction_trait: parse_quote! {::semigroup::Construction},
             path_construction_annotated: parse_quote! {::semigroup::ConstructionAnnotated},
+            path_construction_monoid: parse_quote! {::semigroup::ConstructionMonoid},
             default_type_param: parse_quote! { A },
             attr_feature_monoid: None,
         }
@@ -48,6 +50,7 @@ impl ConstantExt for Internal {
             path_commutative: parse_quote! {crate::Commutative},
             path_construction_trait: parse_quote! {crate::Construction},
             path_construction_annotated: parse_quote! {crate::ConstructionAnnotated},
+            path_construction_monoid: parse_quote! {crate::ConstructionMonoid},
             default_type_param: parse_quote! { A },
             attr_feature_monoid: Some(parse_quote! {#[cfg(feature = "monoid")]}),
         }
