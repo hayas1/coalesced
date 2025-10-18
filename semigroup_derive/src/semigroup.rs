@@ -71,7 +71,7 @@ mod tests {
         impl_semigroup::<External>,
         syn::parse_quote! {
             #[derive(Semigroup)]
-            #[semigroup(monoid, commutative, unit = Default::default())]
+            #[semigroup(monoid, commutative)]
             pub struct MonoidStruct{
                 #[semigroup(with = "semigroup::op::semigroup::sum::Sum")]
                 pub sum: u32,

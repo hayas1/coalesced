@@ -72,6 +72,7 @@ impl<'a> StructSemigroup<'a> {
         let Self {
             constant,
             derive,
+            field_ops,
             attr,
             ..
         } = self;
@@ -84,16 +85,33 @@ impl<'a> StructSemigroup<'a> {
             ident, generics, ..
         } = derive;
         let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-        attr.unit().filter(|_| attr.is_monoid()).map(|expr| {
-            parse_quote! {
-                #[automatically_derived]
-                #attr_feature_monoid
-                impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
-                    fn unit() -> Self {
-                        #expr
+        attr.is_monoid().then(|| {
+            attr.unit()
+                .map(|expr| {
+                    parse_quote! {
+                        #[automatically_derived]
+                        #attr_feature_monoid
+                        impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
+                            fn unit() -> Self {
+                                #expr
+                            }
+                        }
                     }
-                }
-            }
+                })
+                .unwrap_or_else(|| {
+                    let fields_op = field_ops.iter().map(|op| op.impl_field_monoid_unit());
+                    parse_quote! {
+                        #[automatically_derived]
+                        #attr_feature_monoid
+                        impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
+                            fn unit() -> Self {
+                                Self {
+                                    #(#fields_op),*
+                                }
+                            }
+                        }
+                    }
+                })
         })
     }
     pub fn impl_commutative(&self) -> Option<ItemImpl> {
