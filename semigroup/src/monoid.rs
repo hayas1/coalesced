@@ -7,6 +7,8 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// 2. *Associativity*: `op(op(a, b), c) = op(a, op(b, c))`
 /// 3. Existence of *identity element*: `op(unit(), a) = a = op(a, unit())`
 ///
+/// Identity element is provided by [`Default::default()`].
+///
 /// # Testing
 /// Use [`crate::assert_monoid!`] macro.
 ///
