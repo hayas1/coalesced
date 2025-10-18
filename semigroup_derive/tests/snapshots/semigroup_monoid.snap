@@ -14,10 +14,7 @@ impl ::semigroup::Semigroup for MonoidStruct {
     }
 }
 #[automatically_derived]
-impl ::semigroup::Monoid for MonoidStruct
-where
-    Self: Default,
-{
+impl ::semigroup::Monoid for MonoidStruct {
     fn unit() -> Self {
         Default::default()
     }
