@@ -49,6 +49,9 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// assert_eq!(a.semigroup(b).semigroup(c), Sum(5));
 /// ```
 ///
+/// # Optional [`Semigroup`]
+/// [`Option<Semigroup>`] can behave like [`Monoid`]. In such case, [`OptionMonoid`] is useful.
+///
 /// # Testing
 /// Use [`crate::assert_monoid!`] macro.
 ///
@@ -63,6 +66,60 @@ pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
     fn annotated_unit() -> Annotated<Self, A>;
 }
 
+/// Construct [`Monoid`] from optional [`Semigroup`].
+/// Some [`Semigroup`] lack a suitable *identity element* for extension to a [`Monoid`].
+///
+/// # Examples
+/// In [`Semigroup`] operations of [`crate::op::min::Min`] and [`crate::op::max::Max`], [`std::time::Instant`] does not have a suitable *identity element* for extension to a [`Monoid`].
+/// ```compile_fail
+/// use std::time::{Duration, Instant};
+/// use semigroup::{Semigroup, Monoid, OptionMonoid};
+///
+/// #[derive(Debug, Clone, PartialEq, Semigroup)]
+/// #[semigroup(monoid, commutative)]
+/// pub struct BoundingDuration {
+///     #[semigroup(with = "semigroup::op::min::Min")]
+///     start: Instant,
+///     #[semigroup(with = "semigroup::op::max::Max")]
+///     end: Instant,
+/// }
+/// impl BoundingDuration {
+///      pub fn duration(&self) -> Duration {
+///         self.end - self.start
+///     }
+/// }
+/// ```
+///
+/// In such case, [`OptionMonoid`] is useful.
+/// ```
+/// use std::time::{Duration, Instant};
+/// use semigroup::{Semigroup, Monoid, OptionMonoid};
+///
+/// #[derive(Debug, Clone, PartialEq, Semigroup)]
+/// #[semigroup(commutative)]
+/// pub struct BoundingDuration {
+///     #[semigroup(with = "semigroup::op::min::Min")]
+///     start: Instant,
+///     #[semigroup(with = "semigroup::op::max::Max")]
+///     end: Instant,
+/// }
+/// impl BoundingDuration {
+///      pub fn duration(&self) -> Duration {
+///         self.end - self.start
+///     }
+/// }
+///
+/// let (now, mut bd) = (Instant::now(), OptionMonoid::unit());
+/// let v = vec! [
+///     OptionMonoid::from(BoundingDuration { start: now + Duration::from_millis(50), end: now + Duration::from_millis(100) }),
+///     OptionMonoid::from(BoundingDuration { start: now + Duration::from_millis(100), end: now + Duration::from_millis(200) }),
+///     OptionMonoid::from(BoundingDuration { start: now + Duration::from_millis(150), end: now + Duration::from_millis(300) }),
+/// ];
+/// for vi in v {
+///     bd = bd.semigroup(vi);
+/// }
+/// assert_eq!(bd.as_ref().unwrap().duration(), Duration::from_millis(250));
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[construction(monoid, unit = Self(None))]
 pub struct OptionMonoid<T: Semigroup>(pub Option<T>);
