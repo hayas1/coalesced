@@ -2,6 +2,3 @@
 
 heading-base-level = 1
 workspace-project = "semigroup"
-
-[intralinks]
-docs-rs-base-url = "https://hayas1.github.io/semigroup"

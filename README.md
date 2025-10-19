@@ -1,15 +1,14 @@
 <!-- cargo-rdme start -->
 
-[`Semigroup`] trait is useful for
+[`Semigroup`](https://docs.rs/semigroup/latest/semigroup/semigroup/trait.Semigroup.html) trait is useful for
 - reading configs from multiple sources
 - statistically aggregation
 - fast range queries using segment tree
 - and so on...
 
 ## Usage
-```toml
-[dependencies]
-semigroup = { git = "https://github.com/hayas1/semigroup", features = ["derive", "monoid"] }
+```sh
+cargo add semigroup --features derive,monoid
 ```
 
 ## Examples
