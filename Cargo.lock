@@ -567,7 +567,7 @@ checksum = "28d3b2b1366ec20994f1fd18c3c594f05c5dd4bc44d8bb0c1c632c8d6829481f"
 
 [[package]]
 name = "semigroup"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hdrhistogram",
  "num",
@@ -582,7 +582,7 @@ dependencies = [
 
 [[package]]
 name = "semigroup_derive"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "comfy-table",
  "darling",
