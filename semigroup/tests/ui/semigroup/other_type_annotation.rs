@@ -1,4 +1,4 @@
-use semigroup::{op::coalesce::Coalesce, Annotate, Construction, Semigroup};
+use semigroup::{op::Coalesce, Annotate, Construction, Semigroup};
 
 fn main() {
     let a = Coalesce(Some(1)).annotated("a");

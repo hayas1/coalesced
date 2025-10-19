@@ -3,7 +3,7 @@ use semigroup::Semigroup;
 #[derive(Debug, Clone, PartialEq, Semigroup)]
 pub struct NamedStruct<'a> {
     pub num: Option<u32>,
-    #[semigroup(with = "semigroup::op::coalesce::Coalesce")]
+    #[semigroup(with = "semigroup::op::Coalesce")]
     pub str: Option<&'a str>,
 }
 

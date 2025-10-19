@@ -9,12 +9,12 @@ use crate::Annotated;
 /// ```
 /// use semigroup::Semigroup;
 /// #[derive(Debug, Clone, PartialEq, Semigroup)]
-/// #[semigroup(with = "semigroup::op::coalesce::Coalesce")]
+/// #[semigroup(with = "semigroup::op::Coalesce")]
 /// pub struct ExampleStruct<'a> {
 ///     pub str: Option<&'a str>,
-///     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
+///     #[semigroup(with = "semigroup::op::Overwrite")]
 ///     pub boolean: bool,
-///     #[semigroup(with = "semigroup::op::sum::Sum")]
+///     #[semigroup(with = "semigroup::op::Sum")]
 ///     pub sum: u32,
 /// }
 ///
@@ -90,7 +90,7 @@ pub mod test_semigroup {
     ///
     /// # Examples
     /// ```
-    /// use semigroup::{assert_semigroup, op::coalesce::Coalesce};
+    /// use semigroup::{assert_semigroup, op::Coalesce};
     ///
     /// let a = Coalesce(Some(1));
     /// let b = Coalesce(None);
@@ -106,7 +106,7 @@ pub mod test_semigroup {
     /// - The input iterator has less than 3 items.
     ///
     /// ```compile_fail
-    /// use semigroup::{assert_semigroup, op::coalesce::Coalesce};
+    /// use semigroup::{assert_semigroup, op::Coalesce};
     /// let a = Coalesce(Some(1));
     /// let b = Coalesce(None);
     /// assert_semigroup!(a, b);

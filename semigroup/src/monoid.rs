@@ -12,10 +12,10 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// ```
 /// use semigroup::{Semigroup, Monoid};
 /// #[derive(Debug, Clone, PartialEq, Default, Semigroup)]
-/// #[semigroup(monoid, with = "semigroup::op::coalesce::Coalesce")]
+/// #[semigroup(monoid, with = "semigroup::op::Coalesce")]
 /// pub struct ExampleStruct<'a> {
 ///     pub str: Option<&'a str>,
-///     #[semigroup(with = "semigroup::op::sum::Sum")]
+///     #[semigroup(with = "semigroup::op::Sum")]
 ///     pub sum: u32,
 /// }
 ///
@@ -70,7 +70,7 @@ pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
 /// Some [`Semigroup`] lack a suitable *identity element* for extension to a [`Monoid`].
 ///
 /// # Examples
-/// In [`Semigroup`] operations of [`crate::op::min::Min`] and [`crate::op::max::Max`], [`std::time::Instant`] does not have a suitable *identity element* for extension to a [`Monoid`].
+/// In [`Semigroup`] operations of [`crate::op::Instant`] does not have a suitable *identity element* for extension to a [`Monoid`].
 /// ```compile_fail
 /// use std::time::{Duration, Instant};
 /// use semigroup::{Semigroup, Monoid, OptionMonoid};
@@ -78,9 +78,9 @@ pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
 /// #[derive(Debug, Clone, PartialEq, Semigroup)]
 /// #[semigroup(monoid, commutative)]
 /// pub struct BoundingDuration {
-///     #[semigroup(with = "semigroup::op::min::Min")]
+///     #[semigroup(with = "semigroup::op::Min")]
 ///     start: Instant,
-///     #[semigroup(with = "semigroup::op::max::Max")]
+///     #[semigroup(with = "semigroup::op::Max")]
 ///     end: Instant,
 /// }
 /// impl BoundingDuration {
@@ -98,9 +98,9 @@ pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
 /// #[derive(Debug, Clone, PartialEq, Semigroup)]
 /// #[semigroup(commutative)]
 /// pub struct BoundingDuration {
-///     #[semigroup(with = "semigroup::op::min::Min")]
+///     #[semigroup(with = "semigroup::op::Min")]
 ///     start: Instant,
-///     #[semigroup(with = "semigroup::op::max::Max")]
+///     #[semigroup(with = "semigroup::op::Max")]
 ///     end: Instant,
 /// }
 /// impl BoundingDuration {

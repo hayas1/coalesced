@@ -12,7 +12,7 @@ use crate::Semigroup;
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::hdr_histogram::HdrHistogram, Construction, Semigroup};
+/// use semigroup::{op::HdrHistogram, Construction, Semigroup};
 ///
 /// let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
 /// let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();

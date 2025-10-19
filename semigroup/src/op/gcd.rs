@@ -9,7 +9,7 @@ use crate::Semigroup;
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::gcd::Gcd, Construction, Semigroup};
+/// use semigroup::{op::Gcd, Construction, Semigroup};
 ///
 /// let a = Gcd(12u32);
 /// let b = Gcd(18);

@@ -8,7 +8,7 @@ use crate::{Annotated, AnnotatedSemigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::concat::Concat, Construction, Semigroup};
+/// use semigroup::{op::Concat, Construction, Semigroup};
 ///
 /// let a = Concat(vec![1, 2]);
 /// let b = Concat(vec![3, 4]);

@@ -8,7 +8,7 @@ use crate::{Annotated, AnnotatedSemigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::overwrite::Overwrite, Construction, Semigroup};
+/// use semigroup::{op::Overwrite, Construction, Semigroup};
 ///
 /// let a = Overwrite(1);
 /// let b = Overwrite(2);

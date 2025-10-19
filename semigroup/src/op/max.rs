@@ -8,7 +8,7 @@ use crate::Semigroup;
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::max::Max, Construction, Semigroup};
+/// use semigroup::{op::Max, Construction, Semigroup};
 ///
 /// let a = Max(1);
 /// let b = Max(2);

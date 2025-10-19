@@ -7,7 +7,7 @@ expression: formatted
 impl ::semigroup::Semigroup for MonoidStruct {
     fn op(base: Self, other: Self) -> Self {
         Self {
-            sum: <semigroup::op::semigroup::sum::Sum<
+            sum: <semigroup::op::Sum<
                 _,
             > as ::semigroup::Construction<_>>::lift_op(base.sum, other.sum),
         }
@@ -17,7 +17,7 @@ impl ::semigroup::Semigroup for MonoidStruct {
 impl ::semigroup::Monoid for MonoidStruct {
     fn unit() -> Self {
         Self {
-            sum: <semigroup::op::semigroup::sum::Sum<
+            sum: <semigroup::op::Sum<
                 _,
             > as ::semigroup::ConstructionMonoid<_>>::lift_unit(),
         }

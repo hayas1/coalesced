@@ -7,7 +7,7 @@ expression: formatted
 impl ::semigroup::Semigroup for NamedStruct {
     fn op(base: Self, other: Self) -> Self {
         Self {
-            foo: <semigroup::op::annotation::overwrite::Overwrite<
+            foo: <semigroup::op::Overwrite<
                 _,
             > as ::semigroup::Construction<_>>::lift_op(base.foo, other.foo),
             bar: ::semigroup::Semigroup::op(base.bar, other.bar),
@@ -30,7 +30,7 @@ for NamedStruct {
     ) -> ::semigroup::Annotated<Self, NamedStructAnnotation<A>> {
         let (base_value, base_annotation) = base.into_parts();
         let (other_value, other_annotation) = other.into_parts();
-        let (foo_value, foo_annotation) = <semigroup::op::annotation::overwrite::Overwrite<
+        let (foo_value, foo_annotation) = <semigroup::op::Overwrite<
             _,
         > as ::semigroup::ConstructionAnnotated<
             _,

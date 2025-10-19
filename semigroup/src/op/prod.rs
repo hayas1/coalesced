@@ -10,7 +10,7 @@ use crate::Semigroup;
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::prod::Prod, Construction, Semigroup};
+/// use semigroup::{op::Prod, Construction, Semigroup};
 ///
 /// let a = Prod(1);
 /// let b = Prod(2);

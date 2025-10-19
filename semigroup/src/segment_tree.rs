@@ -10,7 +10,7 @@ pub mod iter;
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::sum::Sum, segment_tree::SegmentTree};
+/// use semigroup::{op::Sum, segment_tree::SegmentTree};
 /// let data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 /// let mut sum_tree: SegmentTree<_> = data.into_iter().map(Sum).collect();
 /// assert_eq!(sum_tree.fold(3..=5).0, 12);
@@ -230,10 +230,7 @@ mod tests {
     use crate::{
         assert_monoid,
         monoid::OptionMonoid,
-        op::{
-            coalesce::Coalesce, gcd::Gcd, lcm::Lcm, max::Max, min::Min, prod::Prod, sum::Sum,
-            xor::Xor,
-        },
+        op::{Coalesce, Gcd, Lcm, Max, Min, Prod, Sum, Xor},
     };
 
     use super::*;

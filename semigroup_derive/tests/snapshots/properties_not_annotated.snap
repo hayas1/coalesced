@@ -11,7 +11,7 @@ expression: formatted
 ///| ❌        | ❌     | ❌          |
 ///<!-- properties end -->
 pub struct UnnamedStruct<T: std::ops::Add>(
-    #[semigroup(with = "semigroup::op::semigroup::add::Added")]
+    #[semigroup(with = "semigroup::op::Added")]
     T,
     u64,
 );

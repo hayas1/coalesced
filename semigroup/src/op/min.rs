@@ -8,7 +8,7 @@ use crate::Semigroup;
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::min::Min, Construction, Semigroup};
+/// use semigroup::{op::Min, Construction, Semigroup};
 ///
 /// let a = Min(1);
 /// let b = Min(2);

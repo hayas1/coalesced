@@ -1,9 +1,9 @@
 use semigroup::Semigroup;
 
 #[derive(Debug, Clone, PartialEq, Semigroup)]
-#[semigroup(with = "semigroup::op::coalesce::Coalesce")]
+#[semigroup(with = "semigroup::op::Coalesce")]
 pub struct NamedStruct {
-    #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
+    #[semigroup(with = "semigroup::op::Overwrite")]
     pub name: String,
     pub value: Option<u32>,
 }
@@ -36,9 +36,9 @@ fn test_named_struct_semigroup() {
 }
 
 #[derive(Debug, Clone, PartialEq, Semigroup)]
-#[semigroup(with = "semigroup::op::coalesce::Coalesce")]
+#[semigroup(with = "semigroup::op::Coalesce")]
 pub struct UnnamedStruct(
-    #[semigroup(with = "semigroup::op::overwrite::Overwrite")] String,
+    #[semigroup(with = "semigroup::op::Overwrite")] String,
     Option<u32>,
 );
 
