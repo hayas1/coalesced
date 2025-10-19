@@ -7,10 +7,10 @@ expression: formatted
 impl<T: std::ops::Add> crate::Semigroup for UnnamedStruct<T> {
     fn op(base: Self, other: Self) -> Self {
         Self {
-            0: <semigroup::op::semigroup::add::Added<
+            0: <semigroup::op::Added<
                 _,
             > as crate::Construction<_>>::lift_op(base.0, other.0),
-            1: <semigroup::op::annotation::overwrite::Overwrite<
+            1: <semigroup::op::Overwrite<
                 _,
             > as crate::Construction<_>>::lift_op(base.1, other.1),
         }

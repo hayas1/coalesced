@@ -2,14 +2,14 @@ use std::ops::{Deref, DerefMut};
 
 use crate::{AnnotatedSemigroup, Semigroup};
 
-/// Some [`Semigroup`] such as [`crate::op::coalesce::Coalesce`] can have an annotation.
+/// Some [`Semigroup`] such as [`crate::op::Coalesce`] can have an annotation.
 /// [`Annotate`] trait will be derived by [`Semigroup`].
 /// The annotated value is represented by a type [`Annotated`].
 ///
 /// # Examples
 /// ## constructed semigroup
 /// ```
-/// use semigroup::{op::coalesce::Coalesce, Annotate, Semigroup};
+/// use semigroup::{op::Coalesce, Annotate, Semigroup};
 ///
 /// let a = Coalesce(Some(1)).annotated("first");
 /// let b = Coalesce(None).annotated("second");
@@ -30,14 +30,14 @@ use crate::{AnnotatedSemigroup, Semigroup};
 ///
 /// ## derived semigroup
 /// ```
-/// use semigroup::{op::coalesce::Coalesce, Annotate, Annotated, Semigroup};
+/// use semigroup::{op::Coalesce, Annotate, Annotated, Semigroup};
 ///
 /// #[derive(Debug, Clone, Copy, PartialEq, Semigroup)]
-/// #[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
+/// #[semigroup(annotated, with = "semigroup::op::Coalesce")]
 /// struct ExampleStruct<'a> {
 ///     num: Option<u32>,
 ///     str: Option<&'a str>,
-///     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
+///     #[semigroup(with = "semigroup::op::Overwrite")]
 ///     boolean: bool,
 /// }
 ///
@@ -76,7 +76,7 @@ pub trait Annotate<A>: Sized {
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::coalesce::Coalesce, Annotate, Annotated};
+/// use semigroup::{op::Coalesce, Annotate, Annotated};
 ///
 /// let annotated = Coalesce(Some(1)).annotated("first");
 ///

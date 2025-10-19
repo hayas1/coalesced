@@ -57,9 +57,9 @@ mod tests {
                 /// # Properties
                 /// <!-- properties -->
                 #[derive(SemigroupInternal)]
-                #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
+                #[semigroup(with = "semigroup::op::Overwrite")]
                 pub struct UnnamedStruct<T: std::ops::Add> (
-                    #[semigroup(with = "semigroup::op::semigroup::add::Added")]
+                    #[semigroup(with = "semigroup::op::Added")]
                     T,
                     u64
                 );

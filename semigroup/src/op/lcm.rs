@@ -9,7 +9,7 @@ use crate::Semigroup;
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::lcm::Lcm, Construction, Semigroup};
+/// use semigroup::{op::Lcm, Construction, Semigroup};
 ///
 /// let a = Lcm(12u32);
 /// let b = Lcm(18);

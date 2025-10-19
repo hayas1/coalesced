@@ -33,10 +33,10 @@ mod tests {
             #[derive(Semigroup)]
             #[semigroup(annotated)]
             pub struct NamedStruct {
-                #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
+                #[semigroup(with = "semigroup::op::Overwrite")]
                 pub foo: String,
                 pub bar: Option<u32>,
-                pub baz: semigroup::op::annotation::overwrite::Overwrite<bool>,
+                pub baz: semigroup::op::Overwrite<bool>,
             }
         },
     )]
@@ -45,9 +45,9 @@ mod tests {
         impl_semigroup::<Internal>,
         syn::parse_quote! {
             #[derive(SemigroupInternal)]
-            #[semigroup(with = "semigroup::op::annotation::overwrite::Overwrite")]
+            #[semigroup(with = "semigroup::op::Overwrite")]
             pub struct UnnamedStruct<T: std::ops::Add> (
-                #[semigroup(with = "semigroup::op::semigroup::add::Added")]
+                #[semigroup(with = "semigroup::op::Added")]
                 T,
                 u64
             );
@@ -58,7 +58,7 @@ mod tests {
         impl_semigroup::<External>,
         syn::parse_quote! {
             #[derive(Semigroup)]
-            #[semigroup(annotated, annotation_param = X, with = "semigroup::op::annotation::overwrite::Overwrite")]
+            #[semigroup(annotated, annotation_param = X, with = "semigroup::op::Overwrite")]
             pub struct NamedStruct{
                 pub foo: String,
                 pub bar: Option<u32>,
@@ -73,7 +73,7 @@ mod tests {
             #[derive(Semigroup)]
             #[semigroup(monoid, commutative)]
             pub struct MonoidStruct{
-                #[semigroup(with = "semigroup::op::semigroup::sum::Sum")]
+                #[semigroup(with = "semigroup::op::Sum")]
                 pub sum: u32,
             }
         },

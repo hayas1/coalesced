@@ -10,7 +10,7 @@ use crate::Semigroup;
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::xor::Xor, Construction, Semigroup};
+/// use semigroup::{op::Xor, Construction, Semigroup};
 ///
 /// let a = Xor(0b101);
 /// let b = Xor(0b100);

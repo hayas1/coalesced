@@ -1,16 +1,22 @@
-pub mod coalesce;
-pub mod concat;
-pub mod overwrite;
+mod coalesce;
+mod concat;
+mod overwrite;
+pub use {coalesce::*, concat::*, overwrite::*};
 
 #[cfg(feature = "monoid")]
-pub mod gcd;
+mod gcd;
 #[cfg(feature = "monoid")]
-pub mod lcm;
-pub mod max;
-pub mod min;
-pub mod prod;
-pub mod sum;
-pub mod xor;
+mod lcm;
+mod max;
+mod min;
+mod prod;
+mod sum;
+mod xor;
+#[cfg(feature = "monoid")]
+pub use {gcd::*, lcm::*};
+pub use {max::*, min::*, prod::*, sum::*, xor::*};
 
 #[cfg(feature = "histogram")]
-pub mod hdr_histogram;
+mod hdr_histogram;
+#[cfg(feature = "histogram")]
+pub use hdr_histogram::*;

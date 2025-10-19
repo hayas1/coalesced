@@ -75,7 +75,7 @@ impl<'a, T> ExactSizeIterator for Iter<'a, T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{monoid::OptionMonoid, op::overwrite::Overwrite};
+    use crate::{monoid::OptionMonoid, op::Overwrite};
 
     use super::*;
 

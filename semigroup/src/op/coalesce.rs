@@ -8,7 +8,7 @@ use crate::{Annotated, AnnotatedSemigroup};
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::coalesce::Coalesce, Construction, Semigroup};
+/// use semigroup::{op::Coalesce, Construction, Semigroup};
 ///
 /// let a = Coalesce(None);
 /// let b = Coalesce(Some(2));

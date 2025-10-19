@@ -10,7 +10,7 @@ use crate::Semigroup;
 ///
 /// # Examples
 /// ```
-/// use semigroup::{op::sum::Sum, Construction, Semigroup};
+/// use semigroup::{op::Sum, Construction, Semigroup};
 ///
 /// let a = Sum(1);
 /// let b = Sum(2);

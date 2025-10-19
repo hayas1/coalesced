@@ -14,9 +14,9 @@ use crate::Semigroup;
 /// #[derive(Debug, Clone, PartialEq, Default, Semigroup)]
 /// #[semigroup(commutative)]
 /// pub struct ExampleStruct {
-///     #[semigroup(with = "semigroup::op::sum::Sum")]
+///     #[semigroup(with = "semigroup::op::Sum")]
 ///     pub sum: u32,
-///     #[semigroup(with = "semigroup::op::min::Min")]
+///     #[semigroup(with = "semigroup::op::Min")]
 ///     pub min: u32,
 /// }
 ///

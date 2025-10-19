@@ -18,11 +18,11 @@
 //! ```
 //! use semigroup::Semigroup;
 //! #[derive(Debug, Clone, PartialEq, Semigroup)]
-//! #[semigroup(with = "semigroup::op::coalesce::Coalesce")]
+//! #[semigroup(with = "semigroup::op::Coalesce")]
 //! pub struct Config<'a> {
 //!     pub num: Option<u32>,
 //!     pub str: Option<&'a str>,
-//!     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
+//!     #[semigroup(with = "semigroup::op::Overwrite")]
 //!     pub boolean: bool,
 //! }
 //!
@@ -36,16 +36,16 @@
 //! ```
 //!
 //! ### Coalesce with rich enum annotation
-//! Some [`Semigroup`] such as [`op::coalesce::Coalesce`] can have an annotation.
+//! Some [`Semigroup`] such as [`op::Coalesce`] can have an annotation.
 //! More detail is in [`Annotate`].
 //! ```
 //! use semigroup::{Annotate, Semigroup};
 //! #[derive(Debug, Clone, PartialEq, Semigroup)]
-//! #[semigroup(annotated, with = "semigroup::op::coalesce::Coalesce")]
+//! #[semigroup(annotated, with = "semigroup::op::Coalesce")]
 //! pub struct Config<'a> {
 //!     pub num: Option<u32>,
 //!     pub str: Option<&'a str>,
-//!     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
+//!     #[semigroup(with = "semigroup::op::Overwrite")]
 //!     pub boolean: bool,
 //! }
 //! #[derive(Debug, Clone, PartialEq)]
@@ -69,11 +69,11 @@
 //!
 //! ## Statistically aggregation
 //! ### Aggregate with histogram
-//! Only available with the `histogram` feature. More detail is in [`op::hdr_histogram::HdrHistogram`].
+//! Only available with the `histogram` feature. More detail is in [`op::HdrHistogram`].
 //! ```
 //! # #[cfg(feature="histogram")]
 //! # {
-//! use semigroup::{op::hdr_histogram::HdrHistogram, Semigroup};
+//! use semigroup::{op::HdrHistogram, Semigroup};
 //!
 //! let histogram1 = (1..100).collect::<HdrHistogram<u32>>();
 //! let histogram2 = (100..1000).collect::<HdrHistogram<u32>>();
@@ -92,7 +92,7 @@
 //! # {
 //! use std::time::{Duration, Instant};
 //! use semigroup::{
-//!     op::{hdr_histogram::HdrHistogram, sum::Sum, min::Min, max::Max},
+//!     op::{HdrHistogram, Sum, Min, Max},
 //!     Construction, Commutative, Semigroup, OptionMonoid, Monoid
 //! };
 //!
@@ -154,7 +154,7 @@
 //! ```
 //! # #[cfg(feature="monoid")]
 //! # {
-//! use semigroup::{op::sum::Sum, Semigroup, Construction, segment_tree::SegmentTree};
+//! use semigroup::{op::Sum, Semigroup, Construction, segment_tree::SegmentTree};
 //! let data = 0..=10000;
 //! let mut sum_tree: SegmentTree<_> = data.into_iter().map(Sum).collect();
 //! assert_eq!(sum_tree.fold(3..6).into_inner(), 12);
