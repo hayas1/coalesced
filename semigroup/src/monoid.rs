@@ -43,16 +43,11 @@ pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
-#[construction(monoid)]
+#[construction(monoid, unit = Self(None))]
 pub struct OptionMonoid<T: Semigroup>(pub Option<T>);
 impl<T: Semigroup> From<T> for OptionMonoid<T> {
     fn from(value: T) -> Self {
         Self(Some(value))
-    }
-}
-impl<T: Semigroup> Monoid for OptionMonoid<T> {
-    fn unit() -> Self {
-        Self(None)
     }
 }
 impl<T: AnnotatedSemigroup<A>, A> AnnotatedMonoid<Option<A>> for OptionMonoid<T> {

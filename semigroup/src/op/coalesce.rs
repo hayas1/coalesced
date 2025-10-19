@@ -17,7 +17,7 @@ use crate::{Annotated, AnnotatedSemigroup};
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(annotated, monoid)]
+#[construction(annotated, monoid, unit = Self(None))]
 #[properties(annotated, monoid)]
 pub struct Coalesce<T>(pub Option<T>);
 impl<T, A> AnnotatedSemigroup<A> for Coalesce<T> {
@@ -26,12 +26,6 @@ impl<T, A> AnnotatedSemigroup<A> for Coalesce<T> {
             (Some(_), _) | (None, None) => base,
             (None, Some(_)) => other,
         }
-    }
-}
-#[cfg(feature = "monoid")]
-impl<T> crate::Monoid for Coalesce<T> {
-    fn unit() -> Self {
-        Self(None)
     }
 }
 

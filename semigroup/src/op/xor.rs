@@ -18,18 +18,12 @@ use crate::Semigroup;
 /// assert_eq!(a.semigroup(b).into_inner(), 0b001);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(monoid, commutative)]
+#[construction(monoid, commutative, unit = Self(T::zero()), unit_where = "T: num::Zero")]
 #[properties(monoid, commutative)]
 pub struct Xor<T: BitXor<Output = T>>(pub T);
 impl<T: BitXor<Output = T>> Semigroup for Xor<T> {
     fn op(base: Self, other: Self) -> Self {
         Self(base.0 ^ other.0)
-    }
-}
-#[cfg(feature = "monoid")]
-impl<T: BitXor<Output = T> + num::Zero> crate::Monoid for Xor<T> {
-    fn unit() -> Self {
-        Self(T::zero())
     }
 }
 

@@ -19,18 +19,12 @@ use crate::Semigroup;
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(monoid, commutative)]
+#[construction(monoid, commutative, unit = Self(T::zero()), unit_where = "T: num::Zero")]
 #[properties(monoid, commutative)]
 pub struct Sum<T: Add<Output = T>>(pub T);
 impl<T: Add<Output = T>> Semigroup for Sum<T> {
     fn op(base: Self, other: Self) -> Self {
         Self(base.0 + other.0)
-    }
-}
-#[cfg(feature = "monoid")]
-impl<T: Add<Output = T> + num::Zero> crate::Monoid for Sum<T> {
-    fn unit() -> Self {
-        Self(T::zero())
     }
 }
 

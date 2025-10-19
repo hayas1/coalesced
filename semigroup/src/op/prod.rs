@@ -19,18 +19,12 @@ use crate::Semigroup;
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(monoid, commutative)]
+#[construction(monoid, commutative, unit = Self(T::one()), unit_where = "T: num::One")]
 #[properties(monoid, commutative)]
 pub struct Prod<T: Mul<Output = T>>(pub T);
 impl<T: Mul<Output = T>> Semigroup for Prod<T> {
     fn op(base: Self, other: Self) -> Self {
         Self(base.0 * other.0)
-    }
-}
-#[cfg(feature = "monoid")]
-impl<T: Mul<Output = T> + num::One> crate::Monoid for Prod<T> {
-    fn unit() -> Self {
-        Self(T::one())
     }
 }
 

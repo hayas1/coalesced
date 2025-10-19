@@ -17,18 +17,12 @@ use crate::Semigroup;
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(monoid, commutative)]
+#[construction(monoid, commutative, unit = Self(T::min_value()), unit_where = "T: num::Bounded")]
 #[properties(monoid, commutative)]
 pub struct Max<T: Ord>(pub T);
 impl<T: Ord> Semigroup for Max<T> {
     fn op(base: Self, other: Self) -> Self {
         Self(std::cmp::max(base.0, other.0))
-    }
-}
-#[cfg(feature = "monoid")]
-impl<T: Ord + num::Bounded> crate::Monoid for Max<T> {
-    fn unit() -> Self {
-        Self(T::min_value())
     }
 }
 

@@ -20,6 +20,7 @@ use crate::{Annotated, AnnotatedSemigroup};
 #[construction(
     annotated,
     monoid,
+    unit = Self(std::iter::empty().collect()),
     annotation_type_param = "A: IntoIterator + FromIterator<A::Item>",
     annotation_where = "A::Item: Clone",
     unit_annotation = "vec![(); 0]",
@@ -66,12 +67,6 @@ where
                 )
             }
         }
-    }
-}
-#[cfg(feature = "monoid")]
-impl<T: IntoIterator + FromIterator<T::Item>> crate::Monoid for Concat<T> {
-    fn unit() -> Self {
-        Self(std::iter::empty().collect())
     }
 }
 

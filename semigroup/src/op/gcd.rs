@@ -18,18 +18,12 @@ use crate::Semigroup;
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(monoid, commutative)]
+#[construction(monoid, commutative, unit = Self(T::zero()))]
 #[properties(monoid, commutative)]
 pub struct Gcd<T: Unsigned + Integer + Clone>(pub T);
 impl<T: Unsigned + Integer + Clone> Semigroup for Gcd<T> {
     fn op(base: Self, other: Self) -> Self {
         Self(num::integer::gcd(base.0, other.0))
-    }
-}
-#[cfg(feature = "monoid")]
-impl<T: Unsigned + Integer + Clone> crate::Monoid for Gcd<T> {
-    fn unit() -> Self {
-        Self(T::zero())
     }
 }
 
