@@ -28,6 +28,27 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// assert_eq!(a.semigroup(b).semigroup(c), ExampleStruct { str: Some("ten"), sum: 110 });
 /// ```
 ///
+/// # Construction
+/// [`Monoid`] can be constructed by [`crate::ConstructionMonoid`] like [`Semigroup`], use `monoid` attribute.
+///
+/// Some operations are already provided by [`crate::op`].
+/// ```
+/// use semigroup::{Construction, Semigroup, Monoid};
+///
+/// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
+/// #[construction(monoid, commutative, unit = Self(0))]
+/// pub struct Sum(u64);
+/// impl Semigroup for Sum {
+///     fn op(base: Self, other: Self) -> Self {
+///         Self(base.0 + other.0)
+///     }
+/// }
+/// let (a, b, c) = (Sum::unit(), Sum(2), Sum(3));
+/// // #[test]
+/// semigroup::assert_monoid!(&a, &b, &c);
+/// assert_eq!(a.semigroup(b).semigroup(c), Sum(5));
+/// ```
+///
 /// # Testing
 /// Use [`crate::assert_monoid!`] macro.
 ///
