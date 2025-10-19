@@ -70,7 +70,7 @@ pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
 /// Some [`Semigroup`] lack a suitable *identity element* for extension to a [`Monoid`].
 ///
 /// # Examples
-/// In [`Semigroup`] operations of [`crate::op::Instant`] does not have a suitable *identity element* for extension to a [`Monoid`].
+/// In [`Semigroup`] operations of [`crate::op::Min`] and [`crate::op::Max`], [`std::time::Instant`] does not have a suitable *identity element* for extension to a [`Monoid`].
 /// ```compile_fail
 /// use std::time::{Duration, Instant};
 /// use semigroup::{Semigroup, Monoid, OptionMonoid};
