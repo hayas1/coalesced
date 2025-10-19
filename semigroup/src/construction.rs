@@ -51,7 +51,7 @@ pub trait Construction<T>: Semigroup + Sized + From<T> + Deref<Target = T> + Der
     }
 }
 
-/// [`ConstructionAnnotated`] represents [`crate::AnnotatedSemigroup`] like [`Construction`].
+/// [`ConstructionAnnotated`] represents [`crate::AnnotatedSemigroup`] as a [new type struct](https://doc.rust-lang.org/rust-by-example/generics/new_types.html) like [`Construction`].
 ///
 /// # Example
 /// TODO more derive details
@@ -87,7 +87,7 @@ pub trait ConstructionAnnotated<T, A>:
     }
 }
 
-/// [`ConstructionMonoid`] represents [`crate::Monoid`] like [`Construction`].
+/// [`ConstructionMonoid`] represents [`crate::Monoid`] as a [new type struct](https://doc.rust-lang.org/rust-by-example/generics/new_types.html). like [`Construction`].
 ///
 /// # Example
 /// Simple example see [`crate::Monoid#construction`].
