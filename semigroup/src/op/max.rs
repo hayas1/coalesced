@@ -15,20 +15,14 @@ use crate::Semigroup;
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 2);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(monoid, commutative)]
+#[construction(monoid, commutative, unit = Self(T::min_value()), unit_where = "T: num::Bounded")]
 #[properties(monoid, commutative)]
 pub struct Max<T: Ord>(pub T);
 impl<T: Ord> Semigroup for Max<T> {
     fn op(base: Self, other: Self) -> Self {
         Self(std::cmp::max(base.0, other.0))
-    }
-}
-#[cfg(feature = "monoid")]
-impl<T: Ord + num::Bounded> Default for Max<T> {
-    fn default() -> Self {
-        Self(T::min_value())
     }
 }
 

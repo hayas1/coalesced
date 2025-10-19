@@ -55,7 +55,7 @@ impl<'a> Construction<'a> {
             }
             Data::Enum(DataEnum { enum_token, .. }) => Err(syn::Error::new_spanned(
                 enum_token,
-                ConstructionError::OnlyNewType,
+                ConstructionError::UnsupportedEnum,
             )),
             Data::Struct(DataStruct { struct_token, .. }) => Err(syn::Error::new_spanned(
                 struct_token,

@@ -7,8 +7,6 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// 2. *Associativity*: `op(op(a, b), c) = op(a, op(b, c))`
 /// 3. Existence of *identity element*: `op(unit(), a) = a = op(a, unit())`
 ///
-/// An identity element is provided by [`Monoid::unit`], which defaults to [`Default::default()`].
-///
 /// # Deriving
 /// [`Monoid`] can be derived like [`Semigroup`], use `monoid` attribute.
 /// ```
@@ -17,20 +15,42 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// #[semigroup(monoid, with = "semigroup::op::coalesce::Coalesce")]
 /// pub struct ExampleStruct<'a> {
 ///     pub str: Option<&'a str>,
-///     #[semigroup(with = "semigroup::op::overwrite::Overwrite")]
-///     pub boolean: bool,
 ///     #[semigroup(with = "semigroup::op::sum::Sum")]
 ///     pub sum: u32,
 /// }
 ///
 /// let a = ExampleStruct::unit();
-/// let b = ExampleStruct { str: Some("ten"), boolean: false, sum: 10 };
-/// let c = ExampleStruct { str: None, boolean: false, sum: 100 };
+/// let b = ExampleStruct { str: Some("ten"), sum: 10 };
+/// let c = ExampleStruct { str: None, sum: 100 };
 ///
 /// // #[test]
 /// semigroup::assert_monoid!(&a, &b, &c);
-/// assert_eq!(a.semigroup(b).semigroup(c), ExampleStruct { str: Some("ten"), boolean: false, sum: 110 });
+/// assert_eq!(a.semigroup(b).semigroup(c), ExampleStruct { str: Some("ten"), sum: 110 });
 /// ```
+///
+/// # Construction
+/// [`Monoid`] can be constructed by [`crate::ConstructionMonoid`] like [`Semigroup`], use `monoid` attribute.
+///
+/// Some operations are already provided by [`crate::op`].
+/// ```
+/// use semigroup::{Construction, Semigroup, Monoid};
+///
+/// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
+/// #[construction(monoid, commutative, unit = Self(0))]
+/// pub struct Sum(u64);
+/// impl Semigroup for Sum {
+///     fn op(base: Self, other: Self) -> Self {
+///         Self(base.0 + other.0)
+///     }
+/// }
+/// let (a, b, c) = (Sum::unit(), Sum(2), Sum(3));
+/// // #[test]
+/// semigroup::assert_monoid!(&a, &b, &c);
+/// assert_eq!(a.semigroup(b).semigroup(c), Sum(5));
+/// ```
+///
+/// # Optional [`Semigroup`]
+/// [`Option<Semigroup>`] can behave like [`Monoid`]. In such case, [`OptionMonoid`] is useful.
 ///
 /// # Testing
 /// Use [`crate::assert_monoid!`] macro.
@@ -39,26 +59,73 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// so they are guaranteed by [`crate::assert_semigroup!`].
 /// However, existence of *identity element* is not guaranteed the macro,
 /// so it must be verified manually using [`crate::assert_monoid!`].
-pub trait Monoid: Semigroup + Default {
-    fn unit() -> Self {
-        Default::default()
-    }
+pub trait Monoid: Semigroup {
+    fn unit() -> Self;
 }
 pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
     fn annotated_unit() -> Annotated<Self, A>;
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
-#[construction(monoid)]
+/// Construct [`Monoid`] from optional [`Semigroup`].
+/// Some [`Semigroup`] lack a suitable *identity element* for extension to a [`Monoid`].
+///
+/// # Examples
+/// In [`Semigroup`] operations of [`crate::op::min::Min`] and [`crate::op::max::Max`], [`std::time::Instant`] does not have a suitable *identity element* for extension to a [`Monoid`].
+/// ```compile_fail
+/// use std::time::{Duration, Instant};
+/// use semigroup::{Semigroup, Monoid, OptionMonoid};
+///
+/// #[derive(Debug, Clone, PartialEq, Semigroup)]
+/// #[semigroup(monoid, commutative)]
+/// pub struct BoundingDuration {
+///     #[semigroup(with = "semigroup::op::min::Min")]
+///     start: Instant,
+///     #[semigroup(with = "semigroup::op::max::Max")]
+///     end: Instant,
+/// }
+/// impl BoundingDuration {
+///      pub fn duration(&self) -> Duration {
+///         self.end - self.start
+///     }
+/// }
+/// ```
+///
+/// In such case, [`OptionMonoid`] is useful.
+/// ```
+/// use std::time::{Duration, Instant};
+/// use semigroup::{Semigroup, Monoid, OptionMonoid};
+///
+/// #[derive(Debug, Clone, PartialEq, Semigroup)]
+/// #[semigroup(commutative)]
+/// pub struct BoundingDuration {
+///     #[semigroup(with = "semigroup::op::min::Min")]
+///     start: Instant,
+///     #[semigroup(with = "semigroup::op::max::Max")]
+///     end: Instant,
+/// }
+/// impl BoundingDuration {
+///      pub fn duration(&self) -> Duration {
+///         self.end - self.start
+///     }
+/// }
+///
+/// let (now, mut bd) = (Instant::now(), OptionMonoid::unit());
+/// let v = vec! [
+///     OptionMonoid::from(BoundingDuration { start: now + Duration::from_millis(50), end: now + Duration::from_millis(100) }),
+///     OptionMonoid::from(BoundingDuration { start: now + Duration::from_millis(100), end: now + Duration::from_millis(200) }),
+///     OptionMonoid::from(BoundingDuration { start: now + Duration::from_millis(150), end: now + Duration::from_millis(300) }),
+/// ];
+/// for vi in v {
+///     bd = bd.semigroup(vi);
+/// }
+/// assert_eq!(bd.as_ref().unwrap().duration(), Duration::from_millis(250));
+/// ```
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
+#[construction(monoid, unit = Self(None))]
 pub struct OptionMonoid<T: Semigroup>(pub Option<T>);
 impl<T: Semigroup> From<T> for OptionMonoid<T> {
     fn from(value: T) -> Self {
         Self(Some(value))
-    }
-}
-impl<T: Semigroup> Default for OptionMonoid<T> {
-    fn default() -> Self {
-        Self(None)
     }
 }
 impl<T: AnnotatedSemigroup<A>, A> AnnotatedMonoid<Option<A>> for OptionMonoid<T> {

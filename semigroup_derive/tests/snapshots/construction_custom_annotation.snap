@@ -7,7 +7,11 @@ expression: formatted
 impl<T: IntoIterator + FromIterator<T::Item>> ::semigroup::Monoid for Concat<T>
 where
     Self: Default,
-{}
+{
+    fn unit() -> Self {
+        Default::default()
+    }
+}
 #[automatically_derived]
 impl<T: IntoIterator + FromIterator<T::Item>> ::semigroup::Semigroup for Concat<T> {
     fn op(base: Self, other: Self) -> Self {
@@ -63,4 +67,10 @@ impl<
 > ::semigroup::ConstructionAnnotated<T, X> for Concat<T>
 where
     X::Item: Clone,
+{}
+#[automatically_derived]
+impl<T: IntoIterator + FromIterator<T::Item>> ::semigroup::ConstructionMonoid<T>
+for Concat<T>
+where
+    Self: ::semigroup::Monoid,
 {}

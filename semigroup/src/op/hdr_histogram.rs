@@ -3,8 +3,6 @@ use semigroup_derive::{properties, ConstructionPriv};
 
 use crate::Semigroup;
 
-pub const DEFAULT_SIGFIG: u8 = 3;
-
 /// A semigroup construction merging two `HdrHistogram`s.
 /// - mean
 /// - quantile
@@ -24,7 +22,7 @@ pub const DEFAULT_SIGFIG: u8 = 3;
 /// assert_eq!(h.value_at_quantile(0.9), 6);
 /// ```
 #[derive(Debug, Clone, PartialEq, ConstructionPriv)]
-#[construction(monoid, commutative)]
+#[construction(monoid, commutative, unit = Self(Self::base_histogram()))]
 #[properties(monoid, commutative)]
 pub struct HdrHistogram<T: Counter>(pub Histogram<T>);
 impl<T: Counter> Semigroup for HdrHistogram<T> {
@@ -33,25 +31,25 @@ impl<T: Counter> Semigroup for HdrHistogram<T> {
         base
     }
 }
-impl<T: Counter> Default for HdrHistogram<T> {
-    fn default() -> Self {
-        Self(Histogram::new(DEFAULT_SIGFIG).unwrap_or_else(|_| unreachable!()))
-    }
-}
 impl<T: Counter> From<u64> for HdrHistogram<T> {
     fn from(value: u64) -> Self {
-        let mut h = Histogram::new(DEFAULT_SIGFIG).unwrap_or_else(|_| unreachable!());
+        let mut h = Self::base_histogram();
         h += value;
         Self(h)
     }
 }
 impl<T: Counter> FromIterator<u64> for HdrHistogram<T> {
     fn from_iter<I: IntoIterator<Item = u64>>(iter: I) -> Self {
-        let mut h = Histogram::new(DEFAULT_SIGFIG).unwrap_or_else(|_| unreachable!());
+        let mut h = Self::base_histogram();
         for v in iter {
             h += v;
         }
         Self(h)
+    }
+}
+impl<T: Counter> HdrHistogram<T> {
+    pub fn base_histogram() -> Histogram<T> {
+        Histogram::new(3).unwrap_or_else(|_| unreachable!())
     }
 }
 

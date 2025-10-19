@@ -11,7 +11,9 @@ use crate::{
 #[derive(Debug, Clone)]
 pub enum ConstructionError {
     OnlyNewType,
+    UnsupportedEnum,
     OnlyAnnotated(Name),
+    OnlyMonoid(Name),
 }
 impl Error for ConstructionError {}
 impl Display for ConstructionError {
@@ -23,8 +25,14 @@ impl Display for ConstructionError {
                     "derive {DERIVE_CONSTRUCTION} only supports newtype structs",
                 )
             }
+            Self::UnsupportedEnum => {
+                write!(f, "derive {DERIVE_CONSTRUCTION} does not support enums")
+            }
             Self::OnlyAnnotated(Name(name)) => {
                 write!(f, "attribute `{name}` are supported only with `annotated`")
+            }
+            Self::OnlyMonoid(Name(name)) => {
+                write!(f, "attribute `{name}` are supported only with `monoid`")
             }
         }
     }
@@ -35,6 +43,7 @@ pub enum SemigroupError {
     UnsupportedEnum,
     UnsupportedUnion,
     OnlyAnnotated(Name),
+    OnlyMonoid(Name),
 }
 impl Error for SemigroupError {}
 impl Display for SemigroupError {
@@ -48,6 +57,9 @@ impl Display for SemigroupError {
             }
             Self::OnlyAnnotated(Name(name)) => {
                 write!(f, "attribute `{name}` are supported only with `annotated`")
+            }
+            Self::OnlyMonoid(Name(name)) => {
+                write!(f, "attribute `{name}` are supported only with `monoid`")
             }
         }
     }

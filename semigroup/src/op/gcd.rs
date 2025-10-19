@@ -16,19 +16,14 @@ use crate::Semigroup;
 ///
 /// assert_eq!(a.semigroup(b).into_inner(), 6);
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(monoid, commutative)]
+#[construction(monoid, commutative, unit = Self(T::zero()))]
 #[properties(monoid, commutative)]
 pub struct Gcd<T: Unsigned + Integer + Clone>(pub T);
 impl<T: Unsigned + Integer + Clone> Semigroup for Gcd<T> {
     fn op(base: Self, other: Self) -> Self {
         Self(num::integer::gcd(base.0, other.0))
-    }
-}
-impl<T: Unsigned + Integer + Clone> Default for Gcd<T> {
-    fn default() -> Self {
-        Self(T::zero())
     }
 }
 

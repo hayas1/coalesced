@@ -1,5 +1,5 @@
 use darling::{FromDeriveInput, FromField};
-use syn::{parse_quote, DeriveInput, Field, Ident, Path, WhereClause};
+use syn::{parse_quote, DeriveInput, Expr, Field, Ident, Path, WherePredicate};
 
 use crate::{annotation::Annotation, constant::Constant, error::SemigroupError, name::var_name};
 
@@ -11,6 +11,10 @@ pub struct ContainerAttr {
 
     #[darling(default)]
     monoid: bool,
+    unit: Option<Expr>,
+    unit_where: Option<String>, // TODO Vec
+    #[darling(default)]
+    without_monoid_impl: bool,
 
     #[darling(default)]
     commutative: bool,
@@ -26,6 +30,10 @@ impl ContainerAttr {
         let Self {
             annotated,
             annotation_param,
+            monoid,
+            unit,
+            unit_where,
+            without_monoid_impl,
             ..
         } = &self;
         if !annotated {
@@ -38,6 +46,20 @@ impl ContainerAttr {
                 Err(darling::Error::custom(SemigroupError::OnlyAnnotated(a)))
             })?;
         }
+        if !monoid {
+            let err_attr_name = if unit.is_some() {
+                Some(var_name!(unit))
+            } else if unit_where.is_some() {
+                Some(var_name!(unit_where))
+            } else if *without_monoid_impl {
+                Some(var_name!(without_monoid_impl))
+            } else {
+                None
+            };
+            err_attr_name.map_or(Ok(()), |a| {
+                Err(darling::Error::custom(SemigroupError::OnlyMonoid(a)))
+            })?;
+        }
         Ok(self)
     }
 
@@ -47,6 +69,18 @@ impl ContainerAttr {
 
     pub fn is_monoid(&self) -> bool {
         self.monoid
+    }
+    pub fn unit(&self) -> Option<&Expr> {
+        self.unit.as_ref()
+    }
+    pub fn unit_where(&self) -> Option<WherePredicate> {
+        self.unit_where
+            .as_deref()
+            .map(syn::parse_str)
+            .map(|p| p.unwrap_or_else(|e| todo!("{e}")))
+    }
+    pub fn with_monoid_impl(&self) -> bool {
+        !self.without_monoid_impl
     }
 
     pub fn is_commutative(&self) -> bool {
@@ -63,14 +97,6 @@ impl ContainerAttr {
             Some(parse_quote! { #annotation_ident<#a> }),
             None,
         )
-    }
-
-    pub fn push_monoid_where(&self, where_clause: &mut WhereClause) {
-        self.is_monoid().then(|| {
-            where_clause.predicates.push(parse_quote! {
-                Self: Default
-            });
-        });
     }
 }
 
@@ -121,6 +147,14 @@ mod tests {
             pub struct UnnamedStruct();
         },
         Err("attribute `annotation_param` are supported only with `annotated`"),
+    )]
+    #[case::invalid_monoid_attr(
+        syn::parse_quote! {
+            #[derive(Semigroup)]
+            #[semigroup(unit = ())]
+            pub struct UnnamedStruct();
+        },
+        Err("attribute `unit` are supported only with `monoid`"),
     )]
     fn test_semigroup_container_attr(
         #[case] input: DeriveInput,

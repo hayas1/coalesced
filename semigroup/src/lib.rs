@@ -88,7 +88,7 @@
 //! ### Aggregate request-response result
 //! Only available with the `histogram` feature.
 //! ```
-//! # #[cfg(feature="histogram")]
+//! # #[cfg(all(feature="monoid", feature="histogram"))]
 //! # {
 //! use std::time::{Duration, Instant};
 //! use semigroup::{
@@ -174,15 +174,11 @@
 //! #[derive(
 //!     Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction,
 //! )]
+//! #[construction(monoid, commutative, unit = Self(i32::MIN))]
 //! struct Max(pub i32);
 //! impl Semigroup for Max {
 //!     fn op(base: Self, other: Self) -> Self {
-//!         Max(std::cmp::max(base.0, other.0))
-//!     }
-//! }
-//! impl Monoid for Max {
-//!     fn unit() -> Self {
-//!         Max(i32::MIN)
+//!         Self(std::cmp::max(base.0, other.0))
 //!     }
 //! }
 //!

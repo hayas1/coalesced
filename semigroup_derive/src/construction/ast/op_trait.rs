@@ -59,14 +59,37 @@ impl<'a> OpTrait<'a> {
             ident, generics, ..
         } = derive;
         let mut g = generics.clone();
-        attr.push_monoid_where(g.make_where_clause());
-        let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
-        attr.is_monoid().then(|| {
-            parse_quote! {
-                #[automatically_derived]
-                #attr_feature_monoid
-                impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {}
-            }
+        attr.unit_where()
+            .into_iter()
+            .for_each(|w| g.make_where_clause().predicates.push(w));
+        (attr.is_monoid() && attr.with_monoid_impl()).then(|| {
+            attr.unit()
+                .map(|expr| {
+                    let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
+                    parse_quote! {
+                        #[automatically_derived]
+                        #attr_feature_monoid
+                        impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
+                            fn unit() -> Self {
+                                #expr
+                            }
+                        }
+                    }
+                })
+                .unwrap_or_else(|| {
+                    let where_default = parse_quote! { Self: Default };
+                    g.make_where_clause().predicates.push(where_default);
+                    let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
+                    parse_quote! {
+                        #[automatically_derived]
+                        #attr_feature_monoid
+                        impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
+                            fn unit() -> Self {
+                                Default::default()
+                            }
+                        }
+                    }
+                })
         })
     }
 
@@ -109,12 +132,12 @@ impl<'a> OpTrait<'a> {
 
         attr.is_annotated().then(|| {
             let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-            let unit = attr.unit_annotate();
+            let unit_annotation = attr.unit_annotate();
             parse_quote! {
                 #[automatically_derived]
                 impl #impl_generics #path_semigroup for #ident #ty_generics #where_clause {
                     fn op(base: Self, other: Self) -> Self {
-                        #path_annotated::lift_unit_annotated_op((base, #unit), (other, #unit))
+                        #path_annotated::lift_unit_annotated_op((base, #unit_annotation), (other, #unit_annotation))
                     }
                 }
             }

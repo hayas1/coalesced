@@ -40,7 +40,7 @@ mod tests {
         impl_construction::<Internal>,
         syn::parse_quote! {
             #[derive(ConstructionPriv)]
-            #[construction(monoid, commutative)]
+            #[construction(monoid, commutative, unit = Default::default())]
             pub struct Sum<T: std::ops::Add>(pub T);
         },
     )]
@@ -54,7 +54,7 @@ mod tests {
                 monoid,
                 annotation_type_param = "X: IntoIterator + FromIterator<X::Item>",
                 annotation_where = "X::Item: Clone",
-                unit = "vec![(); 0]"
+                unit_annotation = "vec![(); 0]"
             )]
             pub struct Concat<T: IntoIterator + FromIterator<T::Item>>(pub T);
         },

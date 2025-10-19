@@ -1,5 +1,5 @@
 use darling::FromDeriveInput;
-use syn::{parse_quote, DeriveInput, Expr, TypeParam, WhereClause};
+use syn::{parse_quote, DeriveInput, Expr, TypeParam, WherePredicate};
 
 use crate::{annotation::Annotation, constant::Constant, error::ConstructionError, name::var_name};
 
@@ -8,16 +8,20 @@ use crate::{annotation::Annotation, constant::Constant, error::ConstructionError
 pub struct ContainerAttr {
     #[darling(default)]
     annotated: bool,
-    unit: Option<Expr>,
+    unit_annotation: Option<Expr>,
 
     #[darling(default)]
     monoid: bool,
+    unit: Option<Expr>,
+    unit_where: Option<String>, // TODO Vec
+    #[darling(default)]
+    without_monoid_impl: bool,
 
     #[darling(default)]
     commutative: bool,
 
     annotation_type_param: Option<TypeParam>,
-    annotation_where: Option<String>,
+    annotation_where: Option<String>, // TODO Vec
     #[darling(default)]
     without_annotate_impl: bool,
 }
@@ -28,15 +32,19 @@ impl ContainerAttr {
     pub fn validate(self) -> darling::Result<Self> {
         let Self {
             annotated,
-            unit,
+            unit_annotation,
             annotation_type_param,
             annotation_where,
             without_annotate_impl,
+            monoid,
+            unit,
+            unit_where,
+            without_monoid_impl: with_monoid_impl,
             ..
         } = &self;
         if !annotated {
-            let err_attr_name = if unit.is_some() {
-                Some(var_name!(unit))
+            let err_attr_name = if unit_annotation.is_some() {
+                Some(var_name!(unit_annotation))
             } else if annotation_type_param.is_some() {
                 Some(var_name!(annotation_type_param))
             } else if annotation_where.is_some() {
@@ -50,6 +58,20 @@ impl ContainerAttr {
                 Err(darling::Error::custom(ConstructionError::OnlyAnnotated(a)))
             })?;
         }
+        if !monoid {
+            let err_attr_name = if unit.is_some() {
+                Some(var_name!(unit))
+            } else if unit_where.is_some() {
+                Some(var_name!(unit_where))
+            } else if *with_monoid_impl {
+                Some(var_name!(with_monoid_impl))
+            } else {
+                None
+            };
+            err_attr_name.map_or(Ok(()), |a| {
+                Err(darling::Error::custom(ConstructionError::OnlyMonoid(a)))
+            })?;
+        }
         Ok(self)
     }
 
@@ -60,13 +82,27 @@ impl ContainerAttr {
     pub fn is_monoid(&self) -> bool {
         self.monoid
     }
+    pub fn unit(&self) -> Option<&Expr> {
+        self.unit.as_ref()
+    }
+    pub fn unit_where(&self) -> Option<WherePredicate> {
+        self.unit_where
+            .as_deref()
+            .map(syn::parse_str)
+            .map(|p| p.unwrap_or_else(|e| todo!("{e}")))
+    }
+    pub fn with_monoid_impl(&self) -> bool {
+        !self.without_monoid_impl
+    }
 
     pub fn is_commutative(&self) -> bool {
         self.commutative
     }
 
     pub fn unit_annotate(&self) -> Expr {
-        self.unit.clone().unwrap_or_else(|| parse_quote!(()))
+        self.unit_annotation
+            .clone()
+            .unwrap_or_else(|| parse_quote!(()))
     }
 
     pub fn annotation(&self, constant: &Constant) -> Annotation {
@@ -77,20 +113,13 @@ impl ContainerAttr {
                 .clone(),
             None,
             self.annotation_where
-                .as_ref()
-                .map(|p| syn::parse_str(p).unwrap_or_else(|_| todo!())),
+                .as_deref()
+                .map(syn::parse_str)
+                .map(|p| p.unwrap_or_else(|e| todo!("{e}"))),
         )
     }
     pub fn with_annotate_impl(&self) -> bool {
         !self.without_annotate_impl
-    }
-
-    pub fn push_monoid_where(&self, where_clause: &mut WhereClause) {
-        self.is_monoid().then(|| {
-            where_clause.predicates.push(parse_quote! {
-                Self: Default
-            });
-        });
     }
 }
 
@@ -123,10 +152,18 @@ mod tests {
     #[case::invalid_annotated_attr(
         syn::parse_quote! {
             #[derive(Construction)]
+            #[construction(unit_annotation = ())]
+            pub struct Construct<T>(T);
+        },
+        Err("attribute `unit_annotation` are supported only with `annotated`"),
+    )]
+    #[case::invalid_monoid_attr(
+        syn::parse_quote! {
+            #[derive(Construction)]
             #[construction(unit = ())]
             pub struct Construct<T>(T);
         },
-        Err("attribute `unit` are supported only with `annotated`"),
+        Err("attribute `unit` are supported only with `monoid`"),
     )]
     fn test_construction_container_attr(
         #[case] input: DeriveInput,
