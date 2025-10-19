@@ -88,7 +88,7 @@
 //! ### Aggregate request-response result
 //! Only available with the `histogram` feature.
 //! ```
-//! # #[cfg(feature="histogram")]
+//! # #[cfg(all(feature="monoid", feature="histogram"))]
 //! # {
 //! use std::time::{Duration, Instant};
 //! use semigroup::{
