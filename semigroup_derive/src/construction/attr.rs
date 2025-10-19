@@ -1,5 +1,5 @@
 use darling::FromDeriveInput;
-use syn::{parse_quote, DeriveInput, Expr, TypeParam};
+use syn::{parse_quote, DeriveInput, Expr, TypeParam, WherePredicate};
 
 use crate::{annotation::Annotation, constant::Constant, error::ConstructionError, name::var_name};
 
@@ -13,15 +13,15 @@ pub struct ContainerAttr {
     #[darling(default)]
     monoid: bool,
     unit: Option<Expr>,
-    // TODO unit_where: Option<String>,
+    unit_where: Option<String>, // TODO Vec
     #[darling(default)]
-    with_monoid_impl: bool,
+    without_monoid_impl: bool,
 
     #[darling(default)]
     commutative: bool,
 
     annotation_type_param: Option<TypeParam>,
-    annotation_where: Option<String>,
+    annotation_where: Option<String>, // TODO Vec
     #[darling(default)]
     without_annotate_impl: bool,
 }
@@ -38,7 +38,8 @@ impl ContainerAttr {
             without_annotate_impl,
             monoid,
             unit,
-            with_monoid_impl,
+            unit_where,
+            without_monoid_impl: with_monoid_impl,
             ..
         } = &self;
         if !annotated {
@@ -60,6 +61,8 @@ impl ContainerAttr {
         if !monoid {
             let err_attr_name = if unit.is_some() {
                 Some(var_name!(unit))
+            } else if unit_where.is_some() {
+                Some(var_name!(unit_where))
             } else if *with_monoid_impl {
                 Some(var_name!(with_monoid_impl))
             } else {
@@ -82,8 +85,14 @@ impl ContainerAttr {
     pub fn unit(&self) -> Option<&Expr> {
         self.unit.as_ref()
     }
+    pub fn unit_where(&self) -> Option<WherePredicate> {
+        self.unit_where
+            .as_deref()
+            .map(syn::parse_str)
+            .map(|p| p.unwrap_or_else(|e| todo!("{e}")))
+    }
     pub fn with_monoid_impl(&self) -> bool {
-        self.with_monoid_impl
+        !self.without_monoid_impl
     }
 
     pub fn is_commutative(&self) -> bool {
@@ -104,8 +113,9 @@ impl ContainerAttr {
                 .clone(),
             None,
             self.annotation_where
-                .as_ref()
-                .map(|p| syn::parse_str(p).unwrap_or_else(|_| todo!())),
+                .as_deref()
+                .map(syn::parse_str)
+                .map(|p| p.unwrap_or_else(|e| todo!("{e}"))),
         )
     }
     pub fn with_annotate_impl(&self) -> bool {

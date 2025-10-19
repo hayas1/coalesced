@@ -1,5 +1,5 @@
 use darling::{FromDeriveInput, FromField};
-use syn::{parse_quote, DeriveInput, Expr, Field, Ident, Path};
+use syn::{parse_quote, DeriveInput, Expr, Field, Ident, Path, WherePredicate};
 
 use crate::{annotation::Annotation, constant::Constant, error::SemigroupError, name::var_name};
 
@@ -12,6 +12,7 @@ pub struct ContainerAttr {
     #[darling(default)]
     monoid: bool,
     unit: Option<Expr>,
+    unit_where: Option<String>, // TODO Vec
     #[darling(default)]
     without_monoid_impl: bool,
 
@@ -31,6 +32,8 @@ impl ContainerAttr {
             annotation_param,
             monoid,
             unit,
+            unit_where,
+            without_monoid_impl,
             ..
         } = &self;
         if !annotated {
@@ -46,6 +49,10 @@ impl ContainerAttr {
         if !monoid {
             let err_attr_name = if unit.is_some() {
                 Some(var_name!(unit))
+            } else if unit_where.is_some() {
+                Some(var_name!(unit_where))
+            } else if *without_monoid_impl {
+                Some(var_name!(without_monoid_impl))
             } else {
                 None
             };
@@ -65,6 +72,12 @@ impl ContainerAttr {
     }
     pub fn unit(&self) -> Option<&Expr> {
         self.unit.as_ref()
+    }
+    pub fn unit_where(&self) -> Option<WherePredicate> {
+        self.unit_where
+            .as_deref()
+            .map(syn::parse_str)
+            .map(|p| p.unwrap_or_else(|e| todo!("{e}")))
     }
     pub fn with_monoid_impl(&self) -> bool {
         !self.without_monoid_impl
