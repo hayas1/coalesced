@@ -11,6 +11,7 @@ use crate::{
 #[derive(Debug, Clone)]
 pub enum ConstructionError {
     OnlyNewType,
+    UnsupportedEnum,
     OnlyAnnotated(Name),
     OnlyMonoid(Name),
 }
@@ -23,6 +24,9 @@ impl Display for ConstructionError {
                     f,
                     "derive {DERIVE_CONSTRUCTION} only supports newtype structs",
                 )
+            }
+            Self::UnsupportedEnum => {
+                write!(f, "derive {DERIVE_CONSTRUCTION} does not support enums")
             }
             Self::OnlyAnnotated(Name(name)) => {
                 write!(f, "attribute `{name}` are supported only with `annotated`")
