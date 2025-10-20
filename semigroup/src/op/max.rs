@@ -1,6 +1,6 @@
 use semigroup_derive::{properties, ConstructionPriv};
 
-use crate::Semigroup;
+use crate::{Annotated, AnnotatedSemigroup};
 
 /// A semigroup construction that returns the maximum value.
 /// # Properties
@@ -17,12 +17,12 @@ use crate::Semigroup;
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(monoid, commutative, unit = Self(T::min_value()), unit_where = "T: num::Bounded")]
-#[properties(monoid, commutative)]
+#[construction(annotated, monoid, commutative, unit = Self(T::min_value()), unit_where = "T: num::Bounded")]
+#[properties(annotated, monoid, commutative)]
 pub struct Max<T: Ord>(pub T);
-impl<T: Ord> Semigroup for Max<T> {
-    fn op(base: Self, other: Self) -> Self {
-        Self(std::cmp::max(base.0, other.0))
+impl<A, T: Ord> AnnotatedSemigroup<A> for Max<T> {
+    fn annotated_op(base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A> {
+        std::cmp::max_by(base, other, |a, b| a.value().cmp(b.value()))
     }
 }
 
