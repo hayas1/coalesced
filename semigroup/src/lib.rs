@@ -1,5 +1,5 @@
 #![cfg_attr(doc_cfg, feature(doc_cfg))]
-//! [`Semigroup`](crate::semigroup::Semigroup) trait is useful for
+//! [*semigroup*](crate::semigroup::Semigroup) trait is useful for
 //! - reading configs from multiple sources
 //! - statistically aggregation
 //! - fast range queries using segment tree

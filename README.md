@@ -1,6 +1,6 @@
 <!-- cargo-rdme start -->
 
-[`Semigroup`](https://docs.rs/semigroup/latest/semigroup/semigroup/trait.Semigroup.html) trait is useful for
+[*semigroup*](https://docs.rs/semigroup/latest/semigroup/semigroup/trait.Semigroup.html) trait is useful for
 - reading configs from multiple sources
 - statistically aggregation
 - fast range queries using segment tree
