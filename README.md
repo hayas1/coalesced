@@ -108,7 +108,7 @@ impl RequestAggregate {
             pass: Sum(if pass { 1 } else { 0 }),
             start: Min(time),
             end: Max(time),
-            latency: HdrHistogram::from_iter([latency.as_millis() as u64]),
+            latency: HdrHistogram::from(latency.as_millis() as u64),
         }
     }
     pub fn count(&self) -> u64 {
@@ -129,17 +129,17 @@ impl RequestAggregate {
 }
 
 let (now, mut agg) = (Instant::now(), OptionMonoid::unit());
-for i in 0..10000 {
+for i in 0..100000 {
     let duration = Duration::from_millis(i);
     agg = agg.semigroup(RequestAggregate::new(i % 2 == 0, now + duration, duration).into());
 }
 
 let request_aggregate = agg.into_inner().unwrap();
-assert_eq!(request_aggregate.count(), 10000);
+assert_eq!(request_aggregate.count(), 100000);
 assert_eq!(request_aggregate.pass_rate(), 0.5);
-assert_eq!(request_aggregate.duration(), Duration::from_millis(9999));
-assert_eq!(request_aggregate.rps(), 1000.1000100010001);
-assert_eq!(request_aggregate.p99_latency(), Duration::from_millis(9903));
+assert_eq!(request_aggregate.duration(), Duration::from_millis(99999));
+assert_eq!(request_aggregate.rps(), 1000.0100001000011);
+assert_eq!(request_aggregate.p99_latency(), Duration::from_millis(99007));
 ```
 
 ### Segment tree
