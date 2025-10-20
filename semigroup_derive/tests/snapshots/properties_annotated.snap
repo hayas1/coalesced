@@ -6,8 +6,8 @@ expression: formatted
 /// A semigroup construction that returns the first non-`None` value.
 /// # Properties
 /// <!-- properties start -->
-///| annotated | monoid | commutative |
-///|-----------|--------|-------------|
-///| ✅        | ✅     | ❌          |
+///| [`semigroup::Annotate`] | [`semigroup::Monoid`] | [`semigroup::Commutative`] |
+///|-------------------------|-----------------------|----------------------------|
+///|            ✅           |           ✅          |             ❌             |
 ///<!-- properties end -->
 pub struct Coalesce<T>(pub Option<T>);

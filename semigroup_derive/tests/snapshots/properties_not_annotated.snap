@@ -6,9 +6,9 @@ expression: formatted
 /// A semigroup struct that returns the sum and overwrite
 /// # Properties
 /// <!-- properties start -->
-///| annotated | monoid | commutative |
-///|-----------|--------|-------------|
-///| ❌        | ❌     | ❌          |
+///| [`crate::Annotate`] | [`crate::Monoid`] | [`crate::Commutative`] |
+///|---------------------|-------------------|------------------------|
+///|          ❌         |         ❌        |           ❌           |
 ///<!-- properties end -->
 pub struct UnnamedStruct<T: std::ops::Add>(
     #[semigroup(with = "semigroup::op::Added")]
