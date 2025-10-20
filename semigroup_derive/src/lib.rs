@@ -49,3 +49,15 @@ pub fn properties(
         .unwrap_or_else(syn::Error::into_compile_error)
         .into()
 }
+
+#[proc_macro_attribute]
+pub fn properties_priv(
+    attr: proc_macro::TokenStream,
+    item: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
+    let meta = syn::parse_macro_input!(attr);
+    let item_struct = syn::parse_macro_input!(item);
+    properties::impl_properties::<constant::Internal>(&meta, &item_struct)
+        .unwrap_or_else(syn::Error::into_compile_error)
+        .into()
+}
