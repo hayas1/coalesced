@@ -3,7 +3,6 @@
 //! - reading configs from multiple sources
 //! - statistically aggregation
 //! - fast range queries using segment tree
-//! - and so on...
 //!
 //! # Usage
 //! ```sh
@@ -25,11 +24,11 @@
 //!     pub boolean: bool,
 //! }
 //!
-//! let file = Config { num: Some(1), str: None, boolean: true };
-//! let env = Config { num: None, str: Some("ten"), boolean: false };
-//! let cli = Config { num: Some(100), str: None, boolean: false };
+//! let cli = Config { num: Some(1), str: None, boolean: true };
+//! let file = Config { num: None, str: Some("ten"), boolean: false };
+//! let env = Config { num: Some(100), str: None, boolean: false };
 //!
-//! let config = file.semigroup(env).semigroup(cli);
+//! let config = cli.semigroup(file).semigroup(env);
 //!
 //! assert_eq!(config, Config { num: Some(1), str: Some("ten"), boolean: false });
 //! ```
@@ -54,16 +53,16 @@
 //!     Cli,
 //! }
 //!
-//! let file = Config { num: Some(1), str: None, boolean: true }.annotated(Source::File);
-//! let env = Config { num: None, str: Some("ten"), boolean: false }.annotated(Source::Env);
-//! let cli = Config { num: Some(100), str: None, boolean: false }.annotated(Source::Cli);
+//! let cli = Config { num: Some(1), str: None, boolean: true }.annotated(Source::Cli);
+//! let file = Config { num: None, str: Some("ten"), boolean: false }.annotated(Source::File);
+//! let env = Config { num: Some(100), str: None, boolean: false }.annotated(Source::Env);
 //!
-//! let config = file.semigroup(env).semigroup(cli);
+//! let config = cli.semigroup(file).semigroup(env);
 //!
 //! assert_eq!(config.value(), &Config { num: Some(1), str: Some("ten"), boolean: false });
-//! assert_eq!(config.annotation().num, Source::File);
-//! assert_eq!(config.annotation().str, Source::Env);
-//! assert_eq!(config.annotation().boolean, Source::Cli);
+//! assert_eq!(config.annotation().num, Source::Cli);
+//! assert_eq!(config.annotation().str, Source::File);
+//! assert_eq!(config.annotation().boolean, Source::Env);
 //! ```
 //!
 //! ## Statistically aggregation
