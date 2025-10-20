@@ -181,7 +181,10 @@ semigroup::assert_monoid!(&max_tree[..]);
 ```
 
 ## Documents
-<https://hayas1.github.io/semigroup/semigroup>
+- GitHub: <https://github.com/hayas1/semigroup>
+- GitHub Pages: <https://hayas1.github.io/semigroup/semigroup>
+- Crates.io: <https://crates.io/crates/semigroup>
+- Docs.rs: <https://docs.rs/semigroup>
 
 ## Testing
 ### Benchmarks
