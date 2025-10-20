@@ -1,6 +1,6 @@
 use std::ops::Mul;
 
-use semigroup_derive::{properties, ConstructionPriv};
+use semigroup_derive::{properties_priv, ConstructionPriv};
 
 use crate::Semigroup;
 
@@ -20,7 +20,7 @@ use crate::Semigroup;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(monoid, commutative, unit = Self(T::one()), unit_where = "T: num::One")]
-#[properties(monoid, commutative)]
+#[properties_priv(monoid, commutative)]
 pub struct Prod<T: Mul<Output = T>>(pub T);
 impl<T: Mul<Output = T>> Semigroup for Prod<T> {
     fn op(base: Self, other: Self) -> Self {

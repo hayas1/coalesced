@@ -1,5 +1,5 @@
 use hdrhistogram::{Counter, Histogram};
-use semigroup_derive::{properties, ConstructionPriv};
+use semigroup_derive::{properties_priv, ConstructionPriv};
 
 use crate::Semigroup;
 
@@ -23,7 +23,7 @@ use crate::Semigroup;
 /// ```
 #[derive(Debug, Clone, PartialEq, ConstructionPriv)]
 #[construction(monoid, commutative, unit = Self(Self::base_histogram()))]
-#[properties(monoid, commutative)]
+#[properties_priv(monoid, commutative)]
 pub struct HdrHistogram<T: Counter>(pub Histogram<T>);
 impl<T: Counter> Semigroup for HdrHistogram<T> {
     fn op(mut base: Self, other: Self) -> Self {
