@@ -24,32 +24,62 @@ use crate::Semigroup;
 #[derive(Debug, Clone, PartialEq, ConstructionPriv)]
 #[construction(monoid, commutative, unit = Self(Self::base_histogram()))]
 #[properties_priv(monoid, commutative)]
-pub struct HdrHistogram<T: Counter>(pub Histogram<T>);
+pub struct HdrHistogram<T: Counter>(HdrHistogramInner<T>);
 impl<T: Counter> Semigroup for HdrHistogram<T> {
-    fn op(mut base: Self, other: Self) -> Self {
-        base.0 += other.0;
-        base
+    fn op(base: Self, other: Self) -> Self {
+        match (base, other) {
+            (Self(HdrHistogramInner::Value(a)), Self(HdrHistogramInner::Value(b))) => {
+                Self(Self::base_histogram())
+                    .semigroup(Self(HdrHistogramInner::Value(a)))
+                    .semigroup(Self(HdrHistogramInner::Value(b)))
+            }
+            (Self(HdrHistogramInner::Value(a)), Self(HdrHistogramInner::Histogram(mut b))) => {
+                b += a;
+                Self(HdrHistogramInner::Histogram(b))
+            }
+            (Self(HdrHistogramInner::Histogram(mut a)), Self(HdrHistogramInner::Value(b))) => {
+                a += b;
+                Self(HdrHistogramInner::Histogram(a))
+            }
+            (Self(HdrHistogramInner::Histogram(mut a)), Self(HdrHistogramInner::Histogram(b))) => {
+                a += b;
+                Self(HdrHistogramInner::Histogram(a))
+            }
+        }
     }
 }
 impl<T: Counter> From<u64> for HdrHistogram<T> {
     fn from(value: u64) -> Self {
-        let mut h = Self::base_histogram();
-        h += value;
-        Self(h)
+        Self(HdrHistogramInner::Value(value))
     }
 }
 impl<T: Counter> FromIterator<u64> for HdrHistogram<T> {
     fn from_iter<I: IntoIterator<Item = u64>>(iter: I) -> Self {
-        let mut h = Self::base_histogram();
+        let mut h = Self(Self::base_histogram());
         for v in iter {
-            h += v;
+            h = h.semigroup(v.into());
         }
-        Self(h)
+        h
     }
 }
 impl<T: Counter> HdrHistogram<T> {
-    pub fn base_histogram() -> Histogram<T> {
-        Histogram::new(3).unwrap_or_else(|_| unreachable!())
+    fn base_histogram() -> HdrHistogramInner<T> {
+        HdrHistogramInner::Histogram(Histogram::new(3).unwrap_or_else(|_| unreachable!()))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum HdrHistogramInner<T: Counter> {
+    Value(u64),
+    Histogram(Histogram<T>),
+}
+impl<T: Counter> std::ops::Deref for HdrHistogramInner<T> {
+    type Target = Histogram<T>;
+    fn deref(&self) -> &Self::Target {
+        match self {
+            HdrHistogramInner::Value(_) => todo!(), // TODO cannot deref value
+            HdrHistogramInner::Histogram(h) => h,
+        }
     }
 }
 
