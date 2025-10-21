@@ -155,10 +155,17 @@ mod tests {
 
     #[test]
     fn test_hdr_histogram() {
-        let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
-        let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();
+        let a = HdrHistogram::from(1);
+        let b: HdrHistogram<u32> = [2, 3].into_iter().collect();
+        let c: HdrHistogram<u32> = [4, 5].into_iter().collect();
+        let d = HdrHistogram::from(6);
 
-        let histogram = a.clone().semigroup(b.clone()).into_histogram();
+        let histogram = a
+            .clone()
+            .semigroup(b.clone())
+            .semigroup(c.clone())
+            .semigroup(d.clone())
+            .into_histogram();
         assert_eq!(histogram.max(), 6);
         assert_eq!(histogram.min(), 1);
         assert_eq!(histogram.mean(), 3.5);
@@ -166,7 +173,7 @@ mod tests {
         assert_eq!(histogram.value_at_quantile(0.5), 3);
         assert_eq!(histogram.value_at_quantile(0.9), 6);
 
-        let histogram = b.semigroup(a).into_histogram();
+        let histogram = a.semigroup(d).semigroup(b).semigroup(c).into_histogram();
         assert_eq!(histogram.max(), 6);
         assert_eq!(histogram.min(), 1);
         assert_eq!(histogram.mean(), 3.5);
