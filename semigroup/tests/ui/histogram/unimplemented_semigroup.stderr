@@ -8,8 +8,8 @@ error[E0277]: the trait bound `Option<u32>: Semigroup` is not satisfied
             Annotated<T, A>
             Coalesce<T>
             Gcd<T>
-            HdrHistogram<T>
-            HdrHistogramInner<T>
+            HdrHistogram<C>
+            HdrHistogramInner<C>
             Lcm<T>
             Max<T>
             Min<T>
