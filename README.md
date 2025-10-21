@@ -129,17 +129,17 @@ impl RequestAggregate {
 }
 
 let (now, mut agg) = (Instant::now(), OptionMonoid::unit());
-for i in 0..100000 {
+for i in 0..10000000 {
     let duration = Duration::from_millis(i);
     agg = agg.semigroup(RequestAggregate::new(i % 2 == 0, now + duration, duration).into());
 }
 
 let request_aggregate = agg.into_inner().unwrap();
-assert_eq!(request_aggregate.count(), 100000);
+assert_eq!(request_aggregate.count(), 10000000);
 assert_eq!(request_aggregate.pass_rate(), 0.5);
-assert_eq!(request_aggregate.duration(), Duration::from_millis(99999));
-assert_eq!(request_aggregate.rps(), 1000.0100001000011);
-assert_eq!(request_aggregate.p99_latency(), Duration::from_millis(99007));
+assert_eq!(request_aggregate.duration(), Duration::from_millis(9999999));
+assert_eq!(request_aggregate.rps(), 1000.00010000001);
+assert_eq!(request_aggregate.p99_latency(), Duration::from_millis(9904127));
 ```
 
 ### Segment tree
