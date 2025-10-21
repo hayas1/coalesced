@@ -9,9 +9,9 @@ error[E0277]: the trait bound `Option<u32>: Semigroup` is not satisfied
             Coalesce<T>
             Gcd<T>
             HdrHistogram<T>
+            HdrHistogramInner<T>
             Lcm<T>
             Max<T>
             Min<T>
-            NamedStruct<'a>
           and $N others
   = note: this error originates in the derive macro `Semigroup` (in Nightly builds, run with -Z macro-backtrace for more info)
