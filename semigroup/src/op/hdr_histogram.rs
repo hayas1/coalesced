@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use hdrhistogram::{Counter, Histogram};
 use semigroup_derive::{properties_priv, ConstructionPriv};
 
@@ -18,53 +20,34 @@ use crate::Semigroup;
 /// let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();
 ///
 /// let h = a.semigroup(b);
-/// assert_eq!(h.mean(), 3.5);
-/// assert_eq!(h.value_at_quantile(0.9), 6);
+/// assert_eq!(h.histogram().mean(), 3.5);
+/// assert_eq!(h.histogram().value_at_quantile(0.9), 6);
 /// ```
 #[derive(Debug, Clone, PartialEq, ConstructionPriv)]
-#[construction(monoid, commutative, unit = Self(Self::base_histogram()))]
+#[construction(monoid, commutative, unit = Self(HdrHistogramInner::new()), without_from_impl)]
 #[properties_priv(monoid, commutative)]
-pub struct HdrHistogram<T: Counter>(HdrHistogramInner<T>);
+pub struct HdrHistogram<T: Counter>(pub HdrHistogramInner<T>);
 impl<T: Counter> Semigroup for HdrHistogram<T> {
     fn op(base: Self, other: Self) -> Self {
-        match (base, other) {
-            (Self(HdrHistogramInner::Value(a)), Self(HdrHistogramInner::Value(b))) => {
-                Self(Self::base_histogram())
-                    .semigroup(Self(HdrHistogramInner::Value(a)))
-                    .semigroup(Self(HdrHistogramInner::Value(b)))
-            }
-            (Self(HdrHistogramInner::Value(a)), Self(HdrHistogramInner::Histogram(mut b))) => {
-                b += a;
-                Self(HdrHistogramInner::Histogram(b))
-            }
-            (Self(HdrHistogramInner::Histogram(mut a)), Self(HdrHistogramInner::Value(b))) => {
-                a += b;
-                Self(HdrHistogramInner::Histogram(a))
-            }
-            (Self(HdrHistogramInner::Histogram(mut a)), Self(HdrHistogramInner::Histogram(b))) => {
-                a += b;
-                Self(HdrHistogramInner::Histogram(a))
-            }
-        }
+        Self(HdrHistogramInner::op(base.0, other.0))
     }
 }
-impl<T: Counter> From<u64> for HdrHistogram<T> {
-    fn from(value: u64) -> Self {
-        Self(HdrHistogramInner::Value(value))
+impl<T: Counter, U: Into<HdrHistogramInner<T>>> From<U> for HdrHistogram<T> {
+    fn from(value: U) -> Self {
+        Self(value.into())
     }
 }
 impl<T: Counter> FromIterator<u64> for HdrHistogram<T> {
     fn from_iter<I: IntoIterator<Item = u64>>(iter: I) -> Self {
-        let mut h = Self(Self::base_histogram());
-        for v in iter {
-            h = h.semigroup(v.into());
-        }
-        h
+        Self(HdrHistogramInner::from_iter(iter))
     }
 }
 impl<T: Counter> HdrHistogram<T> {
-    fn base_histogram() -> HdrHistogramInner<T> {
-        HdrHistogramInner::Histogram(Histogram::new(3).unwrap_or_else(|_| unreachable!()))
+    pub fn histogram(&self) -> Cow<Histogram<T>> {
+        self.0.histogram()
+    }
+    pub fn into_histogram(self) -> Histogram<T> {
+        self.0.into_histogram()
     }
 }
 
@@ -73,13 +56,70 @@ pub enum HdrHistogramInner<T: Counter> {
     Value(u64),
     Histogram(Histogram<T>),
 }
-impl<T: Counter> std::ops::Deref for HdrHistogramInner<T> {
-    type Target = Histogram<T>;
-    fn deref(&self) -> &Self::Target {
-        match self {
-            HdrHistogramInner::Value(_) => todo!(), // TODO cannot deref value
+impl<T: Counter> Semigroup for HdrHistogramInner<T> {
+    fn op(base: Self, other: Self) -> Self {
+        match (base, other) {
+            (Self::Value(a), Self::Value(b)) => vec![a, b].into_iter().collect(),
+            (Self::Value(a), Self::Histogram(mut b)) => {
+                b += a;
+                Self::Histogram(b)
+            }
+            (Self::Histogram(mut a), Self::Value(b)) => {
+                a += b;
+                Self::Histogram(a)
+            }
+            (Self::Histogram(mut a), Self::Histogram(b)) => {
+                a += b;
+                Self::Histogram(a)
+            }
+        }
+    }
+}
+impl<T: Counter> From<u64> for HdrHistogramInner<T> {
+    fn from(value: u64) -> Self {
+        Self::Value(value)
+    }
+}
+impl<T: Counter> From<Histogram<T>> for HdrHistogramInner<T> {
+    fn from(value: Histogram<T>) -> Self {
+        Self::Histogram(value)
+    }
+}
+impl<T: Counter> FromIterator<u64> for HdrHistogramInner<T> {
+    fn from_iter<I: IntoIterator<Item = u64>>(iter: I) -> Self {
+        let mut h = Self::base_histogram();
+        for v in iter {
+            h += v;
+        }
+        h.into()
+    }
+}
+impl<T: Counter> From<HdrHistogramInner<T>> for Histogram<T> {
+    fn from(value: HdrHistogramInner<T>) -> Self {
+        match value {
+            HdrHistogramInner::Value(v) => HdrHistogramInner::value_histogram(v),
             HdrHistogramInner::Histogram(h) => h,
         }
+    }
+}
+impl<T: Counter> HdrHistogramInner<T> {
+    fn new() -> Self {
+        Self::Histogram(Self::base_histogram())
+    }
+    fn base_histogram() -> Histogram<T> {
+        Histogram::new(3).unwrap_or_else(|_| unreachable!())
+    }
+    fn value_histogram(value: u64) -> Histogram<T> {
+        Some(value).into_iter().collect::<Self>().into()
+    }
+    fn histogram(&self) -> Cow<Histogram<T>> {
+        match self {
+            Self::Value(v) => Cow::Owned(Self::value_histogram(*v)),
+            Self::Histogram(h) => Cow::Borrowed(h),
+        }
+    }
+    fn into_histogram(self) -> Histogram<T> {
+        self.into()
     }
 }
 
@@ -118,20 +158,20 @@ mod tests {
         let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
         let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();
 
-        let res = a.clone().semigroup(b.clone());
-        assert_eq!(res.max(), 6);
-        assert_eq!(res.min(), 1);
-        assert_eq!(res.mean(), 3.5);
-        assert_eq!(res.len(), 6);
-        assert_eq!(res.value_at_quantile(0.5), 3);
-        assert_eq!(res.value_at_quantile(0.9), 6);
+        let histogram = a.clone().semigroup(b.clone()).into_histogram();
+        assert_eq!(histogram.max(), 6);
+        assert_eq!(histogram.min(), 1);
+        assert_eq!(histogram.mean(), 3.5);
+        assert_eq!(histogram.len(), 6);
+        assert_eq!(histogram.value_at_quantile(0.5), 3);
+        assert_eq!(histogram.value_at_quantile(0.9), 6);
 
-        let res = b.semigroup(a);
-        assert_eq!(res.max(), 6);
-        assert_eq!(res.min(), 1);
-        assert_eq!(res.mean(), 3.5);
-        assert_eq!(res.len(), 6);
-        assert_eq!(res.value_at_quantile(0.5), 3);
-        assert_eq!(res.value_at_quantile(0.9), 6);
+        let histogram = b.semigroup(a).into_histogram();
+        assert_eq!(histogram.max(), 6);
+        assert_eq!(histogram.min(), 1);
+        assert_eq!(histogram.mean(), 3.5);
+        assert_eq!(histogram.len(), 6);
+        assert_eq!(histogram.value_at_quantile(0.5), 3);
+        assert_eq!(histogram.value_at_quantile(0.9), 6);
     }
 }

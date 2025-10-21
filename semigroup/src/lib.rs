@@ -76,7 +76,7 @@
 //! let histogram1 = (1..100).collect::<HdrHistogram<u32>>();
 //! let histogram2 = (100..1000).collect::<HdrHistogram<u32>>();
 //!
-//! let histogram = histogram1.semigroup(histogram2);
+//! let histogram = histogram1.semigroup(histogram2).into_histogram();
 //!
 //! assert_eq!(histogram.mean(), 499.9999999999999);
 //! assert_eq!(histogram.value_at_quantile(0.9), 900);
@@ -126,7 +126,7 @@
 //!         self.count.into_inner() as f64 / self.duration().as_secs_f64()
 //!     }
 //!     pub fn p99_latency(&self) -> Duration {
-//!         Duration::from_millis(self.latency.value_at_quantile(0.99) as u64)
+//!         Duration::from_millis(self.latency.histogram().value_at_quantile(0.99) as u64)
 //!     }
 //! }
 //!
