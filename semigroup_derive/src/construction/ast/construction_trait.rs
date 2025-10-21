@@ -15,7 +15,9 @@ pub struct ConstructionTrait<'a> {
 }
 impl ToTokens for ConstructionTrait<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        self.impl_from().to_tokens(tokens);
+        self.impl_from()
+            .into_iter()
+            .for_each(|i| i.to_tokens(tokens));
         self.impl_deref().to_tokens(tokens);
         self.impl_deref_mut().to_tokens(tokens);
         self.impl_construction().to_tokens(tokens);
@@ -44,24 +46,27 @@ impl<'a> ConstructionTrait<'a> {
             field,
         })
     }
-    pub fn impl_from(&self) -> ItemImpl {
+    pub fn impl_from(&self) -> Option<ItemImpl> {
         let Self {
             derive: DeriveInput {
                 ident, generics, ..
             },
             field: Field { ty, .. },
+            attr,
             ..
         } = self;
         let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
-        parse_quote! {
-            #[automatically_derived]
-            impl #impl_generics From<#ty> for #ident #ty_generics #where_clause {
-                fn from(value: #ty) -> Self {
-                    #ident(value)
+        attr.with_from_impl().then(|| {
+            parse_quote! {
+                #[automatically_derived]
+                impl #impl_generics From<#ty> for #ident #ty_generics #where_clause {
+                    fn from(value: #ty) -> Self {
+                        #ident(value)
+                    }
                 }
             }
-        }
+        })
     }
     pub fn impl_construction(&self) -> ItemImpl {
         let Self {
