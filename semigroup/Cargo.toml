@@ -25,8 +25,10 @@ hdrhistogram = { version = "7.5.4", optional = true }
 [dev-dependencies]
 semigroup = { path = ".", features = ["derive", "test"] }
 rstest = "0.26.1"
-serde_json = "1.0.145"
 trybuild = { version = "1.0.111", features = ["diff"] }
+serde_json = "1.0.145"
+serde = { version = "1.0.228", features = ["derive"] }
+clap = { version = "4.5.50", features = ["derive", "env"] }
 
 
 [lints.rust]
