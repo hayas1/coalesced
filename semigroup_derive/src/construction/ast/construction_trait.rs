@@ -15,9 +15,15 @@ pub struct ConstructionTrait<'a> {
 }
 impl ToTokens for ConstructionTrait<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        self.impl_from().to_tokens(tokens);
-        self.impl_deref().to_tokens(tokens);
-        self.impl_deref_mut().to_tokens(tokens);
+        self.impl_from()
+            .into_iter()
+            .for_each(|i| i.to_tokens(tokens));
+        self.impl_deref()
+            .into_iter()
+            .for_each(|i| i.to_tokens(tokens));
+        self.impl_deref_mut()
+            .into_iter()
+            .for_each(|i| i.to_tokens(tokens));
         self.impl_construction().to_tokens(tokens);
         self.impl_construction_annotated()
             .into_iter()
@@ -43,25 +49,6 @@ impl<'a> ConstructionTrait<'a> {
             annotation,
             field,
         })
-    }
-    pub fn impl_from(&self) -> ItemImpl {
-        let Self {
-            derive: DeriveInput {
-                ident, generics, ..
-            },
-            field: Field { ty, .. },
-            ..
-        } = self;
-        let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-
-        parse_quote! {
-            #[automatically_derived]
-            impl #impl_generics From<#ty> for #ident #ty_generics #where_clause {
-                fn from(value: #ty) -> Self {
-                    #ident(value)
-                }
-            }
-        }
     }
     pub fn impl_construction(&self) -> ItemImpl {
         let Self {
@@ -140,42 +127,70 @@ impl<'a> ConstructionTrait<'a> {
             }
         })
     }
-    pub fn impl_deref(&self) -> ItemImpl {
+    pub fn impl_from(&self) -> Option<ItemImpl> {
         let Self {
             derive: DeriveInput {
                 ident, generics, ..
             },
             field: Field { ty, .. },
+            attr,
             ..
         } = self;
         let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
-        parse_quote! {
-            #[automatically_derived]
-            impl #impl_generics std::ops::Deref for #ident #ty_generics #where_clause {
-                type Target = #ty;
-                fn deref(&self) -> &Self::Target {
-                    &self.0
+        attr.with_from_impl().then(|| {
+            parse_quote! {
+                #[automatically_derived]
+                impl #impl_generics From<#ty> for #ident #ty_generics #where_clause {
+                    fn from(value: #ty) -> Self {
+                        #ident(value)
+                    }
                 }
             }
-        }
+        })
     }
-    pub fn impl_deref_mut(&self) -> ItemImpl {
+    pub fn impl_deref(&self) -> Option<ItemImpl> {
         let Self {
             derive: DeriveInput {
                 ident, generics, ..
             },
+            field: Field { ty, .. },
+            attr,
             ..
         } = self;
         let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
-        parse_quote! {
-            #[automatically_derived]
-            impl #impl_generics std::ops::DerefMut for #ident #ty_generics #where_clause {
-                fn deref_mut(&mut self) -> &mut Self::Target {
-                    &mut self.0
+        attr.with_deref_impl().then(|| {
+            parse_quote! {
+                #[automatically_derived]
+                impl #impl_generics std::ops::Deref for #ident #ty_generics #where_clause {
+                    type Target = #ty;
+                    fn deref(&self) -> &Self::Target {
+                        &self.0
+                    }
                 }
             }
-        }
+        })
+    }
+    pub fn impl_deref_mut(&self) -> Option<ItemImpl> {
+        let Self {
+            derive: DeriveInput {
+                ident, generics, ..
+            },
+            attr,
+            ..
+        } = self;
+        let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+
+        attr.with_deref_mut_impl().then(|| {
+            parse_quote! {
+                #[automatically_derived]
+                impl #impl_generics std::ops::DerefMut for #ident #ty_generics #where_clause {
+                    fn deref_mut(&mut self) -> &mut Self::Target {
+                        &mut self.0
+                    }
+                }
+            }
+        })
     }
 }
