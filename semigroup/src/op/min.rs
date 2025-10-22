@@ -1,4 +1,4 @@
-use semigroup_derive::{properties_priv, ConstructionPriv};
+use semigroup_derive::{ConstructionPriv, properties_priv};
 
 use crate::{Annotated, AnnotatedSemigroup};
 
@@ -28,7 +28,7 @@ impl<A, T: Ord> AnnotatedSemigroup<A> for Min<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, assert_semigroup, Construction, Semigroup};
+    use crate::{Construction, Semigroup, assert_commutative, assert_monoid, assert_semigroup};
 
     use super::*;
 

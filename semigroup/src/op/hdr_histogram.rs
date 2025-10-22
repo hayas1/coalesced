@@ -1,5 +1,5 @@
 use hdrhistogram::{Counter, Histogram};
-use semigroup_derive::{properties_priv, ConstructionPriv};
+use semigroup_derive::{ConstructionPriv, properties_priv};
 
 use crate::Semigroup;
 
@@ -55,7 +55,7 @@ impl<T: Counter> HdrHistogram<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, assert_semigroup, Semigroup};
+    use crate::{Semigroup, assert_commutative, assert_monoid, assert_semigroup};
 
     use super::*;
 
