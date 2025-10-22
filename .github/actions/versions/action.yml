@@ -44,3 +44,28 @@ runs:
         else
           echo "result=false" >>"$GITHUB_OUTPUT"
         fi
+    - name: Find workspace crates
+      id: crates-list
+      uses: mikefarah/yq@v4
+      if: steps.should-release.outputs.result == 'true'
+      with:
+        cmd: yq -p toml '.workspace.members' -o json <Cargo.toml
+    - name: List dependencies version
+      id: dependencies-version
+      uses: mikefarah/yq@v4
+      if: steps.should-release.outputs.result == 'true'
+      with:
+        cmd: |
+          set -euo pipefail
+          for crate in $(echo "${{ steps.crates-list.outputs.result }}" | yq '.[]'); do
+            for dep in $(echo "${{ steps.crates-list.outputs.result }}" | yq '.[]'); do
+              yq -p toml -r ".dependencies.$dep.version | select(. != null)" <"$crate/Cargo.toml"
+            done
+          done
+    - name: Check version
+      id: check-version
+      shell: bash
+      if: steps.should-release.outputs.result == 'true'
+      run: |
+        dep="${{ steps.dependencies-version.outputs.result }}"
+        [[ -z "$dep" || -z $(echo "$dep" | grep -v '^${{ steps.crate-version.outputs.result }}$') ]]
