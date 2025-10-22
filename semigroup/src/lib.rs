@@ -12,7 +12,7 @@
 //! # Examples
 //!
 //! ## Reading configs from multiple sources
-//! An examples of `clap` and `serde` integration, see <https://github.com/hayas1/semigroup/blob/master/semigroup/examples/file_env_cli.rs>
+//! A CLI example of `clap` and `serde` integration, see <https://github.com/hayas1/semigroup/blob/master/semigroup/examples/file_env_cli.rs>
 //!
 //!  ### Simple coalesce
 //! ```
