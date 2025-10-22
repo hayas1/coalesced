@@ -25,14 +25,16 @@ struct Person {
     age: Option<u64>,
 }
 
+/// Reading configs from multiple sources
+///
 /// # Usage
 ///  ```sh
-/// cargo run --example file_env_cli
-/// cargo run --example file_env_cli -- semigroup/examples/file_env_cli_john_doe.json
-/// cargo run --example file_env_cli -- --name=alice
-/// NAME=bob cargo run --example file_env_cli -- --name=alice
-/// NAME=bob AGE=42 cargo run --example file_env_cli
-/// NAME=bob AGE=42 cargo run --example file_env_cli -- semigroup/examples/file_env_cli_john_doe.json --name=alice
+/// cargo run --example clap_serde
+/// cargo run --example clap_serde -- semigroup/examples/john_doe.json
+/// cargo run --example clap_serde -- --name=alice
+/// NAME=bob cargo run --example clap_serde -- --name=alice
+/// NAME=bob AGE=42 cargo run --example clap_serde
+/// NAME=bob AGE=42 cargo run --example clap_serde -- semigroup/examples/john_doe.json --name=alice
 /// ```
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app = App::parse();
