@@ -1,5 +1,5 @@
 use darling::{FromDeriveInput, FromField};
-use syn::{parse_quote, DeriveInput, Expr, Field, Ident, Path, WherePredicate};
+use syn::{DeriveInput, Expr, Field, Ident, Path, WherePredicate, parse_quote};
 
 use crate::{annotation::Annotation, constant::Constant, error::SemigroupError, name::var_name};
 

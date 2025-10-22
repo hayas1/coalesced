@@ -1,4 +1,4 @@
-use syn::{parse_quote, Attribute, Path, TypeParam};
+use syn::{Attribute, Path, TypeParam, parse_quote};
 
 pub const DERIVE_CONSTRUCTION: &str = "Construction";
 pub const DERIVE_SEMIGROUP: &str = "Semigroup";

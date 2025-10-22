@@ -1,4 +1,4 @@
-use semigroup_derive::{properties_priv, ConstructionPriv};
+use semigroup_derive::{ConstructionPriv, properties_priv};
 
 use crate::{Annotated, AnnotatedSemigroup};
 
@@ -31,7 +31,7 @@ impl<T, A> AnnotatedSemigroup<A> for Coalesce<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_monoid, assert_semigroup, Construction, Semigroup};
+    use crate::{Construction, Semigroup, assert_monoid, assert_semigroup};
 
     use super::*;
 

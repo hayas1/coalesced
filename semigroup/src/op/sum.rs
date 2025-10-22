@@ -1,6 +1,6 @@
 use std::ops::Add;
 
-use semigroup_derive::{properties_priv, ConstructionPriv};
+use semigroup_derive::{ConstructionPriv, properties_priv};
 
 use crate::Semigroup;
 
@@ -30,7 +30,7 @@ impl<T: Add<Output = T>> Semigroup for Sum<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, assert_semigroup, Construction, Semigroup};
+    use crate::{Construction, Semigroup, assert_commutative, assert_monoid, assert_semigroup};
 
     use super::*;
 

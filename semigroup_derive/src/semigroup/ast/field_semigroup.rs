@@ -1,5 +1,5 @@
 use quote::format_ident;
-use syn::{parse_quote, DeriveInput, FieldValue, Fields, Ident, Member, Stmt};
+use syn::{DeriveInput, FieldValue, Fields, Ident, Member, Stmt, parse_quote};
 
 use crate::{
     constant::Constant,
