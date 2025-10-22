@@ -56,8 +56,9 @@ runs:
       if: steps.should-release.outputs.result == 'true'
       with:
         cmd: |
-          for crate in $(echo "${{ steps.crates-list.outputs.result }}" | yq -p json '.[]'); do
-            for dep in $(echo "${{ steps.crates-list.outputs.result }}" | yq -p json '.[]'); do
+          set -euo pipefail
+          for crate in $(echo "${{ steps.crates-list.outputs.result }}" | yq '.[]'); do
+            for dep in $(echo "${{ steps.crates-list.outputs.result }}" | yq '.[]'); do
               yq -p toml -r ".dependencies.$dep.version | select(. != null)" <"$crate/Cargo.toml"
             done
           done
