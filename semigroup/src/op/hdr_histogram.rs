@@ -37,12 +37,17 @@ impl<C: Counter> FromIterator<u64> for HdrHistogram<C> {
         Self(HdrHistogramInner::from_iter(iter))
     }
 }
+impl<C: Counter> From<HdrHistogram<C>> for Histogram<C> {
+    fn from(value: HdrHistogram<C>) -> Self {
+        value.0.into()
+    }
+}
 impl<C: Counter> HdrHistogram<C> {
     pub fn histogram(&self) -> Cow<Histogram<C>> {
         self.0.histogram()
     }
     pub fn into_histogram(self) -> Histogram<C> {
-        self.0.into_histogram()
+        self.0.into()
     }
 }
 
@@ -113,9 +118,6 @@ impl<C: Counter> HdrHistogramInner<C> {
             Self::Value(v) => Cow::Owned(Self::value_histogram(*v)),
             Self::Histogram(h) => Cow::Borrowed(h),
         }
-    }
-    fn into_histogram(self) -> Histogram<C> {
-        self.into()
     }
 }
 
