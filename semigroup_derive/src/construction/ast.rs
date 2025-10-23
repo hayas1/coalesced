@@ -17,7 +17,7 @@ pub mod op_trait;
 #[derive(Debug, Clone)]
 pub struct Construction<'a> {
     construction_trait: Option<ConstructionTrait<'a>>,
-    op_trait: Option<OpTrait<'a>>,
+    op_trait: OpTrait<'a>,
 }
 impl ToTokens for Construction<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
