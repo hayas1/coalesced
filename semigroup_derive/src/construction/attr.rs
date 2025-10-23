@@ -24,13 +24,6 @@ pub struct ContainerAttr {
     annotation_where: Option<String>, // TODO Vec
     #[darling(default)]
     without_annotate_impl: bool,
-
-    #[darling(default)]
-    without_from_impl: bool,
-    #[darling(default)]
-    without_deref_impl: bool,
-    #[darling(default)]
-    without_deref_mut_impl: bool,
 }
 impl ContainerAttr {
     pub fn new(derive: &DeriveInput) -> syn::Result<Self> {
@@ -127,16 +120,6 @@ impl ContainerAttr {
     }
     pub fn with_annotate_impl(&self) -> bool {
         !self.without_annotate_impl
-    }
-
-    pub fn with_from_impl(&self) -> bool {
-        !self.without_from_impl
-    }
-    pub fn with_deref_impl(&self) -> bool {
-        !self.without_deref_impl
-    }
-    pub fn with_deref_mut_impl(&self) -> bool {
-        !self.without_deref_mut_impl
     }
 }
 
