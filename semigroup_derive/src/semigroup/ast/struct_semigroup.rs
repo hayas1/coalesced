@@ -23,10 +23,8 @@ pub struct StructSemigroup<'a> {
 impl ToTokens for StructSemigroup<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         self.impl_semigroup().to_tokens(tokens);
-        self.impl_monoid().iter().for_each(|s| s.to_tokens(tokens));
-        self.impl_commutative()
-            .iter()
-            .for_each(|s| s.to_tokens(tokens));
+        self.impl_monoid().to_tokens(tokens);
+        self.impl_commutative().to_tokens(tokens);
     }
 }
 impl<'a> StructSemigroup<'a> {

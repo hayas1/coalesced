@@ -24,6 +24,9 @@ pub struct ContainerAttr {
     annotation_where: Option<String>, // TODO Vec
     #[darling(default)]
     without_annotate_impl: bool,
+
+    #[darling(default)]
+    without_construction: bool,
 }
 impl ContainerAttr {
     pub fn new(derive: &DeriveInput) -> syn::Result<Self> {
@@ -120,6 +123,10 @@ impl ContainerAttr {
     }
     pub fn with_annotate_impl(&self) -> bool {
         !self.without_annotate_impl
+    }
+
+    pub fn with_construction(&self) -> bool {
+        !self.without_construction
     }
 }
 

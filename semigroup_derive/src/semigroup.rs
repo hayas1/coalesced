@@ -44,7 +44,7 @@ mod tests {
         "semigroup_not_annotated",
         impl_semigroup::<Internal>,
         syn::parse_quote! {
-            #[derive(SemigroupInternal)]
+            #[derive(SemigroupPriv)]
             #[semigroup(with = "semigroup::op::Overwrite")]
             pub struct UnnamedStruct<T: std::ops::Add> (
                 #[semigroup(with = "semigroup::op::Added")]

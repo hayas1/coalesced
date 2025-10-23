@@ -56,7 +56,7 @@ mod tests {
                 /// A semigroup struct that returns the sum and overwrite
                 /// # Properties
                 /// <!-- properties -->
-                #[derive(SemigroupInternal)]
+                #[derive(SemigroupPriv)]
                 #[semigroup(with = "semigroup::op::Overwrite")]
                 pub struct UnnamedStruct<T: std::ops::Add> (
                     #[semigroup(with = "semigroup::op::Added")]

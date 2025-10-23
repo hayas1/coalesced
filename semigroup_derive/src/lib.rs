@@ -30,7 +30,7 @@ pub fn derive_semigroup(input: proc_macro::TokenStream) -> proc_macro::TokenStre
         .into()
 }
 
-#[proc_macro_derive(SemigroupInternal, attributes(semigroup))]
+#[proc_macro_derive(SemigroupPriv, attributes(semigroup))]
 pub fn derive_semigroup_internal(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let derive = syn::parse_macro_input!(input);
     semigroup::impl_semigroup::<constant::Internal>(&derive)
