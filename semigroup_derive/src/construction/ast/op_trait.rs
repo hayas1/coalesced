@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
-use syn::{parse_quote, DeriveInput, Field, ItemImpl};
+use syn::{parse_quote, DeriveInput, ItemImpl};
 
 use crate::{annotation::Annotation, constant::Constant, construction::attr::ContainerAttr};
 
@@ -21,12 +21,7 @@ impl ToTokens for OpTrait<'_> {
     }
 }
 impl<'a> OpTrait<'a> {
-    pub fn new(
-        constant: &'a Constant,
-        derive: &'a DeriveInput,
-        attr: &'a ContainerAttr,
-        _field: &'a Field,
-    ) -> Self {
+    pub fn new(constant: &'a Constant, derive: &'a DeriveInput, attr: &'a ContainerAttr) -> Self {
         let annotation = attr.annotation(constant);
 
         Self {
