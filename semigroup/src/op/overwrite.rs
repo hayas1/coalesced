@@ -33,7 +33,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_overwrite_as_semigroup() {
+    fn test_overwrite_semigroup() {
         let (a, b, c) = (Overwrite(1), Overwrite(2), Overwrite(3));
         assert_semigroup!(a, b, c);
     }

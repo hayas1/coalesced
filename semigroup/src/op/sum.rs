@@ -35,7 +35,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_sum_as_semigroup() {
+    fn test_sum_semigroup() {
         let (a, b, c) = (Sum(1), Sum(2), Sum(3));
         assert_semigroup!(a, b, c);
     }
