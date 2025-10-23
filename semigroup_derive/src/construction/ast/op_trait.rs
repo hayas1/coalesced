@@ -14,16 +14,10 @@ pub struct OpTrait<'a> {
 }
 impl ToTokens for OpTrait<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        self.impl_monoid().iter().for_each(|i| i.to_tokens(tokens));
-        self.impl_commutative()
-            .iter()
-            .for_each(|i| i.to_tokens(tokens));
-        self.impl_semigroup_with_unit_annotate()
-            .into_iter()
-            .for_each(|i| i.to_tokens(tokens));
-        self.impl_annotate()
-            .into_iter()
-            .for_each(|i| i.to_tokens(tokens));
+        self.impl_monoid().to_tokens(tokens);
+        self.impl_commutative().to_tokens(tokens);
+        self.impl_semigroup_with_unit_annotate().to_tokens(tokens);
+        self.impl_annotate().to_tokens(tokens);
     }
 }
 impl<'a> OpTrait<'a> {
@@ -32,15 +26,15 @@ impl<'a> OpTrait<'a> {
         derive: &'a DeriveInput,
         attr: &'a ContainerAttr,
         _field: &'a Field,
-    ) -> Option<Self> {
+    ) -> Self {
         let annotation = attr.annotation(constant);
 
-        Some(Self {
+        Self {
             constant,
             derive,
             attr,
             annotation,
-        })
+        }
     }
 
     pub fn impl_monoid(&self) -> Option<ItemImpl> {
