@@ -48,7 +48,7 @@ mod tests {
     }
 
     #[test]
-    fn test_coalesce_as_monoid() {
+    fn test_coalesce_monoid() {
         let (a, b, c) = (Coalesce(Some(1)), Coalesce(Some(2)), Coalesce(Some(3)));
         assert_monoid!(a, b, c);
         let (a, b, c) = (Coalesce(None), Coalesce(Some(2)), Coalesce(Some(3)));

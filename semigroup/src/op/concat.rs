@@ -83,7 +83,7 @@ mod tests {
     }
 
     #[test]
-    fn test_concat_as_monoid() {
+    fn test_concat_monoid() {
         let (a, b, c) = (Concat(vec![1]), Concat(vec![2]), Concat(vec![3]));
         assert_monoid!(a, b, c)
     }

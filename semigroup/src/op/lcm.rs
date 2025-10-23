@@ -40,7 +40,7 @@ mod tests {
     }
 
     #[test]
-    fn test_lcm_as_monoid() {
+    fn test_lcm_monoid() {
         let (a, b, c) = (Lcm(4u32), Lcm(6), Lcm(9));
         assert_monoid!(a, b, c);
     }

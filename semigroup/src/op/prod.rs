@@ -41,7 +41,7 @@ mod tests {
     }
 
     #[test]
-    fn test_prod_as_monoid() {
+    fn test_prod_monoid() {
         let (a, b, c) = (Prod(1), Prod(2), Prod(3));
         assert_monoid!(a, b, c);
     }
