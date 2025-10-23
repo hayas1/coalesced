@@ -16,7 +16,7 @@ pub mod op_trait;
 
 #[derive(Debug, Clone)]
 pub struct Construction<'a> {
-    construction_trait: ConstructionTrait<'a>,
+    construction_trait: Option<ConstructionTrait<'a>>,
     op_trait: Option<OpTrait<'a>>,
 }
 impl ToTokens for Construction<'_> {
@@ -32,7 +32,10 @@ impl<'a> Construction<'a> {
         attr: &'a ContainerAttr,
     ) -> syn::Result<Self> {
         let field = Self::newtype_field(derive)?;
-        let construction_trait = ConstructionTrait::new(constant, derive, attr, field)?;
+        let construction_trait = attr
+            .with_construction()
+            .then(|| ConstructionTrait::new(constant, derive, attr, field))
+            .transpose()?;
         let op_trait = OpTrait::new(constant, derive, attr, field);
         Ok(Self {
             construction_trait,
