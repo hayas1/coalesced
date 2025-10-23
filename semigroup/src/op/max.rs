@@ -33,13 +33,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_max_as_semigroup() {
+    fn test_max_semigroup() {
         let (a, b, c) = (Max(1), Max(2), Max(3));
         assert_semigroup!(a, b, c);
     }
 
     #[test]
-    fn test_max_as_monoid() {
+    fn test_max_monoid() {
         let (a, b, c) = (Max(1), Max(2), Max(3));
         assert_monoid!(a, b, c);
     }
