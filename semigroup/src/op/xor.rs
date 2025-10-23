@@ -34,7 +34,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_xor_as_semigroup() {
+    fn test_xor_semigroup() {
         let (a, b, c) = (Xor(0b111), Xor(0b101), Xor(0b100));
         assert_semigroup!(a, b, c);
     }

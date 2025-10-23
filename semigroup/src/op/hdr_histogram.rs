@@ -60,7 +60,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_hdr_histogram_as_semigroup() {
+    fn test_hdr_histogram_semigroup() {
         let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
         let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();
         let c: HdrHistogram<u32> = [7, 8, 9].into_iter().collect();
