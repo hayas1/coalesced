@@ -31,7 +31,7 @@ fn test_join_semigroup() {
 }
 
 #[test]
-fn test_join_as_monoid() {
+fn test_join_monoid() {
     let (a, b, c) = (
         Join("a".to_string()),
         Join("b".to_string()),

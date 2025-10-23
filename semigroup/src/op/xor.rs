@@ -40,7 +40,7 @@ mod tests {
     }
 
     #[test]
-    fn test_xor_as_monoid() {
+    fn test_xor_monoid() {
         let (a, b, c) = (Xor(0b111), Xor(0b101), Xor(0b100));
         assert_monoid!(a, b, c);
     }

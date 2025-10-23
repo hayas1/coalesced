@@ -39,7 +39,7 @@ mod tests {
     }
 
     #[test]
-    fn test_max_as_monoid() {
+    fn test_max_monoid() {
         let (a, b, c) = (Max(1), Max(2), Max(3));
         assert_monoid!(a, b, c);
     }

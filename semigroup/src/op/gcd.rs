@@ -40,7 +40,7 @@ mod tests {
     }
 
     #[test]
-    fn test_gcd_as_monoid() {
+    fn test_gcd_monoid() {
         let (a, b, c) = (Gcd(12u32), Gcd(18), Gcd(27));
         assert_monoid!(a, b, c);
     }

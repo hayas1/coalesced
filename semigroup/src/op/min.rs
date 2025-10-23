@@ -39,7 +39,7 @@ mod tests {
     }
 
     #[test]
-    fn test_min_as_monoid() {
+    fn test_min_monoid() {
         let (a, b, c) = (Min(1), Min(2), Min(3));
         assert_monoid!(a, b, c);
     }
