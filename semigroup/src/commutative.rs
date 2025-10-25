@@ -1,4 +1,6 @@
-use crate::Semigroup;
+use semigroup_derive::ConstructionPriv;
+
+use crate::{Monoid, Semigroup};
 
 /// [`Commutative`] represents a binary operation that satisfies the following property
 /// 1. *Commutativity*: `op(a, b) = op(b, a)`
@@ -38,9 +40,10 @@ use crate::Semigroup;
 ///
 pub trait Commutative: Semigroup {}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
+#[construction(monoid, commutative, unit = Self(T::unit()), unit_where = "T: Monoid", commutative_where = "T: Commutative")]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct Reverse<T>(pub T);
+pub struct Reverse<T: Semigroup>(pub T);
 
 impl<T: Semigroup> Semigroup for Reverse<T> {
     fn op(base: Self, other: Self) -> Self {
