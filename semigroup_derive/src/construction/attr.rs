@@ -43,7 +43,7 @@ impl ContainerAttr {
             monoid,
             unit,
             unit_where,
-            without_monoid_impl: with_monoid_impl,
+            without_monoid_impl,
             commutative,
             commutative_where,
             ..
@@ -69,8 +69,8 @@ impl ContainerAttr {
                 Some(var_name!(unit))
             } else if unit_where.is_some() {
                 Some(var_name!(unit_where))
-            } else if *with_monoid_impl {
-                Some(var_name!(with_monoid_impl))
+            } else if *without_monoid_impl {
+                Some(var_name!(without_monoid_impl))
             } else {
                 None
             };
