@@ -59,6 +59,10 @@ pub mod test_commutative {
 
     use super::*;
 
+    /// Assert that the given type satisfies the *commutative* property.
+    ///
+    /// # Usage
+    /// Same to [`crate::assert_semigroup!`].
     #[macro_export]
     macro_rules! assert_commutative {
         ($a:expr, $b: expr, $($tail: expr),*) => {
