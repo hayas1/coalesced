@@ -19,6 +19,7 @@ pub struct ContainerAttr {
 
     #[darling(default)]
     commutative: bool,
+    commutative_where: Option<String>, // TODO Vec
 
     annotation_type_param: Option<TypeParam>,
     annotation_where: Option<String>, // TODO Vec
@@ -43,6 +44,8 @@ impl ContainerAttr {
             unit,
             unit_where,
             without_monoid_impl: with_monoid_impl,
+            commutative,
+            commutative_where,
             ..
         } = &self;
         if !annotated {
@@ -75,6 +78,18 @@ impl ContainerAttr {
                 Err(darling::Error::custom(ConstructionError::OnlyMonoid(a)))
             })?;
         }
+        if !commutative {
+            let err_attr_name = if commutative_where.is_some() {
+                Some(var_name!(commutative_where))
+            } else {
+                None
+            };
+            err_attr_name.map_or(Ok(()), |a| {
+                Err(darling::Error::custom(ConstructionError::OnlyCommutative(
+                    a,
+                )))
+            })?;
+        }
         Ok(self)
     }
 
@@ -100,6 +115,12 @@ impl ContainerAttr {
 
     pub fn is_commutative(&self) -> bool {
         self.commutative
+    }
+    pub fn commutative_where(&self) -> Option<WherePredicate> {
+        self.commutative_where
+            .as_deref()
+            .map(syn::parse_str)
+            .map(|p| p.unwrap_or_else(|e| todo!("{e}")))
     }
 
     pub fn unit_annotate(&self) -> Expr {

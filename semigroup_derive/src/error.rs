@@ -14,6 +14,7 @@ pub enum ConstructionError {
     UnsupportedEnum,
     OnlyAnnotated(Name),
     OnlyMonoid(Name),
+    OnlyCommutative(Name),
 }
 impl Error for ConstructionError {}
 impl Display for ConstructionError {
@@ -34,6 +35,12 @@ impl Display for ConstructionError {
             Self::OnlyMonoid(Name(name)) => {
                 write!(f, "attribute `{name}` are supported only with `monoid`")
             }
+            Self::OnlyCommutative(Name(name)) => {
+                write!(
+                    f,
+                    "attribute `{name}` are supported only with `commutative`"
+                )
+            }
         }
     }
 }
@@ -44,6 +51,7 @@ pub enum SemigroupError {
     UnsupportedUnion,
     OnlyAnnotated(Name),
     OnlyMonoid(Name),
+    OnlyCommutative(Name),
 }
 impl Error for SemigroupError {}
 impl Display for SemigroupError {
@@ -60,6 +68,12 @@ impl Display for SemigroupError {
             }
             Self::OnlyMonoid(Name(name)) => {
                 write!(f, "attribute `{name}` are supported only with `monoid`")
+            }
+            Self::OnlyCommutative(Name(name)) => {
+                write!(
+                    f,
+                    "attribute `{name}` are supported only with `commutative`"
+                )
             }
         }
     }
