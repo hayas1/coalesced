@@ -5,7 +5,9 @@ use semigroup_derive::{properties_priv, ConstructionPriv, SemigroupPriv};
 
 use crate::Semigroup;
 
-/// A semigroup construction merging two `HdrHistogram`s.
+/// A [`Semigroup`](crate::Semigroup) [construction](crate::Construction) merging two `HdrHistogram`s.
+///
+/// Histogram can be used to aggregate data with the following properties:
 /// - mean
 /// - quantile
 /// - and more...

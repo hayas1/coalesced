@@ -2,7 +2,7 @@ use semigroup_derive::{properties_priv, ConstructionPriv};
 
 use crate::{Annotated, AnnotatedSemigroup};
 
-/// A semigroup construction that returns the maximum value.
+/// A [`Semigroup`](crate::Semigroup) [construction](crate::Construction) that returns the maximum value.
 /// # Properties
 /// <!-- properties -->
 ///

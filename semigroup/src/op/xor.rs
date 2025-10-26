@@ -4,7 +4,7 @@ use semigroup_derive::{properties_priv, ConstructionPriv};
 
 use crate::Semigroup;
 
-/// A semigroup construction that returns the exclusive or.
+/// A [`Semigroup`](crate::Semigroup) [construction](crate::Construction) that returns the exclusive or.
 /// # Properties
 /// <!-- properties -->
 ///
