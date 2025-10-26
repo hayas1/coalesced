@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use hdrhistogram::{Counter, Histogram};
-use semigroup_derive::{properties_priv, ConstructionPriv};
+use semigroup_derive::{properties_priv, ConstructionPriv, SemigroupPriv};
 
 use crate::Semigroup;
 
@@ -23,15 +23,10 @@ use crate::Semigroup;
 /// assert_eq!(h.histogram().mean(), 3.5);
 /// assert_eq!(h.histogram().value_at_quantile(0.9), 6);
 /// ```
-#[derive(Debug, Clone, PartialEq, ConstructionPriv)]
-#[construction(monoid, commutative, unit = Self(HdrHistogramInner::new()), without_from_impl)]
+#[derive(Debug, Clone, PartialEq, SemigroupPriv)]
+#[semigroup(monoid, commutative)]
 #[properties_priv(monoid, commutative)]
-pub struct HdrHistogram<C: Counter>(pub HdrHistogramInner<C>);
-impl<C: Counter> Semigroup for HdrHistogram<C> {
-    fn op(base: Self, other: Self) -> Self {
-        Self(HdrHistogramInner::op(base.0, other.0))
-    }
-}
+pub struct HdrHistogram<C: Counter>(HdrHistogramInner<C>);
 impl<C: Counter, T: Into<HdrHistogramInner<C>>> From<T> for HdrHistogram<C> {
     fn from(value: T) -> Self {
         Self(value.into())
@@ -42,17 +37,23 @@ impl<C: Counter> FromIterator<u64> for HdrHistogram<C> {
         Self(HdrHistogramInner::from_iter(iter))
     }
 }
+impl<C: Counter> From<HdrHistogram<C>> for Histogram<C> {
+    fn from(value: HdrHistogram<C>) -> Self {
+        value.0.into()
+    }
+}
 impl<C: Counter> HdrHistogram<C> {
     pub fn histogram(&self) -> Cow<Histogram<C>> {
         self.0.histogram()
     }
     pub fn into_histogram(self) -> Histogram<C> {
-        self.0.into_histogram()
+        self.0.into()
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub enum HdrHistogramInner<C: Counter> {
+#[derive(Debug, Clone, PartialEq, ConstructionPriv)]
+#[construction(monoid, commutative, unit = HdrHistogramInner::new(), without_construction)]
+enum HdrHistogramInner<C: Counter> {
     Value(u64),
     Histogram(Histogram<C>),
 }
@@ -117,9 +118,6 @@ impl<C: Counter> HdrHistogramInner<C> {
             Self::Value(v) => Cow::Owned(Self::value_histogram(*v)),
             Self::Histogram(h) => Cow::Borrowed(h),
         }
-    }
-    fn into_histogram(self) -> Histogram<C> {
-        self.into()
     }
 }
 

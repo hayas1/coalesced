@@ -26,11 +26,7 @@ pub struct ContainerAttr {
     without_annotate_impl: bool,
 
     #[darling(default)]
-    without_from_impl: bool,
-    #[darling(default)]
-    without_deref_impl: bool,
-    #[darling(default)]
-    without_deref_mut_impl: bool,
+    without_construction: bool,
 }
 impl ContainerAttr {
     pub fn new(derive: &DeriveInput) -> syn::Result<Self> {
@@ -129,14 +125,8 @@ impl ContainerAttr {
         !self.without_annotate_impl
     }
 
-    pub fn with_from_impl(&self) -> bool {
-        !self.without_from_impl
-    }
-    pub fn with_deref_impl(&self) -> bool {
-        !self.without_deref_impl
-    }
-    pub fn with_deref_mut_impl(&self) -> bool {
-        !self.without_deref_mut_impl
+    pub fn with_construction(&self) -> bool {
+        !self.without_construction
     }
 }
 
