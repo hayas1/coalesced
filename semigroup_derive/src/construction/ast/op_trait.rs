@@ -48,7 +48,7 @@ impl<'a> OpTrait<'a> {
             ident, generics, ..
         } = derive;
         let mut g = generics.clone();
-        attr.unit_where()
+        attr.monoid_where()
             .into_iter()
             .for_each(|w| g.make_where_clause().predicates.push(w));
         (attr.is_monoid() && attr.with_monoid_impl()).then(|| {

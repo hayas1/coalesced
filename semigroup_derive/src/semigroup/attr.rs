@@ -12,7 +12,7 @@ pub struct ContainerAttr {
     #[darling(default)]
     monoid: bool,
     unit: Option<Expr>,
-    unit_where: Option<String>, // TODO Vec
+    monoid_where: Option<String>, // TODO Vec
     #[darling(default)]
     without_monoid_impl: bool,
 
@@ -33,7 +33,7 @@ impl ContainerAttr {
             annotation_param,
             monoid,
             unit,
-            unit_where,
+            monoid_where,
             without_monoid_impl,
             commutative,
             commutative_where,
@@ -52,8 +52,8 @@ impl ContainerAttr {
         if !monoid {
             let err_attr_name = if unit.is_some() {
                 Some(var_name!(unit))
-            } else if unit_where.is_some() {
-                Some(var_name!(unit_where))
+            } else if monoid_where.is_some() {
+                Some(var_name!(monoid_where))
             } else if *without_monoid_impl {
                 Some(var_name!(without_monoid_impl))
             } else {
@@ -86,8 +86,8 @@ impl ContainerAttr {
     pub fn unit(&self) -> Option<&Expr> {
         self.unit.as_ref()
     }
-    pub fn unit_where(&self) -> Option<WherePredicate> {
-        self.unit_where
+    pub fn monoid_where(&self) -> Option<WherePredicate> {
+        self.monoid_where
             .as_deref()
             .map(syn::parse_str)
             .map(|p| p.unwrap_or_else(|e| todo!("{e}")))

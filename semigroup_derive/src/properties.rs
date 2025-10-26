@@ -71,14 +71,14 @@ mod tests {
         impl_properties::<Internal>,
         (
             syn::parse_quote! {
-                monoid, commutative, unit_where = "T: num::Zero"
+                monoid, commutative, monoid_where = "T: num::Zero"
             },
             syn::parse_quote! {
                 /// A semigroup construction that returns the sum.
                 /// # Properties
                 /// <!-- properties -->
                 #[derive(SemigroupPriv)]
-                #[construction(monoid, commutative, unit = Self(T::zero()), unit_where = "T: num::Zero")]
+                #[construction(monoid, commutative, unit = Self(T::zero()), monoid_where = "T: num::Zero")]
                 pub struct Sum<T: Add<Output = T>>(pub T);
             },
         )

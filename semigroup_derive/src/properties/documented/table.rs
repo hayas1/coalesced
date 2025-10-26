@@ -64,7 +64,7 @@ impl<'a> PropertiesTable<'a> {
         let Self { attr, .. } = self;
         [
             attr.annotation_where(),
-            attr.unit_where(),
+            attr.monoid_where(),
             attr.commutative_where(),
         ]
         .map(|w| match w {

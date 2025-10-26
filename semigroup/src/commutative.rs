@@ -93,11 +93,11 @@ pub trait Commutative: Semigroup {}
 /// # }
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
-#[construction(monoid, commutative, unit = Self(T::unit()), unit_where = "T: Monoid", commutative_where = "T: Commutative")]
+#[construction(monoid, commutative, unit = Self(T::unit()), monoid_where = "T: Monoid", commutative_where = "T: Commutative")]
 #[properties_priv(
     monoid,
     commutative,
-    unit_where = "T: Monoid",
+    monoid_where = "T: Monoid",
     commutative_where = "T: Commutative"
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

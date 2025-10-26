@@ -9,7 +9,7 @@ pub struct ContainerAttr {
 
     #[darling(default)]
     monoid: bool,
-    unit_where: Option<String>, // TODO Vec
+    monoid_where: Option<String>, // TODO Vec
 
     #[darling(default)]
     commutative: bool,
@@ -32,8 +32,8 @@ impl ContainerAttr {
     pub fn annotation_where(&self) -> Option<&str> {
         self.annotation_where.as_deref()
     }
-    pub fn unit_where(&self) -> Option<&str> {
-        self.unit_where.as_deref()
+    pub fn monoid_where(&self) -> Option<&str> {
+        self.monoid_where.as_deref()
     }
     pub fn commutative_where(&self) -> Option<&str> {
         self.commutative_where.as_deref()

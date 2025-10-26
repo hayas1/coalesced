@@ -19,8 +19,8 @@ use crate::Semigroup;
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(monoid, commutative, unit = Self(T::zero()), unit_where = "T: num::Zero")]
-#[properties_priv(monoid, commutative, unit_where = "T: num::Zero")]
+#[construction(monoid, commutative, unit = Self(T::zero()), monoid_where = "T: num::Zero")]
+#[properties_priv(monoid, commutative, monoid_where = "T: num::Zero")]
 pub struct Sum<T: Add<Output = T>>(pub T);
 impl<T: Add<Output = T>> Semigroup for Sum<T> {
     fn op(base: Self, other: Self) -> Self {

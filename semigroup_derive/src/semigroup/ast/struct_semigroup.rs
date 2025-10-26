@@ -84,7 +84,7 @@ impl<'a> StructSemigroup<'a> {
         } = derive;
         (attr.is_monoid() && attr.with_monoid_impl()).then(|| {
             let mut g = generics.clone();
-            attr.unit_where()
+            attr.monoid_where()
                 .into_iter()
                 .for_each(|w| g.make_where_clause().predicates.push(w));
             let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
