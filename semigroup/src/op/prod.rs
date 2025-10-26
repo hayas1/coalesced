@@ -20,7 +20,7 @@ use crate::Semigroup;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(monoid, commutative, unit = Self(T::one()), unit_where = "T: num::One")]
-#[properties_priv(monoid, commutative)]
+#[properties_priv(monoid, commutative, unit_where = "T: num::One")]
 pub struct Prod<T: Mul<Output = T>>(pub T);
 impl<T: Mul<Output = T>> Semigroup for Prod<T> {
     fn op(base: Self, other: Self) -> Self {

@@ -18,7 +18,7 @@ use crate::{Annotated, AnnotatedSemigroup};
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(annotated, monoid, commutative, unit = Self(T::max_value()), unit_where = "T: num::Bounded")]
-#[properties_priv(annotated, monoid, commutative)]
+#[properties_priv(annotated, monoid, commutative, unit_where = "T: num::Bounded")]
 pub struct Min<T: Ord>(pub T);
 impl<A, T: Ord> AnnotatedSemigroup<A> for Min<T> {
     fn annotated_op(base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A> {

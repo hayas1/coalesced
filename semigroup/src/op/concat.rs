@@ -26,7 +26,7 @@ use crate::{Annotated, AnnotatedSemigroup};
     unit_annotation = "vec![(); 0]",
     without_annotate_impl
 )]
-#[properties_priv(annotated, monoid)]
+#[properties_priv(annotated, monoid, annotation_where = "A::Item: Clone")]
 pub struct Concat<T: IntoIterator + FromIterator<T::Item>>(pub T);
 impl<T: IntoIterator + FromIterator<T::Item>, A: IntoIterator + FromIterator<A::Item>>
     AnnotatedSemigroup<A> for Concat<T>

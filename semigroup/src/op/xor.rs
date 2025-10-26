@@ -19,7 +19,7 @@ use crate::Semigroup;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(monoid, commutative, unit = Self(T::zero()), unit_where = "T: num::Zero")]
-#[properties_priv(monoid, commutative)]
+#[properties_priv(monoid, commutative, unit_where = "T: num::Zero")]
 pub struct Xor<T: BitXor<Output = T>>(pub T);
 impl<T: BitXor<Output = T>> Semigroup for Xor<T> {
     fn op(base: Self, other: Self) -> Self {
