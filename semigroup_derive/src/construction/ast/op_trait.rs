@@ -16,7 +16,7 @@ impl ToTokens for OpTrait<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         self.impl_monoid().to_tokens(tokens);
         self.impl_commutative().to_tokens(tokens);
-        self.impl_semigroup_with_unit_annotate().to_tokens(tokens);
+        self.impl_semigroup_with_unit_annotation().to_tokens(tokens);
         self.impl_annotate().to_tokens(tokens);
     }
 }
@@ -108,7 +108,7 @@ impl<'a> OpTrait<'a> {
         })
     }
 
-    pub fn impl_semigroup_with_unit_annotate(&self) -> Option<ItemImpl> {
+    pub fn impl_semigroup_with_unit_annotation(&self) -> Option<ItemImpl> {
         let Self {
             constant:
                 Constant {
@@ -125,7 +125,7 @@ impl<'a> OpTrait<'a> {
 
         attr.is_annotated().then(|| {
             let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-            let unit_annotation = attr.unit_annotate();
+            let unit_annotation = attr.unit_annotation();
             parse_quote! {
                 #[automatically_derived]
                 impl #impl_generics #path_semigroup for #ident #ty_generics #where_clause {
