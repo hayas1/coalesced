@@ -72,20 +72,21 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_monoid, assert_semigroup, Construction, Semigroup};
+    use crate::{Construction, Semigroup};
 
     use super::*;
 
     #[test]
     fn test_concat_semigroup() {
         let (a, b, c) = (Concat(vec![1]), Concat(vec![2]), Concat(vec![3]));
-        assert_semigroup!(a, b, c);
+        crate::assert_semigroup!(a, b, c);
     }
 
     #[test]
+    #[cfg(feature = "monoid")]
     fn test_concat_monoid() {
         let (a, b, c) = (Concat(vec![1]), Concat(vec![2]), Concat(vec![3]));
-        assert_monoid!(a, b, c)
+        crate::assert_monoid!(a, b, c)
     }
 
     #[test]
