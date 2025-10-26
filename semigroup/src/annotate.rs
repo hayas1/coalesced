@@ -111,9 +111,6 @@ impl<T, A> Annotated<T, A> {
     pub fn parts(&self) -> (&T, &A) {
         (&self.value, &self.annotation)
     }
-    pub fn parts_mut(&mut self) -> (&mut T, &mut A) {
-        (&mut self.value, &mut self.annotation)
-    }
     pub fn into_value(self) -> T {
         self.value
     }
@@ -128,9 +125,6 @@ impl<T, A> Annotated<T, A> {
     }
     pub fn annotation(&self) -> &A {
         &self.annotation
-    }
-    pub fn annotation_mut(&mut self) -> &mut A {
-        &mut self.annotation
     }
 
     pub fn map<U>(self, f: impl FnOnce(T) -> U) -> Annotated<U, A> {
@@ -162,10 +156,10 @@ impl<T, A> Annotated<T, A> {
             annotation: &self.annotation,
         }
     }
-    pub fn as_ref_mut(&mut self) -> Annotated<&mut T, &mut A> {
+    pub fn as_ref_mut(&mut self) -> Annotated<&mut T, &A> {
         Annotated {
             value: &mut self.value,
-            annotation: &mut self.annotation,
+            annotation: &self.annotation,
         }
     }
     pub fn as_deref(&self) -> Annotated<&T::Target, &A>
@@ -174,7 +168,7 @@ impl<T, A> Annotated<T, A> {
     {
         self.as_ref().map(|v| v.deref())
     }
-    pub fn as_deref_mut(&mut self) -> Annotated<&mut T::Target, &mut A>
+    pub fn as_deref_mut(&mut self) -> Annotated<&mut T::Target, &A>
     where
         T: DerefMut,
     {
@@ -290,7 +284,7 @@ pub mod tests {
         let one_value_ref_annotation_ref_mut = Annotated::new(&1, &mut first);
         assert_eq!(one_value_ref_annotation_ref_mut.cloned(), annotated_one);
 
-        let one_value_ref_mut_annotation_ref_mut = Annotated::new(&mut one, &mut first);
+        let one_value_ref_mut_annotation_ref_mut = Annotated::new(&mut one, &first);
         assert_eq!(
             one_value_ref_mut_annotation_ref_mut,
             annotated_one.as_ref_mut()
