@@ -116,6 +116,7 @@ impl<T: AnnotatedSemigroup<A>, A> Annotated<T, A> {
 }
 
 impl<T, A> Annotated<T, A> {
+    /// [`Annotated`] has `new` method, but [`Annotated`] should be created by [`Annotate`] trait.
     pub fn new(value: T, annotation: A) -> Self {
         Self { value, annotation }
     }

@@ -1,6 +1,6 @@
-use semigroup_derive::ConstructionPriv;
+use semigroup_derive::{properties_priv, ConstructionPriv};
 
-use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
+use crate::Semigroup;
 
 /// [`Monoid`] represents a binary operation that satisfies the following properties
 /// 1. *Closure*: `op: T × T → T`
@@ -62,9 +62,6 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 pub trait Monoid: Semigroup {
     fn identity() -> Self;
 }
-pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
-    fn annotated_identity() -> Annotated<Self, A>;
-}
 
 /// Construct [`Monoid`] from optional [`Semigroup`].
 /// Some [`Semigroup`] lack a suitable *identity element* for extension to a [`Monoid`].
@@ -121,16 +118,12 @@ pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
 /// assert_eq!(bd.as_ref().unwrap().duration(), Duration::from_millis(250));
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
-#[construction(monoid, identity = Self(None))]
+#[construction(monoid, commutative, identity = Self(None), commutative_where = "T: crate::Commutative")]
+#[properties_priv(monoid, commutative, commutative_where = "T: crate::Commutative")]
 pub struct OptionMonoid<T: Semigroup>(pub Option<T>);
 impl<T: Semigroup> From<T> for OptionMonoid<T> {
     fn from(value: T) -> Self {
         Self(Some(value))
-    }
-}
-impl<T: AnnotatedSemigroup<A>, A> AnnotatedMonoid<Option<A>> for OptionMonoid<T> {
-    fn annotated_identity() -> Annotated<Self, Option<A>> {
-        Annotated::new(Self::identity(), None)
     }
 }
 impl<T: Semigroup> Semigroup for OptionMonoid<T> {
@@ -139,33 +132,6 @@ impl<T: Semigroup> Semigroup for OptionMonoid<T> {
             (Self(Some(b)), Self(Some(o))) => Self(Some(T::op(b, o))),
             (b, Self(None)) => b,
             (Self(None), o) => o,
-        }
-    }
-}
-impl<T: AnnotatedSemigroup<A>, A> AnnotatedSemigroup<Option<A>> for OptionMonoid<T> {
-    fn annotated_op(
-        base: Annotated<Self, Option<A>>,
-        other: Annotated<Self, Option<A>>,
-    ) -> Annotated<Self, Option<A>> {
-        let (Self(base_value), base_annotation) = base.into_parts();
-        let (Self(other_value), other_annotation) = other.into_parts();
-        match (base_value, base_annotation, other_value, other_annotation) {
-            (Some(bv), Some(ba), Some(ov), Some(oa)) => {
-                T::annotated_op(Annotated::new(bv, ba), Annotated::new(ov, oa))
-                    .map_parts(Self::from, Some)
-            }
-            (b, ba, None, None) => Annotated::new(Self(b), ba),
-            (None, None, o, oa) => Annotated::new(Self(o), oa),
-            _ => unreachable!(), // TODO safety annotation
-        }
-    }
-}
-impl<T: AnnotatedSemigroup<A> + Annotate<A>, A> Annotate<Option<A>> for OptionMonoid<T> {
-    type Annotation = T::Annotation;
-    fn annotated(self, annotation: Self::Annotation) -> Annotated<Self, Option<A>> {
-        match self {
-            Self(None) => Self::annotated_identity(),
-            Self(Some(semigroup)) => semigroup.annotated(annotation).map_parts(Self::from, Some),
         }
     }
 }
