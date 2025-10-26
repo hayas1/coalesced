@@ -35,7 +35,7 @@ use crate::Annotated;
 /// use semigroup::{Construction, Semigroup};
 ///
 /// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
-/// #[construction(monoid, commutative)]
+/// #[construction(commutative)]
 /// pub struct Sum(u64);
 /// impl Semigroup for Sum {
 ///     fn op(base: Self, other: Self) -> Self {
@@ -123,7 +123,6 @@ pub mod test_semigroup {
             {
                 let (a, b, c) = $crate::test_semigroup::pick3($v);
                 $crate::test_semigroup::assert_semigroup_impl(a.clone(), b.clone(), c.clone());
-                $crate::test_monoid::assert_option_monoid(a.clone(), b.clone(), c.clone());
             }
         };
     }
@@ -139,6 +138,8 @@ pub mod test_semigroup {
         assert_reverse_reverse(a.clone(), b.clone(), c.clone());
         assert_reverse_associative_law(a.clone(), b.clone(), c.clone());
         assert_lazy_evaluation_iter(a.clone(), b.clone(), c.clone());
+        #[cfg(feature = "monoid")]
+        crate::test_monoid::assert_option_monoid(a.clone(), b.clone(), c.clone());
     }
 
     pub fn assert_associative_law<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {

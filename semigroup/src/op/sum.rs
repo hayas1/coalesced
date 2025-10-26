@@ -30,26 +30,27 @@ impl<T: Add<Output = T>> Semigroup for Sum<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, assert_semigroup, Construction, Semigroup};
+    use crate::{Construction, Semigroup};
 
     use super::*;
 
     #[test]
     fn test_sum_semigroup() {
         let (a, b, c) = (Sum(1), Sum(2), Sum(3));
-        assert_semigroup!(a, b, c);
+        crate::assert_semigroup!(a, b, c);
     }
 
     #[test]
+    #[cfg(feature = "monoid")]
     fn test_sum_monoid() {
         let (a, b, c) = (Sum(1), Sum(2), Sum(3));
-        assert_monoid!(a, b, c);
+        crate::assert_monoid!(a, b, c);
     }
 
     #[test]
     fn test_sum_commutative() {
         let (a, b, c) = (Sum(1), Sum(2), Sum(3));
-        assert_commutative!(a, b, c);
+        crate::assert_commutative!(a, b, c);
     }
 
     #[test]

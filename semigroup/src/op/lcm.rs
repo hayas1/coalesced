@@ -29,26 +29,27 @@ impl<T: Unsigned + Integer + Clone> Semigroup for Lcm<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, assert_semigroup, Construction, Semigroup};
+    use crate::{Construction, Semigroup};
 
     use super::*;
 
     #[test]
     fn test_lcm_semigroup() {
         let (a, b, c) = (Lcm(4u32), Lcm(6), Lcm(9));
-        assert_semigroup!(a, b, c);
+        crate::assert_semigroup!(a, b, c);
     }
 
     #[test]
+    #[cfg(feature = "monoid")]
     fn test_lcm_monoid() {
         let (a, b, c) = (Lcm(4u32), Lcm(6), Lcm(9));
-        assert_monoid!(a, b, c);
+        crate::assert_monoid!(a, b, c);
     }
 
     #[test]
     fn test_lcm_commutative() {
         let (a, b, c) = (Lcm(4u32), Lcm(6), Lcm(9));
-        assert_commutative!(a, b, c);
+        crate::assert_commutative!(a, b, c);
     }
 
     #[test]

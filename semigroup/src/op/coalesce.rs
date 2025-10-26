@@ -31,32 +31,33 @@ impl<T, A> AnnotatedSemigroup<A> for Coalesce<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_monoid, assert_semigroup, Construction, Semigroup};
+    use crate::{Construction, Semigroup};
 
     use super::*;
 
     #[test]
     fn test_coalesce_semigroup() {
         let (a, b, c) = (Coalesce(Some(1)), Coalesce(Some(2)), Coalesce(Some(3)));
-        assert_semigroup!(a, b, c);
+        crate::assert_semigroup!(a, b, c);
         let (a, b, c) = (Coalesce(None), Coalesce(Some(2)), Coalesce(Some(3)));
-        assert_semigroup!(a, b, c);
+        crate::assert_semigroup!(a, b, c);
         let (a, b, c) = (Coalesce(None), Coalesce(Some(2)), Coalesce(None));
-        assert_semigroup!(a, b, c);
+        crate::assert_semigroup!(a, b, c);
         let (a, b, c) = (Coalesce::<u32>(None), Coalesce(None), Coalesce(None));
-        assert_semigroup!(a, b, c);
+        crate::assert_semigroup!(a, b, c);
     }
 
     #[test]
+    #[cfg(feature = "monoid")]
     fn test_coalesce_monoid() {
         let (a, b, c) = (Coalesce(Some(1)), Coalesce(Some(2)), Coalesce(Some(3)));
-        assert_monoid!(a, b, c);
+        crate::assert_monoid!(a, b, c);
         let (a, b, c) = (Coalesce(None), Coalesce(Some(2)), Coalesce(Some(3)));
-        assert_monoid!(a, b, c);
+        crate::assert_monoid!(a, b, c);
         let (a, b, c) = (Coalesce(None), Coalesce(Some(2)), Coalesce(None));
-        assert_monoid!(a, b, c);
+        crate::assert_monoid!(a, b, c);
         let (a, b, c) = (Coalesce::<u32>(None), Coalesce(None), Coalesce(None));
-        assert_monoid!(a, b, c);
+        crate::assert_monoid!(a, b, c);
     }
 
     #[test]

@@ -140,7 +140,7 @@ impl<T: Semigroup> Semigroup for OptionMonoid<T> {
 pub mod test_monoid {
     use std::fmt::Debug;
 
-    use crate::semigroup::test_semigroup::{assert_associative_law, assert_semigroup_impl};
+    use crate::semigroup::test_semigroup::assert_associative_law;
 
     use super::*;
 
@@ -165,7 +165,6 @@ pub mod test_monoid {
     }
 
     pub fn assert_monoid_impl<T: Monoid + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
-        assert_semigroup_impl(a.clone(), b.clone(), c.clone());
         assert_monoid_identity_associative_law(a.clone(), b.clone(), c.clone());
     }
 
