@@ -77,7 +77,7 @@ use semigroup::{op::HdrHistogram, Semigroup};
 let histogram1 = (1..100).collect::<HdrHistogram<u32>>();
 let histogram2 = (100..1000).collect::<HdrHistogram<u32>>();
 
-let histogram = histogram1.semigroup(histogram2);
+let histogram = histogram1.semigroup(histogram2).into_histogram();
 
 assert_eq!(histogram.mean(), 499.9999999999999);
 assert_eq!(histogram.value_at_quantile(0.9), 900);
@@ -108,7 +108,7 @@ impl RequestAggregate {
             pass: Sum(if pass { 1 } else { 0 }),
             start: Min(time),
             end: Max(time),
-            latency: HdrHistogram::from_iter([latency.as_millis() as u64]),
+            latency: HdrHistogram::from(latency.as_millis() as u64),
         }
     }
     pub fn count(&self) -> u64 {
@@ -124,22 +124,22 @@ impl RequestAggregate {
         self.count.into_inner() as f64 / self.duration().as_secs_f64()
     }
     pub fn p99_latency(&self) -> Duration {
-        Duration::from_millis(self.latency.value_at_quantile(0.99) as u64)
+        Duration::from_millis(self.latency.histogram().value_at_quantile(0.99) as u64)
     }
 }
 
 let (now, mut agg) = (Instant::now(), OptionMonoid::unit());
-for i in 0..10000 {
+for i in 0..10000000 {
     let duration = Duration::from_millis(i);
     agg = agg.semigroup(RequestAggregate::new(i % 2 == 0, now + duration, duration).into());
 }
 
 let request_aggregate = agg.into_inner().unwrap();
-assert_eq!(request_aggregate.count(), 10000);
+assert_eq!(request_aggregate.count(), 10000000);
 assert_eq!(request_aggregate.pass_rate(), 0.5);
-assert_eq!(request_aggregate.duration(), Duration::from_millis(9999));
-assert_eq!(request_aggregate.rps(), 1000.1000100010001);
-assert_eq!(request_aggregate.p99_latency(), Duration::from_millis(9903));
+assert_eq!(request_aggregate.duration(), Duration::from_millis(9999999));
+assert_eq!(request_aggregate.rps(), 1000.00010000001);
+assert_eq!(request_aggregate.p99_latency(), Duration::from_millis(9904127));
 ```
 
 ### Segment tree

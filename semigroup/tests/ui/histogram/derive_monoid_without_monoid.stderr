@@ -7,7 +7,7 @@ error[E0277]: the trait bound `Overwrite<_>: ConstructionMonoid<_>` is not satis
   = help: the following other types implement trait `ConstructionMonoid<T>`:
             `Coalesce<T>` implements `ConstructionMonoid<Option<T>>`
             `Gcd<T>` implements `ConstructionMonoid<T>`
-            `HdrHistogram<T>` implements `ConstructionMonoid<hdrhistogram::Histogram<T>>`
+            `HdrHistogram<C>` implements `ConstructionMonoid<HdrHistogramInner<C>>`
             `Lcm<T>` implements `ConstructionMonoid<T>`
             `Max<T>` implements `ConstructionMonoid<T>`
             `Min<T>` implements `ConstructionMonoid<T>`
