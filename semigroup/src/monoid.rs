@@ -1,4 +1,4 @@
-use semigroup_derive::ConstructionPriv;
+use semigroup_derive::{properties_priv, ConstructionPriv};
 
 use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 
@@ -121,7 +121,8 @@ pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
 /// assert_eq!(bd.as_ref().unwrap().duration(), Duration::from_millis(250));
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
-#[construction(monoid, identity = Self(None))]
+#[construction(monoid, commutative, identity = Self(None), commutative_where = "T: crate::Commutative")]
+#[properties_priv(monoid, commutative, commutative_where = "T: crate::Commutative")]
 pub struct OptionMonoid<T: Semigroup>(pub Option<T>);
 impl<T: Semigroup> From<T> for OptionMonoid<T> {
     fn from(value: T) -> Self {
