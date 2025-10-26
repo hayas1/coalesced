@@ -5,12 +5,15 @@ use darling::FromMeta;
 pub struct ContainerAttr {
     #[darling(default)]
     annotated: bool,
+    annotation_where: Option<String>, // TODO Vec
 
     #[darling(default)]
     monoid: bool,
+    unit_where: Option<String>, // TODO Vec
 
     #[darling(default)]
     commutative: bool,
+    commutative_where: Option<String>, // TODO Vec
 }
 impl ContainerAttr {
     pub fn validate(self) -> darling::Result<Self> {
@@ -24,5 +27,15 @@ impl ContainerAttr {
     }
     pub fn is_commutative(&self) -> bool {
         self.commutative
+    }
+
+    pub fn annotation_where(&self) -> Option<&str> {
+        self.annotation_where.as_deref()
+    }
+    pub fn unit_where(&self) -> Option<&str> {
+        self.unit_where.as_deref()
+    }
+    pub fn commutative_where(&self) -> Option<&str> {
+        self.commutative_where.as_deref()
     }
 }

@@ -30,7 +30,7 @@ mod tests {
     #[rstest]
     #[case::properties_annotated(
         "properties_annotated",
-        impl_properties::<External>,
+        impl_properties::<Internal>,
         (
             syn::parse_quote! {
                 annotated, monoid
@@ -47,13 +47,13 @@ mod tests {
     )]
     #[case::properties_not_annotated(
         "properties_not_annotated",
-        impl_properties::<Internal>,
+        impl_properties::<External>,
         (
             syn::parse_quote! {
 
             },
             syn::parse_quote! {
-                /// A semigroup struct that returns the sum and overwrite
+                /// A semigroup struct that returns the sum and overwrite.
                 /// # Properties
                 /// <!-- properties -->
                 #[derive(SemigroupPriv)]
@@ -63,6 +63,23 @@ mod tests {
                     T,
                     u64
                 );
+            },
+        )
+    )]
+    #[case::properties_where(
+        "properties_where",
+        impl_properties::<Internal>,
+        (
+            syn::parse_quote! {
+                monoid, commutative, unit_where = "T: num::Zero"
+            },
+            syn::parse_quote! {
+                /// A semigroup construction that returns the sum.
+                /// # Properties
+                /// <!-- properties -->
+                #[derive(SemigroupPriv)]
+                #[construction(monoid, commutative, unit = Self(T::zero()), unit_where = "T: num::Zero")]
+                pub struct Sum<T: Add<Output = T>>(pub T);
             },
         )
     )]

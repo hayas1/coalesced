@@ -4,7 +4,7 @@ use semigroup_derive::{properties_priv, ConstructionPriv};
 
 use crate::Semigroup;
 
-/// A semigroup construction that returns the sum.
+/// A [`Semigroup`](crate::Semigroup) [construction](crate::Construction) that returns the sum.
 /// # Properties
 /// <!-- properties -->
 ///
@@ -20,7 +20,7 @@ use crate::Semigroup;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[construction(monoid, commutative, unit = Self(T::zero()), unit_where = "T: num::Zero")]
-#[properties_priv(monoid, commutative)]
+#[properties_priv(monoid, commutative, unit_where = "T: num::Zero")]
 pub struct Sum<T: Add<Output = T>>(pub T);
 impl<T: Add<Output = T>> Semigroup for Sum<T> {
     fn op(base: Self, other: Self) -> Self {

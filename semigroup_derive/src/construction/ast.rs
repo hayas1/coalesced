@@ -57,15 +57,15 @@ impl<'a> Construction<'a> {
             }
             Data::Enum(DataEnum { enum_token, .. }) => Err(syn::Error::new_spanned(
                 enum_token,
-                ConstructionError::UnsupportedEnum,
+                ConstructionError::ExpectNewType,
             )),
             Data::Struct(DataStruct { struct_token, .. }) => Err(syn::Error::new_spanned(
                 struct_token,
-                ConstructionError::OnlyNewType,
+                ConstructionError::ExpectNewType,
             )),
             Data::Union(DataUnion { union_token, .. }) => Err(syn::Error::new_spanned(
                 union_token,
-                ConstructionError::OnlyNewType,
+                ConstructionError::ExpectNewType,
             )),
         }
     }

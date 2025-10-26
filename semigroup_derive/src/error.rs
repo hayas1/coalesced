@@ -10,29 +10,32 @@ use crate::{
 
 #[derive(Debug, Clone)]
 pub enum ConstructionError {
-    OnlyNewType,
-    UnsupportedEnum,
+    ExpectNewType,
     OnlyAnnotated(Name),
     OnlyMonoid(Name),
+    OnlyCommutative(Name),
 }
 impl Error for ConstructionError {}
 impl Display for ConstructionError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::OnlyNewType => {
+            Self::ExpectNewType => {
                 write!(
                     f,
                     "derive {DERIVE_CONSTRUCTION} only supports newtype structs",
                 )
-            }
-            Self::UnsupportedEnum => {
-                write!(f, "derive {DERIVE_CONSTRUCTION} does not support enums")
             }
             Self::OnlyAnnotated(Name(name)) => {
                 write!(f, "attribute `{name}` are supported only with `annotated`")
             }
             Self::OnlyMonoid(Name(name)) => {
                 write!(f, "attribute `{name}` are supported only with `monoid`")
+            }
+            Self::OnlyCommutative(Name(name)) => {
+                write!(
+                    f,
+                    "attribute `{name}` are supported only with `commutative`"
+                )
             }
         }
     }
@@ -44,6 +47,7 @@ pub enum SemigroupError {
     UnsupportedUnion,
     OnlyAnnotated(Name),
     OnlyMonoid(Name),
+    OnlyCommutative(Name),
 }
 impl Error for SemigroupError {}
 impl Display for SemigroupError {
@@ -60,6 +64,12 @@ impl Display for SemigroupError {
             }
             Self::OnlyMonoid(Name(name)) => {
                 write!(f, "attribute `{name}` are supported only with `monoid`")
+            }
+            Self::OnlyCommutative(Name(name)) => {
+                write!(
+                    f,
+                    "attribute `{name}` are supported only with `commutative`"
+                )
             }
         }
     }

@@ -1,4 +1,6 @@
-use crate::Semigroup;
+use semigroup_derive::{properties_priv, ConstructionPriv};
+
+use crate::{Monoid, Semigroup};
 
 /// [`Commutative`] represents a binary operation that satisfies the following property
 /// 1. *Commutativity*: `op(a, b) = op(b, a)`
@@ -35,12 +37,71 @@ use crate::Semigroup;
 ///
 /// The *commutativity* property is not guaranteed by Rust’s type system,
 /// so it must be verified manually using [`crate::assert_commutative!`].
-///
 pub trait Commutative: Semigroup {}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
+/// A [`Semigroup`](crate::Semigroup) [construction](crate::Construction) that flips the order of operands:
+/// `op(Reverse(a), Reverse(b)) = Reverse(op(b, a))`.
+///
+/// If `T` is [`Commutative`], then `op(a, b) = op(b, a)`, and thus [`Reverse`] is meaningless.
+///
+/// ## Calculate right fold by left fold algorithm
+/// By using [`Reverse`], a right fold can be computed using a left fold algorithm.
+/// - Let the underlying operation be `a ⊙ b := op(a, b)`, therefore `Reverse(a) ⊙ Reverse(b) := Reverse(b ⊙ a)`
+///     - `op` is [`Semigroup`], so that has associativity property: `a ⊙ b ⊙ c = a ⊙ (b ⊙ c) = (a ⊙ b) ⊙ c`
+/// - A left fold evaluates as: `v1 ⊙ v2 ... ⊙ vn`
+/// - A right fold evaluates as: `vn ⊙ vn-1 ... ⊙ v1`
+/// Now, the left fold of [`Reverse`] is `Reverse(v1) ⊙ Reverse(v2) ... ⊙ Reverse(vn)`.
+/// ```text
+/// Reverse(v1) ⊙ Reverse(v2) ⊙ Reverse(v3) ⊙ ... ⊙ Reverse(vn-1) ⊙ Reverse(vn)
+/// = Reverse(v2 ⊙ v1) ⊙ Reverse(v3) ⊙ ... ⊙ Reverse(vn-1) ⊙ Reverse(vn)
+/// = Reverse(v3 ⊙ v2 ⊙ v1) ⊙ ... ⊙ Reverse(vn-1) ⊙ Reverse(vn)
+/// ...
+/// = Reverse(vn-1 ⊙ ... ⊙ v3 ⊙ v2 ⊙ v1) ⊙ Reverse(vn)
+/// = Reverse(vn ⊙ vn-1 ⊙ ... ⊙ v3 ⊙ v2 ⊙ v1)
+/// ```
+/// The inner expression `vn ⊙ vn-1 ⊙ ... ⊙ v3 ⊙ v2 ⊙ v1` is exactly the right fold of original semigroup.
+///
+/// # Properties
+/// <!-- properties -->
+///
+/// # Examples
+/// ## Simple reverse two elements
+/// ```
+/// use semigroup::{op::Coalesce, Reverse, Construction, Semigroup};
+///
+/// let a = Coalesce(Some(1));
+/// let b = Coalesce(Some(2));
+///
+/// assert_eq!(a.semigroup(b), Coalesce(Some(1)));
+///
+/// let ra = Reverse(a);
+/// let rb = Reverse(b);
+///
+/// assert_eq!(ra.semigroup(rb).into_inner(), Coalesce(Some(2)));
+/// ```
+///
+/// ## Calculate right fold by left fold algorithm
+/// ```
+/// # #[cfg(feature="monoid")]
+/// # {
+/// use semigroup::{op::Coalesce, Reverse, Construction, Semigroup, Monoid};
+///
+/// let v = (1..100).map(Some).map(Coalesce).collect::<Vec<_>>();
+///
+/// assert_eq!(v.iter().cloned().fold(Monoid::unit(), Semigroup::op), Coalesce(Some(1)));
+/// assert_eq!(v.iter().cloned().map(Reverse).fold(Monoid::unit(), Semigroup::op).into_inner(), Coalesce(Some(99)));
+/// # }
+/// ```
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
+#[construction(monoid, commutative, unit = Self(T::unit()), unit_where = "T: Monoid", commutative_where = "T: Commutative")]
+#[properties_priv(
+    monoid,
+    commutative,
+    unit_where = "T: Monoid",
+    commutative_where = "T: Commutative"
+)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct Reverse<T>(pub T);
+pub struct Reverse<T: Semigroup>(pub T);
 
 impl<T: Semigroup> Semigroup for Reverse<T> {
     fn op(base: Self, other: Self) -> Self {
@@ -56,6 +117,10 @@ pub mod test_commutative {
 
     use super::*;
 
+    /// Assert that the given type satisfies the *commutative* property.
+    ///
+    /// # Usage
+    /// Same to [`crate::assert_semigroup!`].
     #[macro_export]
     macro_rules! assert_commutative {
         ($a:expr, $b: expr, $($tail: expr),*) => {
