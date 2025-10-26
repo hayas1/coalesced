@@ -132,7 +132,7 @@
 //!     }
 //! }
 //!
-//! let (now, mut agg) = (Instant::now(), OptionMonoid::unit());
+//! let (now, mut agg) = (Instant::now(), OptionMonoid::identity());
 //! for i in 0..10000000 {
 //!     let duration = Duration::from_millis(i);
 //!     agg = agg.semigroup(RequestAggregate::new(i % 2 == 0, now + duration, duration).into());
@@ -174,7 +174,7 @@
 //! #[derive(
 //!     Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction,
 //! )]
-//! #[construction(monoid, commutative, unit = Self(i32::MIN))]
+//! #[construction(monoid, commutative, identity = Self(i32::MIN))]
 //! struct Max(pub i32);
 //! impl Semigroup for Max {
 //!     fn op(base: Self, other: Self) -> Self {

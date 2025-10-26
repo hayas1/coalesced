@@ -52,14 +52,14 @@ impl<'a> OpTrait<'a> {
             .into_iter()
             .for_each(|w| g.make_where_clause().predicates.push(w));
         (attr.is_monoid() && attr.with_monoid_impl()).then(|| {
-            attr.unit()
+            attr.identity()
                 .map(|expr| {
                     let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
                     parse_quote! {
                         #[automatically_derived]
                         #attr_feature_monoid
                         impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
-                            fn unit() -> Self {
+                            fn identity() -> Self {
                                 #expr
                             }
                         }
@@ -73,7 +73,7 @@ impl<'a> OpTrait<'a> {
                         #[automatically_derived]
                         #attr_feature_monoid
                         impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
-                            fn unit() -> Self {
+                            fn identity() -> Self {
                                 Default::default()
                             }
                         }

@@ -15,7 +15,7 @@ impl Semigroup for Join {
     }
 }
 impl Monoid for Join {
-    fn unit() -> Self {
+    fn identity() -> Self {
         Self(String::new())
     }
 }

@@ -74,7 +74,7 @@ impl<'a> FieldSemigroupOp<'a> {
             }
         })
     }
-    pub fn impl_field_monoid_unit(&self) -> FieldValue {
+    pub fn impl_field_monoid_identity(&self) -> FieldValue {
         let Self {
             constant:
                 Constant {
@@ -90,12 +90,12 @@ impl<'a> FieldSemigroupOp<'a> {
         let with = field_attr.with(container_attr);
         with.map(|path| {
             parse_quote! {
-                #member: <#path<_> as #path_construction_monoid<_>>::lift_unit()
+                #member: <#path<_> as #path_construction_monoid<_>>::lit_identity()
             }
         })
         .unwrap_or_else(|| {
             parse_quote! {
-                #member: #path_monoid::unit()
+                #member: #path_monoid::identity()
             }
         })
     }

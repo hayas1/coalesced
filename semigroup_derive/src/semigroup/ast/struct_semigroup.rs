@@ -89,25 +89,25 @@ impl<'a> StructSemigroup<'a> {
                 .for_each(|w| g.make_where_clause().predicates.push(w));
             let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
 
-            attr.unit()
+            attr.identity()
                 .map(|expr| {
                     parse_quote! {
                         #[automatically_derived]
                         #attr_feature_monoid
                         impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
-                            fn unit() -> Self {
+                            fn identity() -> Self {
                                 #expr
                             }
                         }
                     }
                 })
                 .unwrap_or_else(|| {
-                    let fields_op = field_ops.iter().map(|op| op.impl_field_monoid_unit());
+                    let fields_op = field_ops.iter().map(|op| op.impl_field_monoid_identity());
                     parse_quote! {
                         #[automatically_derived]
                         #attr_feature_monoid
                         impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
-                            fn unit() -> Self {
+                            fn identity() -> Self {
                                 Self {
                                     #(#fields_op),*
                                 }

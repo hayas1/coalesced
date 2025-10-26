@@ -12,7 +12,7 @@ pub struct ContainerAttr {
 
     #[darling(default)]
     monoid: bool,
-    unit: Option<Expr>,
+    identity: Option<Expr>,
     monoid_where: Option<String>, // TODO Vec
     #[darling(default)]
     without_monoid_impl: bool,
@@ -41,7 +41,7 @@ impl ContainerAttr {
             annotation_where,
             without_annotate_impl,
             monoid,
-            unit,
+            identity,
             monoid_where,
             without_monoid_impl,
             commutative,
@@ -65,8 +65,8 @@ impl ContainerAttr {
             })?;
         }
         if !monoid {
-            let err_attr_name = if unit.is_some() {
-                Some(var_name!(unit))
+            let err_attr_name = if identity.is_some() {
+                Some(var_name!(identity))
             } else if monoid_where.is_some() {
                 Some(var_name!(monoid_where))
             } else if *without_monoid_impl {
@@ -100,8 +100,8 @@ impl ContainerAttr {
     pub fn is_monoid(&self) -> bool {
         self.monoid
     }
-    pub fn unit(&self) -> Option<&Expr> {
-        self.unit.as_ref()
+    pub fn identity(&self) -> Option<&Expr> {
+        self.identity.as_ref()
     }
     pub fn monoid_where(&self) -> Option<WherePredicate> {
         self.monoid_where
@@ -188,10 +188,10 @@ mod tests {
     #[case::invalid_monoid_attr(
         syn::parse_quote! {
             #[derive(Construction)]
-            #[construction(unit = ())]
+            #[construction(identity = ())]
             pub struct Construct<T>(T);
         },
-        Err("attribute `unit` are supported only with `monoid`"),
+        Err("attribute `identity` are supported only with `monoid`"),
     )]
     fn test_construction_container_attr(
         #[case] input: DeriveInput,

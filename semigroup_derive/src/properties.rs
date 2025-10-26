@@ -78,7 +78,7 @@ mod tests {
                 /// # Properties
                 /// <!-- properties -->
                 #[derive(SemigroupPriv)]
-                #[construction(monoid, commutative, unit = Self(T::zero()), monoid_where = "T: num::Zero")]
+                #[construction(monoid, commutative, identity = Self(T::zero()), monoid_where = "T: num::Zero")]
                 pub struct Sum<T: Add<Output = T>>(pub T);
             },
         )
