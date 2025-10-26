@@ -170,7 +170,7 @@ impl<T: AnnotatedSemigroup<A> + Annotate<A>, A> Annotate<Option<A>> for OptionMo
     }
 }
 
-#[cfg(any(test, feature = "test"))]
+#[cfg(feature = "test")]
 pub mod test_monoid {
     use std::fmt::Debug;
 

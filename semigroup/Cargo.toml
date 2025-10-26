@@ -11,7 +11,7 @@ readme.workspace = true
 [features]
 derive = []
 serde = ["dep:serde"]
-test = ["monoid", "dep:rand"]
+test = ["dep:rand"]
 monoid = ["dep:num"]
 histogram = ["dep:hdrhistogram"]
 

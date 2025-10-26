@@ -109,7 +109,7 @@ impl<T: Semigroup> Semigroup for Reverse<T> {
     }
 }
 
-#[cfg(any(test, feature = "test"))]
+#[cfg(feature = "test")]
 pub mod test_commutative {
     use std::fmt::Debug;
 

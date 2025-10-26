@@ -69,7 +69,7 @@ pub trait AnnotatedSemigroup<A>: Sized + Semigroup {
     fn annotated_op(base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A>;
 }
 
-#[cfg(any(test, feature = "test"))]
+#[cfg(feature = "test")]
 pub mod test_semigroup {
     use std::fmt::Debug;
 
