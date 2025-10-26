@@ -1,22 +1,17 @@
 #![cfg(all(feature = "monoid", feature = "test"))]
-use semigroup::{assert_monoid, assert_semigroup, properties, Construction, Monoid, Semigroup};
+use semigroup::{assert_monoid, assert_semigroup, properties, Construction, Semigroup};
 
 /// A semigroup construction that join two [`String`]s into a [`String`].
 /// # Properties
 /// <!-- properties -->
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
-#[construction()]
+#[construction(monoid, identity = Self(String::new()))]
 #[properties(monoid)]
 pub struct Join(pub String);
 impl Semigroup for Join {
     fn op(mut base: Self, other: Self) -> Self {
         base.0.push_str(&other.0);
         base
-    }
-}
-impl Monoid for Join {
-    fn identity() -> Self {
-        Self(String::new())
     }
 }
 
