@@ -1,6 +1,6 @@
 use semigroup_derive::{properties_priv, ConstructionPriv};
 
-use crate::{Monoid, Semigroup};
+use crate::Semigroup;
 
 /// [`Commutative`] represents a binary operation that satisfies the following property
 /// 1. *Commutativity*: `op(a, b) = op(b, a)`
@@ -93,11 +93,11 @@ pub trait Commutative: Semigroup {}
 /// # }
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
-#[construction(monoid, commutative, identity = Self(T::identity()), monoid_where = "T: Monoid", commutative_where = "T: Commutative")]
+#[construction(monoid, commutative, identity = Self(T::identity()), monoid_where = "T: crate::Monoid", commutative_where = "T: Commutative")]
 #[properties_priv(
     monoid,
     commutative,
-    monoid_where = "T: Monoid",
+    monoid_where = "T: crate::Monoid",
     commutative_where = "T: Commutative"
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
