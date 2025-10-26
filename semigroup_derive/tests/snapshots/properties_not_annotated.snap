@@ -1,14 +1,15 @@
 ---
 source: semigroup_derive/src/properties.rs
-assertion_line: 77
+assertion_line: 94
 expression: formatted
 ---
-/// A semigroup struct that returns the sum and overwrite
+/// A semigroup struct that returns the sum and overwrite.
 /// # Properties
 /// <!-- properties start -->
-///| [`crate::Annotate`] | [`crate::Monoid`] | [`crate::Commutative`] |
-///|---------------------|-------------------|------------------------|
-///|          ❌         |         ❌        |           ❌           |
+///|       | [`semigroup::Annotate`] | [`semigroup::Monoid`] | [`semigroup::Commutative`] |
+///|-------|-------------------------|-----------------------|----------------------------|
+///|  impl |            ❌           |           ❌          |             ❌             |
+///| where |                         |                       |                            |
 ///<!-- properties end -->
 pub struct UnnamedStruct<T: std::ops::Add>(
     #[semigroup(with = "semigroup::op::Added")]
