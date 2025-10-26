@@ -1,6 +1,8 @@
 use std::ops::{Deref, DerefMut};
 
-use crate::{AnnotatedSemigroup, Semigroup};
+use semigroup_derive::{properties_priv, ConstructionPriv};
+
+use crate::{AnnotatedSemigroup, Commutative, Semigroup};
 
 /// Some [`Semigroup`] such as [`crate::op::Coalesce`] can have an annotation.
 /// [`Annotate`] trait will be derived by [`Semigroup`].
@@ -71,8 +73,11 @@ pub trait Annotate<A>: Sized {
     fn annotated(self, annotation: Self::Annotation) -> Annotated<Self, A>;
 }
 
-/// [`Annotated`] represents a value with an annotation.
+/// [`Annotated`] represents a [`Semigroup`] value with an annotation.
 /// The value will be annotated by [`Annotate`] trait.
+///
+/// # Properties
+/// <!-- properties -->
 ///
 /// # Examples
 /// ```
@@ -84,7 +89,16 @@ pub trait Annotate<A>: Sized {
 /// assert_eq!(annotated.annotation(), &"first");
 /// assert_eq!(annotated, Annotated::new(Coalesce(Some(1)), "first"));
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
+#[construction(
+    commutative,
+    commutative_where = "T: AnnotatedSemigroup<A> + Commutative",
+    without_construction
+)]
+#[properties_priv(
+    commutative,
+    commutative_where = "T: AnnotatedSemigroup<A> + Commutative"
+)]
 pub struct Annotated<T, A> {
     value: T,
     annotation: A,
