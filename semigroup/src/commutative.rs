@@ -88,16 +88,16 @@ pub trait Commutative: Semigroup {}
 ///
 /// let v = (1..100).map(Some).map(Coalesce).collect::<Vec<_>>();
 ///
-/// assert_eq!(v.iter().cloned().fold(Monoid::unit(), Semigroup::op), Coalesce(Some(1)));
-/// assert_eq!(v.iter().cloned().map(Reverse).fold(Monoid::unit(), Semigroup::op).into_inner(), Coalesce(Some(99)));
+/// assert_eq!(v.iter().cloned().fold(Monoid::identity(), Semigroup::op), Coalesce(Some(1)));
+/// assert_eq!(v.iter().cloned().map(Reverse).fold(Monoid::identity(), Semigroup::op).into_inner(), Coalesce(Some(99)));
 /// # }
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
-#[construction(monoid, commutative, unit = Self(T::unit()), unit_where = "T: Monoid", commutative_where = "T: Commutative")]
+#[construction(monoid, commutative, identity = Self(T::identity()), monoid_where = "T: Monoid", commutative_where = "T: Commutative")]
 #[properties_priv(
     monoid,
     commutative,
-    unit_where = "T: Monoid",
+    monoid_where = "T: Monoid",
     commutative_where = "T: Commutative"
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

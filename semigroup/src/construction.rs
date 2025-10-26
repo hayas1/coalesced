@@ -102,7 +102,7 @@ pub trait ConstructionMonoid<T>: Construction<T> + crate::Monoid {
     /// use semigroup::{Construction, ConstructionMonoid, Semigroup};
     ///
     /// #[derive(Construction)]
-    /// #[construction(monoid, unit = Self(None))]
+    /// #[construction(monoid, identity = Self(None))]
     /// struct Coalesce<T>(Option<T>);
     /// impl<T> Semigroup for Coalesce<T> {
     ///     fn op(base: Self, other: Self) -> Self {
@@ -110,10 +110,10 @@ pub trait ConstructionMonoid<T>: Construction<T> + crate::Monoid {
     ///     }
     /// }
     ///
-    /// let a: Option<u32> = Coalesce::lift_unit();
+    /// let a: Option<u32> = Coalesce::lit_identity();
     /// assert_eq!(a, None);
     /// ```
-    fn lift_unit() -> T {
-        Self::unit().into_inner()
+    fn lit_identity() -> T {
+        Self::identity().into_inner()
     }
 }

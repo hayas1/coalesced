@@ -5,7 +5,7 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// [`Monoid`] represents a binary operation that satisfies the following properties
 /// 1. *Closure*: `op: T × T → T`
 /// 2. *Associativity*: `op(op(a, b), c) = op(a, op(b, c))`
-/// 3. Existence of *identity element*: `op(unit(), a) = a = op(a, unit())`
+/// 3. Existence of *identity element*: `op(identity(), a) = a = op(a, identity())`
 ///
 /// # Deriving
 /// [`Monoid`] can be derived like [`Semigroup`], use `monoid` attribute.
@@ -19,7 +19,7 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 ///     pub sum: u32,
 /// }
 ///
-/// let a = ExampleStruct::unit();
+/// let a = ExampleStruct::identity();
 /// let b = ExampleStruct { str: Some("ten"), sum: 10 };
 /// let c = ExampleStruct { str: None, sum: 100 };
 ///
@@ -36,14 +36,14 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// use semigroup::{Construction, Semigroup, Monoid};
 ///
 /// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
-/// #[construction(monoid, commutative, unit = Self(0))]
+/// #[construction(monoid, commutative, identity = Self(0))]
 /// pub struct Sum(u64);
 /// impl Semigroup for Sum {
 ///     fn op(base: Self, other: Self) -> Self {
 ///         Self(base.0 + other.0)
 ///     }
 /// }
-/// let (a, b, c) = (Sum::unit(), Sum(2), Sum(3));
+/// let (a, b, c) = (Sum::identity(), Sum(2), Sum(3));
 /// // #[test]
 /// semigroup::assert_monoid!(&a, &b, &c);
 /// assert_eq!(a.semigroup(b).semigroup(c), Sum(5));
@@ -60,10 +60,10 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 /// However, existence of *identity element* is not guaranteed the macro,
 /// so it must be verified manually using [`crate::assert_monoid!`].
 pub trait Monoid: Semigroup {
-    fn unit() -> Self;
+    fn identity() -> Self;
 }
 pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
-    fn annotated_unit() -> Annotated<Self, A>;
+    fn annotated_identity() -> Annotated<Self, A>;
 }
 
 /// Construct [`Monoid`] from optional [`Semigroup`].
@@ -109,7 +109,7 @@ pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
 ///     }
 /// }
 ///
-/// let (now, mut bd) = (Instant::now(), OptionMonoid::unit());
+/// let (now, mut bd) = (Instant::now(), OptionMonoid::identity());
 /// let v = vec! [
 ///     OptionMonoid::from(BoundingDuration { start: now + Duration::from_millis(50), end: now + Duration::from_millis(100) }),
 ///     OptionMonoid::from(BoundingDuration { start: now + Duration::from_millis(100), end: now + Duration::from_millis(200) }),
@@ -121,7 +121,7 @@ pub trait AnnotatedMonoid<A>: Sized + Monoid + AnnotatedSemigroup<A> {
 /// assert_eq!(bd.as_ref().unwrap().duration(), Duration::from_millis(250));
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
-#[construction(monoid, unit = Self(None))]
+#[construction(monoid, identity = Self(None))]
 pub struct OptionMonoid<T: Semigroup>(pub Option<T>);
 impl<T: Semigroup> From<T> for OptionMonoid<T> {
     fn from(value: T) -> Self {
@@ -129,8 +129,8 @@ impl<T: Semigroup> From<T> for OptionMonoid<T> {
     }
 }
 impl<T: AnnotatedSemigroup<A>, A> AnnotatedMonoid<Option<A>> for OptionMonoid<T> {
-    fn annotated_unit() -> Annotated<Self, Option<A>> {
-        Annotated::new(Self::unit(), None)
+    fn annotated_identity() -> Annotated<Self, Option<A>> {
+        Annotated::new(Self::identity(), None)
     }
 }
 impl<T: Semigroup> Semigroup for OptionMonoid<T> {
@@ -164,7 +164,7 @@ impl<T: AnnotatedSemigroup<A> + Annotate<A>, A> Annotate<Option<A>> for OptionMo
     type Annotation = T::Annotation;
     fn annotated(self, annotation: Self::Annotation) -> Annotated<Self, Option<A>> {
         match self {
-            Self(None) => Self::annotated_unit(),
+            Self(None) => Self::annotated_identity(),
             Self(Some(semigroup)) => semigroup.annotated(annotation).map_parts(Self::from, Some),
         }
     }
@@ -200,7 +200,7 @@ pub mod test_monoid {
 
     pub fn assert_monoid_impl<T: Monoid + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
         assert_semigroup_impl(a.clone(), b.clone(), c.clone());
-        assert_monoid_unit_associative_law(a.clone(), b.clone(), c.clone());
+        assert_monoid_identity_associative_law(a.clone(), b.clone(), c.clone());
     }
 
     pub fn assert_option_monoid<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
@@ -210,22 +210,22 @@ pub mod test_monoid {
             OptionMonoid::<T>::from(c.clone()),
         );
     }
-    pub fn assert_monoid_unit_associative_law<T: Monoid + Clone + PartialEq + Debug>(
+    pub fn assert_monoid_identity_associative_law<T: Monoid + Clone + PartialEq + Debug>(
         a: T,
         b: T,
         c: T,
     ) {
-        assert_eq!(T::unit(), T::op(T::unit(), T::unit()));
-        assert_eq!(a.clone(), T::op(a.clone(), T::unit()));
-        assert_eq!(a.clone(), T::op(T::unit(), a.clone()));
-        assert_eq!(b.clone(), T::op(b.clone(), T::unit()));
-        assert_eq!(b.clone(), T::op(T::unit(), b.clone()));
-        assert_eq!(c.clone(), T::op(c.clone(), T::unit()));
-        assert_eq!(c.clone(), T::op(T::unit(), c.clone()));
+        assert_eq!(T::identity(), T::op(T::identity(), T::identity()));
+        assert_eq!(a.clone(), T::op(a.clone(), T::identity()));
+        assert_eq!(a.clone(), T::op(T::identity(), a.clone()));
+        assert_eq!(b.clone(), T::op(b.clone(), T::identity()));
+        assert_eq!(b.clone(), T::op(T::identity(), b.clone()));
+        assert_eq!(c.clone(), T::op(c.clone(), T::identity()));
+        assert_eq!(c.clone(), T::op(T::identity(), c.clone()));
 
         assert_associative_law(a.clone(), b.clone(), c.clone());
-        assert_associative_law(T::unit(), b.clone(), c.clone());
-        assert_associative_law(a.clone(), T::unit(), c.clone());
-        assert_associative_law(a.clone(), b.clone(), T::unit());
+        assert_associative_law(T::identity(), b.clone(), c.clone());
+        assert_associative_law(a.clone(), T::identity(), c.clone());
+        assert_associative_law(a.clone(), b.clone(), T::identity());
     }
 }

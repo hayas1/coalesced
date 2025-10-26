@@ -18,7 +18,7 @@ use crate::Semigroup;
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(monoid, commutative, unit = Self(T::one()))]
+#[construction(monoid, commutative, identity = Self(T::one()))]
 #[properties_priv(monoid, commutative)]
 pub struct Lcm<T: Unsigned + Integer + Clone>(pub T);
 impl<T: Unsigned + Integer + Clone> Semigroup for Lcm<T> {

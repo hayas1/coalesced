@@ -75,10 +75,10 @@ impl<T: Monoid + Clone> SegmentTree<T> {
         self.reconstruct(iter);
         self
     }
-    /// **O(len)**, resize segment tree by allocating unit values without truncating.
+    /// **O(len)**, resize segment tree by allocating identity elements without truncating.
     fn resize_upto(&mut self, len: usize) {
         let data = self.over_capacity(len).then(|| self[..].to_vec());
-        self.tree.resize_with(Self::capacity(len), T::unit);
+        self.tree.resize_with(Self::capacity(len), T::identity);
         self.len = len.max(self.len());
         data.into_iter().for_each(|d| self.reconstruct(d));
     }
@@ -130,8 +130,8 @@ impl<T: Monoid + Clone> SegmentTree<T> {
             self.resize_upto(self.len() + len);
             self.reconstruct(data);
         } else {
-            let repeat_unit = std::iter::repeat_with(T::unit);
-            for d in iter.into_iter().chain(repeat_unit).take(len) {
+            let repeat_identity = std::iter::repeat_with(T::identity);
+            for d in iter.into_iter().chain(repeat_identity).take(len) {
                 self.push(d.clone());
             }
         }
@@ -163,7 +163,7 @@ impl<T: Monoid + Clone> SegmentTree<T> {
     {
         let Range { start, end } = self.indices(range);
         let (mut left, mut right) = (self.leaf_offset() + start, self.leaf_offset() + end);
-        let mut res = T::unit();
+        let mut res = T::identity();
         while left < right {
             if left % 2 == 1 {
                 res = T::semigroup(res, self.tree[left].clone());
@@ -384,9 +384,12 @@ mod tests {
         assert!(empty.is_empty());
         assert_eq!(empty.len(), 0);
         assert_eq!(empty[..], vec![]);
-        assert_eq!(empty.tree, vec![OptionMonoid::unit(), OptionMonoid::unit()]);
-        assert_eq!(empty.fold(..), OptionMonoid::unit());
-        assert_eq!(empty.fold(0..0), OptionMonoid::unit());
+        assert_eq!(
+            empty.tree,
+            vec![OptionMonoid::identity(), OptionMonoid::identity()]
+        );
+        assert_eq!(empty.fold(..), OptionMonoid::identity());
+        assert_eq!(empty.fold(0..0), OptionMonoid::identity());
     }
 
     #[test]
@@ -397,15 +400,18 @@ mod tests {
         assert_eq!(single[..], vec![OptionMonoid::from(Coalesce(Some(3)))]);
         assert_eq!(
             single.tree,
-            vec![OptionMonoid::unit(), OptionMonoid::from(Coalesce(Some(3)))]
+            vec![
+                OptionMonoid::identity(),
+                OptionMonoid::from(Coalesce(Some(3)))
+            ]
         );
 
         assert_eq!(single.fold(..), OptionMonoid::from(Coalesce(Some(3))));
-        assert_eq!(single.fold(1..1), OptionMonoid::unit());
-        assert_eq!(single.fold(1..), OptionMonoid::unit());
+        assert_eq!(single.fold(1..1), OptionMonoid::identity());
+        assert_eq!(single.fold(1..), OptionMonoid::identity());
         single.update(0, OptionMonoid::from(Coalesce(Some(5))));
         assert_eq!(single.fold(..), OptionMonoid::from(Coalesce(Some(5))));
-        assert_eq!(single.fold(1..), OptionMonoid::unit());
+        assert_eq!(single.fold(1..), OptionMonoid::identity());
     }
 
     #[test]
@@ -426,7 +432,7 @@ mod tests {
         assert_eq!(
             pair.tree,
             vec![
-                OptionMonoid::unit(),
+                OptionMonoid::identity(),
                 OptionMonoid::from(Coalesce(Some(3))),
                 OptionMonoid::from(Coalesce(Some(3))),
                 OptionMonoid::from(Coalesce(Some(4))),
@@ -434,7 +440,7 @@ mod tests {
         );
 
         assert_eq!(pair.fold(..), OptionMonoid::from(Coalesce(Some(3))));
-        assert_eq!(pair.fold(1..1), OptionMonoid::unit());
+        assert_eq!(pair.fold(1..1), OptionMonoid::identity());
         assert_eq!(pair.fold(1..), OptionMonoid::from(Coalesce(Some(4))));
         pair.update(0, OptionMonoid::from(Coalesce(Some(5))));
         assert_eq!(pair.fold(..), OptionMonoid::from(Coalesce(Some(5))));
@@ -442,7 +448,7 @@ mod tests {
         assert_eq!(
             pair.tree,
             vec![
-                OptionMonoid::unit(),
+                OptionMonoid::identity(),
                 OptionMonoid::from(Coalesce(Some(5))),
                 OptionMonoid::from(Coalesce(Some(5))),
                 OptionMonoid::from(Coalesce(Some(4))),
