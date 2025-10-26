@@ -21,7 +21,7 @@ impl Monoid for Join {
 }
 
 #[test]
-fn test_join_as_semigroup() {
+fn test_join_semigroup() {
     let (a, b, c) = (
         Join("a".to_string()),
         Join("b".to_string()),
@@ -31,7 +31,7 @@ fn test_join_as_semigroup() {
 }
 
 #[test]
-fn test_join_as_monoid() {
+fn test_join_monoid() {
     let (a, b, c) = (
         Join("a".to_string()),
         Join("b".to_string()),

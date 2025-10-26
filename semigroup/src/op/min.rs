@@ -33,13 +33,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_min_as_semigroup() {
+    fn test_min_semigroup() {
         let (a, b, c) = (Min(1), Min(2), Min(3));
         assert_semigroup!(a, b, c);
     }
 
     #[test]
-    fn test_min_as_monoid() {
+    fn test_min_monoid() {
         let (a, b, c) = (Min(1), Min(2), Min(3));
         assert_monoid!(a, b, c);
     }
