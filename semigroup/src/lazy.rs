@@ -26,7 +26,25 @@ pub trait CombineIterator: Sized + Iterator {
 }
 impl<I: Iterator> CombineIterator for I {}
 
-/// A lazy [`Semigroup`] that is implemented as a nonempty [`Vec`].
+/// A lazy evaluated [`Semigroup`] that is implemented as a nonempty [`Vec`].
+///
+/// # Properties
+/// <!-- properties -->
+///
+/// # Examples
+/// ```
+/// use semigroup::{op::Coalesce, Lazy, Semigroup};
+///
+/// let a = Coalesce(Some(1));
+/// let b = Coalesce(Some(2));
+/// let c = Coalesce(Some(3));
+///
+/// let lazy = Lazy::from(a).semigroup(b.into()).semigroup(c.into());
+///
+/// assert_eq!(lazy.first(), &Coalesce(Some(1)));
+/// assert_eq!(lazy.last(), &Coalesce(Some(3)));
+/// assert_eq!(lazy.combine(), Coalesce(Some(1)));
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
 #[construction(
     commutative,
@@ -138,7 +156,7 @@ impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
     /// let b = Coalesce(Some(2)).annotated("middle");
     /// let c = Coalesce(Some(3)).annotated("edge");
     ///
-    /// let lazy = Lazy::from(a.clone()).semigroup(b.clone().into()).semigroup(c.clone().into());
+    /// let lazy = Lazy::from(a).semigroup(b.into()).semigroup(c.into());
     ///
     /// assert_eq!(lazy.find_annotated(&"edge"), Some(&a));
     /// assert_eq!(lazy.find_annotated(&"middle"), Some(&b));
@@ -160,7 +178,7 @@ impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
     /// let b = Coalesce(Some(2)).annotated("middle");
     /// let c = Coalesce(Some(3)).annotated("edge");
     ///
-    /// let lazy = Lazy::from(a.clone()).semigroup(b.clone().into()).semigroup(c.clone().into());
+    /// let lazy = Lazy::from(a).semigroup(b.into()).semigroup(c.into());
     ///
     /// assert_eq!(lazy.position_annotated(&"edge"), Some(0));
     /// assert_eq!(lazy.position_annotated(&"middle"), Some(1));
@@ -183,7 +201,7 @@ impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
     /// let b = Coalesce(Some(2)).annotated("middle");
     /// let c = Coalesce(Some(3)).annotated("edge");
     ///
-    /// let lazy = Lazy::from(a.clone()).semigroup(b.clone().into()).semigroup(c.clone().into());
+    /// let lazy = Lazy::from(a).semigroup(b.into()).semigroup(c.into());
     ///
     /// assert_eq!(lazy.rfind_annotated(&"edge"), Some(&c));
     /// assert_eq!(lazy.rfind_annotated(&"middle"), Some(&b));
@@ -205,7 +223,7 @@ impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
     /// let b = Coalesce(Some(2)).annotated("middle");
     /// let c = Coalesce(Some(3)).annotated("edge");
     ///
-    /// let lazy = Lazy::from(a.clone()).semigroup(b.clone().into()).semigroup(c.clone().into());
+    /// let lazy = Lazy::from(a).semigroup(b.into()).semigroup(c.into());
     ///
     /// assert_eq!(lazy.rposition_annotated(&"edge"), Some(2));
     /// assert_eq!(lazy.rposition_annotated(&"middle"), Some(1));
@@ -228,7 +246,7 @@ impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
     /// let b = Coalesce(Some(2)).annotated("middle");
     /// let c = Coalesce(Some(3)).annotated("edge");
     ///
-    /// let lazy = Lazy::from(a.clone()).semigroup(b.clone().into()).semigroup(c.clone().into());
+    /// let lazy = Lazy::from(a).semigroup(b.into()).semigroup(c.into());
     ///
     /// assert_eq!(lazy.find_annotated_all(&"edge").collect::<Vec<_>>(), vec![&a, &c]);
     /// assert_eq!(lazy.find_annotated_all(&"middle").collect::<Vec<_>>(), vec![&b]);
@@ -254,7 +272,7 @@ impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
     /// let b = Coalesce(Some(2)).annotated("middle");
     /// let c = Coalesce(Some(3)).annotated("edge");
     ///
-    /// let lazy = Lazy::from(a.clone()).semigroup(b.clone().into()).semigroup(c.clone().into());
+    /// let lazy = Lazy::from(a).semigroup(b.into()).semigroup(c.into());
     ///
     /// assert_eq!(lazy.position_annotated_all(&"edge").collect::<Vec<_>>(), vec![0, 2]);
     /// assert_eq!(lazy.position_annotated_all(&"middle").collect::<Vec<_>>(), vec![1]);
