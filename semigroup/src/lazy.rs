@@ -1,30 +1,39 @@
 use std::{ops::Index, slice::SliceIndex};
 
+use semigroup_derive::{properties_priv, ConstructionPriv};
+
 use crate::{Construction, Reverse, Semigroup};
 
 pub trait CombineIterator: Sized + Iterator {
-    fn fold_final(self, fin: Self::Item) -> Self::Item
+    fn fold_final(mut self, fin: Self::Item) -> Self::Item
     where
         Self::Item: Semigroup,
     {
-        let iter = self.chain(Some(fin));
-        iter.reduce(Semigroup::op).unwrap_or_else(|| unreachable!())
+        if let Some(init) = self.next() {
+            self.chain(Some(fin)).fold(init, Semigroup::op)
+        } else {
+            fin
+        }
     }
     fn rfold_final(self, fin: Self::Item) -> Self::Item
     where
         Self::Item: Semigroup,
     {
-        let iter = Some(fin).into_iter().chain(self);
-        iter.map(Reverse)
-            .reduce(Semigroup::op)
-            .unwrap_or_else(|| unreachable!())
+        self.map(Reverse)
+            .fold(Reverse(fin), Semigroup::op)
             .into_inner()
     }
 }
 impl<I: Iterator> CombineIterator for I {}
 
 /// A lazy [`Semigroup`] that is implemented as a nonempty [`Vec`].
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, ConstructionPriv)]
+#[construction(
+    commutative,
+    commutative_where = "T: crate::Commutative",
+    without_construction
+)]
+#[properties_priv(commutative, commutative_where = "T: crate::Commutative")]
 pub struct Lazy<T>(Vec<T>);
 impl<T> Semigroup for Lazy<T> {
     fn op(mut base: Self, other: Self) -> Self {
@@ -34,26 +43,26 @@ impl<T> Semigroup for Lazy<T> {
 }
 impl<T: Semigroup> Lazy<T> {
     pub fn combine(self) -> T {
-        let (head, tail) = self.split_off_first();
-        tail.into_iter().fold(head, Semigroup::op)
+        let (first, tail) = self.split_off_first();
+        tail.into_iter().fold(first, Semigroup::op)
     }
     pub fn combine_cloned(&self) -> T
     where
         T: Clone,
     {
-        let (head, tail) = self.split_first();
-        tail.iter().cloned().fold(head.clone(), Semigroup::op)
+        let (first, tail) = self.split_first();
+        tail.iter().cloned().fold(first.clone(), Semigroup::op)
     }
     pub fn combine_rev(self) -> T {
-        let (head, tail) = self.split_off_last();
-        tail.into_iter().rfold(head, Semigroup::op)
+        let (last, head) = self.split_off_last();
+        head.into_iter().rfold(last, Semigroup::op)
     }
     pub fn combine_rev_cloned(&self) -> T
     where
         T: Clone,
     {
-        let (head, tail) = self.split_last();
-        tail.iter().cloned().rfold(head.clone(), Semigroup::op)
+        let (last, head) = self.split_last();
+        head.iter().cloned().rfold(last.clone(), Semigroup::op)
     }
 }
 impl<T> From<T> for Lazy<T> {
@@ -78,8 +87,9 @@ impl<T> Lazy<T> {
             .next()
             .map(|head| Self(Some(head).into_iter().chain(iterator).collect()))
     }
+    /// Returns `true` if the collection contains no elements. [`Lazy`] is nonempty, so always returns `false`.
     pub fn is_empty(&self) -> bool {
-        self.0.is_empty() // must be false
+        self.0.is_empty()
     }
     pub fn is_single(&self) -> bool {
         self.0.len() == 1
@@ -104,8 +114,8 @@ impl<T> Lazy<T> {
         self.0.split_last().unwrap_or_else(|| unreachable!())
     }
     pub fn split_off_last(mut self) -> (T, Vec<T>) {
-        let head = self.0.split_off(self.0.len() - 1);
-        (self.0.pop().unwrap_or_else(|| unreachable!()), head)
+        let mut tail = self.0.split_off(self.0.len() - 1);
+        (tail.pop().unwrap_or_else(|| unreachable!()), self.0)
     }
     pub fn get<I: SliceIndex<[T]>>(&self, index: I) -> Option<&I::Output> {
         self.0.get(index)
@@ -134,5 +144,77 @@ impl<T, I: SliceIndex<[T]>> Index<I> for Lazy<T> {
     type Output = I::Output;
     fn index(&self, index: I) -> &Self::Output {
         &self.0[index]
+    }
+}
+
+#[cfg(feature = "test")]
+pub mod test_lazy {
+    use std::fmt::Debug;
+
+    use super::*;
+
+    pub fn assert_combine_iter<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
+        let ab = vec![a.clone(), b.clone()];
+        assert_eq!(
+            ab.into_iter().fold_final(c.clone()),
+            T::op(T::op(a.clone(), b.clone()), c.clone())
+        );
+
+        let bc = vec![b.clone(), c.clone()];
+        assert_eq!(
+            bc.into_iter().rfold_final(a.clone()),
+            T::op(T::op(c.clone(), b.clone()), a.clone())
+        );
+    }
+
+    pub fn assert_lazy<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
+        let lazy = Lazy::from(a.clone());
+        assert!(!lazy.is_empty());
+        assert!(lazy.is_single());
+        assert_eq!(lazy.first(), &a);
+        assert_eq!(lazy.last(), &a);
+        assert_eq!(lazy.get(0), Some(&a));
+        assert_eq!(lazy.get(1), None);
+        assert_eq!(lazy.get(..), Some(&[a.clone()][..]));
+        assert_eq!(lazy.clone().split_off_first(), (a.clone(), vec![]));
+        assert_eq!(lazy.clone().split_off_last(), (a.clone(), vec![]));
+        assert_eq!(lazy.combine_cloned(), a.clone());
+        assert_eq!(lazy.combine_rev_cloned(), a.clone());
+
+        let lazy = lazy.semigroup(b.clone().into()).semigroup(c.clone().into());
+        assert!(!lazy.is_empty());
+        assert!(!lazy.is_single());
+        assert_eq!(lazy.first(), &a);
+        assert_eq!(lazy.last(), &c);
+        assert_eq!(lazy.get(0), Some(&a));
+        assert_eq!(lazy.get(1), Some(&b));
+        assert_eq!(lazy.get(2), Some(&c));
+        assert_eq!(lazy.get(3), None);
+        assert_eq!(lazy.get(..), Some(&[a.clone(), b.clone(), c.clone()][..]));
+        assert_eq!(
+            lazy.clone().split_off_first(),
+            (a.clone(), vec![b.clone(), c.clone()])
+        );
+        assert_eq!(
+            lazy.clone().split_off_last(),
+            (c.clone(), vec![a.clone(), b.clone()])
+        );
+
+        assert_eq!(
+            lazy.clone().combine(),
+            T::op(T::op(a.clone(), b.clone()), c.clone())
+        );
+        assert_eq!(
+            lazy.combine_cloned(),
+            T::op(T::op(a.clone(), b.clone()), c.clone())
+        );
+        assert_eq!(
+            lazy.clone().combine_rev(),
+            T::op(T::op(c.clone(), b.clone()), a.clone())
+        );
+        assert_eq!(
+            lazy.combine_rev_cloned(),
+            T::op(T::op(c.clone(), b.clone()), a.clone())
+        );
     }
 }
