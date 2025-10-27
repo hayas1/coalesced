@@ -29,26 +29,27 @@ impl<T: BitXor<Output = T>> Semigroup for Xor<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, assert_semigroup, Construction, Semigroup};
+    use crate::{Construction, Semigroup};
 
     use super::*;
 
     #[test]
     fn test_xor_semigroup() {
         let (a, b, c) = (Xor(0b111), Xor(0b101), Xor(0b100));
-        assert_semigroup!(a, b, c);
+        crate::assert_semigroup!(a, b, c);
     }
 
     #[test]
+    #[cfg(feature = "monoid")]
     fn test_xor_monoid() {
         let (a, b, c) = (Xor(0b111), Xor(0b101), Xor(0b100));
-        assert_monoid!(a, b, c);
+        crate::assert_monoid!(a, b, c);
     }
 
     #[test]
     fn test_xor_commutative() {
         let (a, b, c) = (Xor(0b111), Xor(0b101), Xor(0b100));
-        assert_commutative!(a, b, c);
+        crate::assert_commutative!(a, b, c);
     }
 
     #[test]
