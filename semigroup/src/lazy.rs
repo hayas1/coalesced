@@ -34,34 +34,26 @@ impl<T> Semigroup for Lazy<T> {
 }
 impl<T: Semigroup> Lazy<T> {
     pub fn combine(self) -> T {
-        self.into_iter()
-            .reduce(Semigroup::op)
-            .unwrap_or_else(|| unreachable!())
+        let (head, tail) = self.split_off_first();
+        tail.into_iter().fold(head, Semigroup::op)
     }
     pub fn combine_cloned(&self) -> T
     where
         T: Clone,
     {
-        self.iter()
-            .cloned()
-            .reduce(Semigroup::op)
-            .unwrap_or_else(|| unreachable!())
+        let (head, tail) = self.split_first();
+        tail.iter().cloned().fold(head.clone(), Semigroup::op)
     }
     pub fn combine_rev(self) -> T {
-        self.into_iter()
-            .rev()
-            .reduce(Semigroup::op)
-            .unwrap_or_else(|| unreachable!())
+        let (head, tail) = self.split_off_last();
+        tail.into_iter().rfold(head, Semigroup::op)
     }
     pub fn combine_rev_cloned(&self) -> T
     where
         T: Clone,
     {
-        self.iter()
-            .cloned()
-            .rev()
-            .reduce(Semigroup::op)
-            .unwrap_or_else(|| unreachable!())
+        let (head, tail) = self.split_last();
+        tail.iter().cloned().rfold(head.clone(), Semigroup::op)
     }
 }
 impl<T> From<T> for Lazy<T> {
@@ -98,8 +90,22 @@ impl<T> Lazy<T> {
     pub fn first(&self) -> &T {
         self.0.first().unwrap_or_else(|| unreachable!())
     }
+    pub fn split_first(&self) -> (&T, &[T]) {
+        self.0.split_first().unwrap_or_else(|| unreachable!())
+    }
+    pub fn split_off_first(mut self) -> (T, Vec<T>) {
+        let tail = self.0.split_off(1);
+        (self.0.pop().unwrap_or_else(|| unreachable!()), tail)
+    }
     pub fn last(&self) -> &T {
         self.0.last().unwrap_or_else(|| unreachable!())
+    }
+    pub fn split_last(&self) -> (&T, &[T]) {
+        self.0.split_last().unwrap_or_else(|| unreachable!())
+    }
+    pub fn split_off_last(mut self) -> (T, Vec<T>) {
+        let head = self.0.split_off(self.0.len() - 1);
+        (self.0.pop().unwrap_or_else(|| unreachable!()), head)
     }
     pub fn get<I: SliceIndex<[T]>>(&self, index: I) -> Option<&I::Output> {
         self.0.get(index)
