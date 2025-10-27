@@ -150,12 +150,12 @@ Only available with the `monoid` feature
 use semigroup::{op::Sum, Semigroup, Construction, segment_tree::SegmentTree};
 let data = 0..=10000;
 let mut sum_tree: SegmentTree<_> = data.into_iter().map(Sum).collect();
-assert_eq!(sum_tree.fold(3..6).into_inner(), 12);
-assert_eq!(sum_tree.fold(..).into_inner(), 50005000);
+assert_eq!(sum_tree.combine(3..6).into_inner(), 12);
+assert_eq!(sum_tree.combine(..).into_inner(), 50005000);
 sum_tree.update_with(4, |Sum(x)| Sum(x + 50));
 sum_tree.update_with(9999, |Sum(x)| Sum(x + 500000));
-assert_eq!(sum_tree.fold(3..6).into_inner(), 62);
-assert_eq!(sum_tree.fold(..).into_inner(), 50505050);
+assert_eq!(sum_tree.combine(3..6).into_inner(), 62);
+assert_eq!(sum_tree.combine(..).into_inner(), 50505050);
 ```
 #### Custom monoid operator
 Only available with the `monoid` feature
@@ -174,9 +174,9 @@ impl Semigroup for Max {
 
 let data = [2, -5, 122, -33, -12, 14, -55, 500, 3];
 let mut max_tree: SegmentTree<_> = data.into_iter().map(Max).collect();
-assert_eq!(max_tree.fold(3..6).0, 14);
+assert_eq!(max_tree.combine(3..6).0, 14);
 max_tree.update_with(4, |Max(x)| Max(x + 1000));
-assert_eq!(max_tree.fold(3..6).0, 988);
+assert_eq!(max_tree.combine(3..6).0, 988);
 
 // #[test]
 semigroup::assert_monoid!(&max_tree[..]);
