@@ -211,6 +211,7 @@ mod annotate;
 mod commutative;
 mod construction;
 mod iter;
+mod lazy;
 #[cfg(feature = "monoid")]
 mod monoid;
 pub mod op;
@@ -218,7 +219,7 @@ pub mod op;
 pub mod segment_tree;
 mod semigroup;
 
-pub use self::{annotate::*, commutative::*, construction::*, iter::*, semigroup::*};
+pub use self::{annotate::*, commutative::*, construction::*, iter::*, lazy::*, semigroup::*};
 
 #[cfg(feature = "monoid")]
 pub use self::monoid::*;
