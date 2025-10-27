@@ -1,38 +1,132 @@
-use crate::Semigroup;
+use std::{ops::Index, slice::SliceIndex};
 
-pub trait Combine<T: Semigroup> {
-    fn combine(self) -> T;
-    fn combine_rev(self) -> T;
-    fn combine_cloned(&self) -> T
+use crate::{Construction, Reverse, Semigroup};
+
+pub trait CombineIterator: Sized + Iterator {
+    fn fold_final(self, fin: Self::Item) -> Self::Item
     where
-        Self: Clone,
+        Self::Item: Semigroup,
     {
-        self.clone().combine()
+        let iter = self.chain(Some(fin));
+        iter.reduce(Semigroup::op).unwrap_or_else(|| unreachable!())
     }
-    fn combine_rev_cloned(&self) -> T
+    fn rfold_final(self, fin: Self::Item) -> Self::Item
     where
-        Self: Clone,
+        Self::Item: Semigroup,
     {
-        self.clone().combine_rev()
+        let iter = Some(fin).into_iter().chain(self);
+        iter.map(Reverse)
+            .reduce(Semigroup::op)
+            .unwrap_or_else(|| unreachable!())
+            .into_inner()
+    }
+}
+impl<I: Iterator> CombineIterator for I {}
+
+/// A lazy [`Semigroup`] that is implemented as a nonempty [`Vec`].
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Lazy<T>(Vec<T>);
+impl<T> Semigroup for Lazy<T> {
+    fn op(mut base: Self, other: Self) -> Self {
+        base.extend(other);
+        base
+    }
+}
+impl<T: Semigroup> Lazy<T> {
+    pub fn combine(self) -> T {
+        self.into_iter()
+            .reduce(Semigroup::op)
+            .unwrap_or_else(|| unreachable!())
+    }
+    pub fn combine_cloned(&self) -> T
+    where
+        T: Clone,
+    {
+        self.iter()
+            .cloned()
+            .reduce(Semigroup::op)
+            .unwrap_or_else(|| unreachable!())
+    }
+    pub fn combine_rev(self) -> T {
+        self.into_iter()
+            .rev()
+            .reduce(Semigroup::op)
+            .unwrap_or_else(|| unreachable!())
+    }
+    pub fn combine_rev_cloned(&self) -> T
+    where
+        T: Clone,
+    {
+        self.iter()
+            .cloned()
+            .rev()
+            .reduce(Semigroup::op)
+            .unwrap_or_else(|| unreachable!())
+    }
+}
+impl<T> From<T> for Lazy<T> {
+    fn from(value: T) -> Self {
+        Self::new(value)
     }
 }
 
-macro_rules! lazy_tuple_impl {
-    ($($idx:tt $t:tt),+) => {
-        impl<T: Semigroup, $( $t: Into<T> ),+> Combine<T> for ($($t,)+) {
-            fn combine(self) -> T {
-                let v = vec![$(self.$idx.into()),+];
-                v.into_iter().reduce(|a, b| a.semigroup(b)).unwrap_or_else(|| unreachable!())
-            }
-            fn combine_rev(self) -> T {
-                let v = vec![$(self.$idx.into()),+];
-                v.into_iter().rev().reduce(|a, b| a.semigroup(b)).unwrap_or_else(|| unreachable!())
-            }
-        }
-    };
+impl<T> Lazy<T> {
+    pub fn new(value: T) -> Self {
+        Self(vec![value])
+    }
+    pub fn from_iterator<I: IntoIterator<Item = T>>(iter: I) -> Option<Self> {
+        // compile error: type parameter `T` must be used as the type parameter for some local type
+        // impl<T> FromIterator<T> for Option<Lazy<T>> {
+        //     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        //         todo!()
+        //     }
+        // }
+        let mut iterator = iter.into_iter();
+        iterator
+            .next()
+            .map(|head| Self(Some(head).into_iter().chain(iterator).collect()))
+    }
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty() // must be false
+    }
+    pub fn is_single(&self) -> bool {
+        self.0.len() == 1
+    }
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+    pub fn first(&self) -> &T {
+        self.0.first().unwrap_or_else(|| unreachable!())
+    }
+    pub fn last(&self) -> &T {
+        self.0.last().unwrap_or_else(|| unreachable!())
+    }
+    pub fn get<I: SliceIndex<[T]>>(&self, index: I) -> Option<&I::Output> {
+        self.0.get(index)
+    }
+    pub fn iter(&self) -> <&[T] as IntoIterator>::IntoIter {
+        self.0.iter()
+    }
+    pub fn map<U, F: Fn(T) -> U>(self, f: F) -> Lazy<U> {
+        Lazy(self.0.into_iter().map(f).collect())
+    }
 }
+impl<T> IntoIterator for Lazy<T> {
+    type Item = T;
+    type IntoIter = <Vec<T> as IntoIterator>::IntoIter;
 
-lazy_tuple_impl!(0 A);
-lazy_tuple_impl!(0 A, 1 B);
-lazy_tuple_impl!(0 A, 1 B, 2 C);
-lazy_tuple_impl!(0 A, 1 B, 2 C, 3 D);
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+impl<T> Extend<T> for Lazy<T> {
+    fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
+        self.0.extend(iter);
+    }
+}
+impl<T, I: SliceIndex<[T]>> Index<I> for Lazy<T> {
+    type Output = I::Output;
+    fn index(&self, index: I) -> &Self::Output {
+        &self.0[index]
+    }
+}
