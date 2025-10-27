@@ -2,7 +2,7 @@ use std::{ops::Index, slice::SliceIndex};
 
 use semigroup_derive::{properties_priv, ConstructionPriv};
 
-use crate::{Construction, Reverse, Semigroup};
+use crate::{Annotated, Construction, Reverse, Semigroup};
 
 pub trait CombineIterator: Sized + Iterator {
     fn fold_final(mut self, fin: Self::Item) -> Self::Item
@@ -125,6 +125,151 @@ impl<T> Lazy<T> {
     }
     pub fn map<U, F: Fn(T) -> U>(self, f: F) -> Lazy<U> {
         Lazy(self.0.into_iter().map(f).collect())
+    }
+}
+impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
+    /// Searches for a value that has the given annotation.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, Annotate, Lazy, Semigroup};
+    ///
+    /// let a = Coalesce(Some(1)).annotated("edge");
+    /// let b = Coalesce(Some(2)).annotated("middle");
+    /// let c = Coalesce(Some(3)).annotated("edge");
+    ///
+    /// let lazy = Lazy::from(a.clone()).semigroup(b.clone().into()).semigroup(c.clone().into());
+    ///
+    /// assert_eq!(lazy.find_annotated(&"edge"), Some(&a));
+    /// assert_eq!(lazy.find_annotated(&"middle"), Some(&b));
+    /// assert_eq!(lazy.find_annotated(&"where"), None);
+    /// assert_eq!(lazy.combine(), Coalesce(Some(1)).annotated("edge"));
+    /// ```
+    pub fn find_annotated(&self, annotation: &A) -> Option<&Annotated<T, A>> {
+        self.0
+            .iter()
+            .find(|annotated| annotated.annotation() == annotation)
+    }
+    /// Searches for a value's index that has the given annotation.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, Annotate, Lazy, Semigroup};
+    ///
+    /// let a = Coalesce(Some(1)).annotated("edge");
+    /// let b = Coalesce(Some(2)).annotated("middle");
+    /// let c = Coalesce(Some(3)).annotated("edge");
+    ///
+    /// let lazy = Lazy::from(a.clone()).semigroup(b.clone().into()).semigroup(c.clone().into());
+    ///
+    /// assert_eq!(lazy.position_annotated(&"edge"), Some(0));
+    /// assert_eq!(lazy.position_annotated(&"middle"), Some(1));
+    /// assert_eq!(lazy.position_annotated(&"where"), None);
+    /// assert_eq!(lazy.combine(), Coalesce(Some(1)).annotated("edge"));
+    /// ```
+    pub fn position_annotated(&self, annotation: &A) -> Option<usize> {
+        self.0
+            .iter()
+            .position(|annotated| annotated.annotation() == annotation)
+    }
+
+    /// Searches for a value that has the given annotation from the end.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, Annotate, Lazy, Semigroup};
+    ///
+    /// let a = Coalesce(Some(1)).annotated("edge");
+    /// let b = Coalesce(Some(2)).annotated("middle");
+    /// let c = Coalesce(Some(3)).annotated("edge");
+    ///
+    /// let lazy = Lazy::from(a.clone()).semigroup(b.clone().into()).semigroup(c.clone().into());
+    ///
+    /// assert_eq!(lazy.rfind_annotated(&"edge"), Some(&c));
+    /// assert_eq!(lazy.rfind_annotated(&"middle"), Some(&b));
+    /// assert_eq!(lazy.rfind_annotated(&"where"), None);
+    /// assert_eq!(lazy.combine(), Coalesce(Some(1)).annotated("edge"));
+    /// ```
+    pub fn rfind_annotated(&self, annotation: &A) -> Option<&Annotated<T, A>> {
+        self.0
+            .iter()
+            .rfind(|annotated| annotated.annotation() == annotation)
+    }
+    /// Searches for a value's index that has the given annotation from the end.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, Annotate, Lazy, Semigroup};
+    ///
+    /// let a = Coalesce(Some(1)).annotated("edge");
+    /// let b = Coalesce(Some(2)).annotated("middle");
+    /// let c = Coalesce(Some(3)).annotated("edge");
+    ///
+    /// let lazy = Lazy::from(a.clone()).semigroup(b.clone().into()).semigroup(c.clone().into());
+    ///
+    /// assert_eq!(lazy.rposition_annotated(&"edge"), Some(2));
+    /// assert_eq!(lazy.rposition_annotated(&"middle"), Some(1));
+    /// assert_eq!(lazy.rposition_annotated(&"where"), None);
+    /// assert_eq!(lazy.combine(), Coalesce(Some(1)).annotated("edge"));
+    /// ```
+    pub fn rposition_annotated(&self, annotation: &A) -> Option<usize> {
+        self.0
+            .iter()
+            .rposition(|annotated| annotated.annotation() == annotation)
+    }
+
+    /// Searches for all values that have the given annotation.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, Annotate, Lazy, Semigroup};
+    ///
+    /// let a = Coalesce(Some(1)).annotated("edge");
+    /// let b = Coalesce(Some(2)).annotated("middle");
+    /// let c = Coalesce(Some(3)).annotated("edge");
+    ///
+    /// let lazy = Lazy::from(a.clone()).semigroup(b.clone().into()).semigroup(c.clone().into());
+    ///
+    /// assert_eq!(lazy.find_annotated_all(&"edge").collect::<Vec<_>>(), vec![&a, &c]);
+    /// assert_eq!(lazy.find_annotated_all(&"middle").collect::<Vec<_>>(), vec![&b]);
+    /// assert_eq!(lazy.find_annotated_all(&"where").collect::<Vec<_>>(), vec![&a; 0]);
+    /// assert_eq!(lazy.combine(), Coalesce(Some(1)).annotated("edge"));
+    /// ```
+    pub fn find_annotated_all<'a>(
+        &'a self,
+        annotation: &'a A,
+    ) -> impl 'a + Iterator<Item = &'a Annotated<T, A>> {
+        self.0
+            .iter()
+            .filter(move |annotated| annotated.annotation() == annotation)
+    }
+
+    /// Searches for all values' indices that have the given annotation.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, Annotate, Lazy, Semigroup};
+    ///
+    /// let a = Coalesce(Some(1)).annotated("edge");
+    /// let b = Coalesce(Some(2)).annotated("middle");
+    /// let c = Coalesce(Some(3)).annotated("edge");
+    ///
+    /// let lazy = Lazy::from(a.clone()).semigroup(b.clone().into()).semigroup(c.clone().into());
+    ///
+    /// assert_eq!(lazy.position_annotated_all(&"edge").collect::<Vec<_>>(), vec![0, 2]);
+    /// assert_eq!(lazy.position_annotated_all(&"middle").collect::<Vec<_>>(), vec![1]);
+    /// assert_eq!(lazy.position_annotated_all(&"where").collect::<Vec<_>>(), vec![0; 0]);
+    /// assert_eq!(lazy.combine(), Coalesce(Some(1)).annotated("edge"));
+    /// ```
+    pub fn position_annotated_all<'a>(
+        &'a self,
+        annotation: &'a A,
+    ) -> impl 'a + Iterator<Item = usize> {
+        self.0
+            .iter()
+            .enumerate()
+            .filter(move |(_, annotated)| annotated.annotation() == annotation)
+            .map(move |(i, _)| i)
     }
 }
 impl<T> IntoIterator for Lazy<T> {
