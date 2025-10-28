@@ -5,32 +5,11 @@ use semigroup_derive::{properties_priv, ConstructionPriv};
 use crate::{AnnotatedSemigroup, Commutative, Semigroup};
 
 /// Some [`Semigroup`] such as [`crate::op::Coalesce`] can have an annotation.
-/// [`Annotate`] trait will be derived by [`Semigroup`].
-/// The annotated value is represented by a type [`Annotated`].
+/// The annotated operation is represented by [`AnnotatedSemigroup`], and the annotated value is represented by a type [`Annotated`].
 ///
 /// # Examples
-/// ## constructed semigroup
-/// ```
-/// use semigroup::{op::Coalesce, Annotate, Semigroup};
-///
-/// let a = Coalesce(Some(1)).annotated("first");
-/// let b = Coalesce(None).annotated("second");
-/// let c = Coalesce(Some(3)).annotated("third");
-///
-/// let ab = a.semigroup(b);
-/// assert_eq!(ab.value(), &Coalesce(Some(1)));
-/// assert_eq!(ab.annotation(), &"first");
-///
-/// let bc = b.semigroup(c);
-/// assert_eq!(bc.value(), &Coalesce(Some(3)));
-/// assert_eq!(bc.annotation(), &"third");
-///
-/// let ca = c.semigroup(a);
-/// assert_eq!(ca.value(), &Coalesce(Some(3)));
-/// assert_eq!(ca.annotation(), &"third");
-/// ```
-///
-/// ## derived semigroup
+/// ## Deriving
+/// [`Annotate`] can be derived like [`Semigroup`], use `annotated` attribute.
 /// ```
 /// use semigroup::{op::Coalesce, Annotate, Annotated, Semigroup};
 ///
@@ -67,6 +46,43 @@ use crate::{AnnotatedSemigroup, Commutative, Semigroup};
 /// assert_eq!(ca.annotation().str, "third");
 /// assert_eq!(ca.annotation().boolean, "first");
 /// assert_eq!(ca.annotation(), &ExampleStructAnnotation{ num: "third", str: "third", boolean: "first" });
+/// ```
+///
+/// ## Construction
+/// [`Annotate`] can be constructed by [`crate::ConstructionAnnotated`] like [`Semigroup`], use `annotated` attribute.
+/// In this case, the [`Semigroup`] annotated operation is represented by [`AnnotatedSemigroup`].
+///
+/// Some operations are already provided by [`crate::op`].
+/// ```
+/// use semigroup::{AnnotatedSemigroup, Annotate, Annotated, Construction, ConstructionAnnotated, Semigroup};
+///
+/// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
+/// #[construction(annotated)]
+/// struct Coalesce<T>(Option<T>);
+/// impl<A, T> AnnotatedSemigroup<A> for Coalesce<T> {
+///     fn annotated_op(base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A> {
+///         match (&base.value().0, &other.value().0) {
+///             (Some(_), _) | (None, None) => base,
+///             (None, Some(_)) => other,
+///         }
+///     }
+/// }
+///
+/// let a = Coalesce(Some(1)).annotated("first");
+/// let b = Coalesce(None).annotated("second");
+/// let c = Coalesce(Some(3)).annotated("third");
+///
+/// let ab = a.semigroup(b);
+/// assert_eq!(ab.value(), &Coalesce(Some(1)));
+/// assert_eq!(ab.annotation(), &"first");
+///
+/// let bc = b.semigroup(c);
+/// assert_eq!(bc.value(), &Coalesce(Some(3)));
+/// assert_eq!(bc.annotation(), &"third");
+///
+/// let ca = c.semigroup(a);
+/// assert_eq!(ca.value(), &Coalesce(Some(3)));
+/// assert_eq!(ca.annotation(), &"third");
 /// ```
 pub trait Annotate<A>: Sized {
     type Annotation;

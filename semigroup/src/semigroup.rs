@@ -4,7 +4,8 @@ use crate::Annotated;
 /// 1. *Closure*: `op: T × T → T`
 /// 2. *Associativity*: `op(op(a, b), c) = op(a, op(b, c))`
 ///
-/// # Deriving
+/// # Examples
+/// ## Deriving
 /// When fields do not implement [`Semigroup`], use `with` attribute.
 /// ```
 /// use semigroup::Semigroup;
@@ -27,7 +28,7 @@ use crate::Annotated;
 /// assert_eq!(a.semigroup(b).semigroup(c), ExampleStruct { str: Some("ten"), boolean: false, sum: 111 });
 /// ```
 ///
-/// # Construction
+/// ## Construction
 /// [`Semigroup`] can be constructed by [`crate::Construction`].
 ///
 /// Some operations are already provided by [`crate::op`].
@@ -35,7 +36,6 @@ use crate::Annotated;
 /// use semigroup::{Construction, Semigroup};
 ///
 /// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
-/// #[construction(commutative)]
 /// pub struct Sum(u64);
 /// impl Semigroup for Sum {
 ///     fn op(base: Self, other: Self) -> Self {
@@ -64,7 +64,7 @@ pub trait Semigroup {
     }
 }
 
-/// [`AnnotatedSemigroup`] is a [`Semigroup`] that has an annotation.
+/// [`AnnotatedSemigroup`] is a [`Semigroup`] that has an annotation, such as [`crate::Annotate`].
 pub trait AnnotatedSemigroup<A>: Sized + Semigroup {
     fn annotated_op(base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A>;
 }

@@ -9,8 +9,29 @@ use crate::Semigroup;
 ///
 /// And the [*monoid*](crate::Monoid) set that satisfies the *commutativity* property is often called *commutative monoid*.
 ///
-/// # Deriving
+/// # Examples
+/// ## Deriving
 /// [`Commutative`] can be derived like [`Semigroup`], use `commutative` attribute.
+/// ```
+/// use semigroup::{Construction, Semigroup};
+///
+/// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
+/// #[construction(commutative)]
+/// pub struct Sum(u64);
+/// impl Semigroup for Sum {
+///     fn op(base: Self, other: Self) -> Self {
+///         Self(base.0 + other.0)
+///     }
+/// }
+///
+/// let (a, b, c) = (Sum(1), Sum(2), Sum(3));
+/// // #[test]
+/// semigroup::assert_commutative!(&a, &b, &c);
+/// assert_eq!(a.semigroup(b).semigroup(c), Sum(6));
+/// ```
+///
+/// ## Construction
+/// [`Commutative`] can be constructed like [`Semigroup`], use `commutative` attribute.
 /// ```
 /// use semigroup::Semigroup;
 /// #[derive(Debug, Clone, PartialEq, Default, Semigroup)]
