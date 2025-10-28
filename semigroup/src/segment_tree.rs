@@ -1,6 +1,6 @@
 use std::ops::{Bound, Range, RangeBounds};
 
-use crate::Monoid;
+use crate::{Monoid, Semigroup};
 
 pub mod index;
 pub mod iter;
@@ -89,7 +89,7 @@ impl<T: Monoid + Clone> SegmentTree<T> {
             self.tree[leaf_offset + i] = d;
         }
         for i in (1..leaf_offset).rev() {
-            self.tree[i] = T::op(self.tree[i * 2].clone(), self.tree[i * 2 + 1].clone());
+            self.tree[i] = Semigroup::op(self.tree[i * 2].clone(), self.tree[i * 2 + 1].clone());
         }
     }
 
@@ -109,7 +109,7 @@ impl<T: Monoid + Clone> SegmentTree<T> {
             while node > 1 {
                 node /= 2;
                 self.tree[node] =
-                    T::op(self.tree[node * 2].clone(), self.tree[node * 2 + 1].clone());
+                    Semigroup::op(self.tree[node * 2].clone(), self.tree[node * 2 + 1].clone());
             }
             result
         })

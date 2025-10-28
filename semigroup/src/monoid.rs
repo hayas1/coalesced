@@ -129,7 +129,7 @@ impl<T: Semigroup> From<T> for OptionMonoid<T> {
 impl<T: Semigroup> Semigroup for OptionMonoid<T> {
     fn op(base: Self, other: Self) -> Self {
         match (base, other) {
-            (Self(Some(b)), Self(Some(o))) => Self(Some(T::op(b, o))),
+            (Self(Some(b)), Self(Some(o))) => Self(Some(Semigroup::op(b, o))),
             (b, Self(None)) => b,
             (Self(None), o) => o,
         }

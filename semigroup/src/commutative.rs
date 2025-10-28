@@ -143,12 +143,12 @@ pub mod test_commutative {
     }
 
     pub fn assert_commutative_law<T: Commutative + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
-        let abc = T::op(T::op(a.clone(), b.clone()), c.clone());
-        let bca = T::op(T::op(b.clone(), c.clone()), a.clone());
-        let cba = T::op(T::op(c.clone(), b.clone()), a.clone());
-        let acb = T::op(T::op(a.clone(), c.clone()), b.clone());
-        let bac = T::op(T::op(b.clone(), a.clone()), c.clone());
-        let cab = T::op(T::op(c.clone(), a.clone()), b.clone());
+        let abc = Semigroup::op(Semigroup::op(a.clone(), b.clone()), c.clone());
+        let bca = Semigroup::op(Semigroup::op(b.clone(), c.clone()), a.clone());
+        let cba = Semigroup::op(Semigroup::op(c.clone(), b.clone()), a.clone());
+        let acb = Semigroup::op(Semigroup::op(a.clone(), c.clone()), b.clone());
+        let bac = Semigroup::op(Semigroup::op(b.clone(), a.clone()), c.clone());
+        let cab = Semigroup::op(Semigroup::op(c.clone(), a.clone()), b.clone());
 
         assert_eq!(abc, bca);
         assert_eq!(bca, cba);
@@ -165,32 +165,32 @@ pub mod test_commutative {
     ) {
         let (ra, rb, rc) = (Reverse(a.clone()), Reverse(b.clone()), Reverse(c.clone()));
         assert_eq!(
-            T::op(a.clone(), b.clone()),
-            Reverse::<T>::op(ra.clone(), rb.clone()).0
+            Semigroup::op(a.clone(), b.clone()),
+            Semigroup::op(ra.clone(), rb.clone()).0
         );
         assert_eq!(
-            T::op(b.clone(), c.clone()),
-            Reverse::<T>::op(rb.clone(), rc.clone()).0
+            Semigroup::op(b.clone(), c.clone()),
+            Semigroup::op(rb.clone(), rc.clone()).0
         );
         assert_eq!(
-            T::op(c.clone(), a.clone()),
-            Reverse::<T>::op(rc.clone(), ra.clone()).0
+            Semigroup::op(c.clone(), a.clone()),
+            Semigroup::op(rc.clone(), ra.clone()).0
         );
     }
 
     pub fn assert_reverse_reverse<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
         let (ra, rb, rc) = (Reverse(a.clone()), Reverse(b.clone()), Reverse(c.clone()));
         assert_eq!(
-            T::op(a.clone(), b.clone()),
-            Reverse::<T>::op(rb.clone(), ra.clone()).0
+            Semigroup::op(a.clone(), b.clone()),
+            Semigroup::op(rb.clone(), ra.clone()).0
         );
         assert_eq!(
-            T::op(b.clone(), c.clone()),
-            Reverse::<T>::op(rc.clone(), rb.clone()).0
+            Semigroup::op(b.clone(), c.clone()),
+            Semigroup::op(rc.clone(), rb.clone()).0
         );
         assert_eq!(
-            T::op(a.clone(), c.clone()),
-            Reverse::<T>::op(rc.clone(), ra.clone()).0
+            Semigroup::op(a.clone(), c.clone()),
+            Semigroup::op(rc.clone(), ra.clone()).0
         );
     }
     pub fn assert_reverse_associative_law<T: Semigroup + Clone + PartialEq + Debug>(

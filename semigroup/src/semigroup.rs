@@ -144,8 +144,8 @@ pub mod test_semigroup {
     }
 
     pub fn assert_associative_law<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
-        let ab_c = T::op(T::op(a.clone(), b.clone()), c.clone());
-        let a_bc = T::op(a.clone(), T::op(b.clone(), c.clone()));
+        let ab_c = Semigroup::op(Semigroup::op(a.clone(), b.clone()), c.clone());
+        let a_bc = Semigroup::op(a.clone(), Semigroup::op(b.clone(), c.clone()));
         assert_eq!(ab_c, a_bc);
     }
 }
