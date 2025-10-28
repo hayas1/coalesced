@@ -1,6 +1,6 @@
 use std::ops::{Bound, Range, RangeBounds};
 
-use crate::Monoid;
+use crate::{Monoid, Semigroup};
 
 pub mod index;
 pub mod iter;
@@ -78,7 +78,7 @@ impl<T: Monoid + Clone> SegmentTree<T> {
     /// **O(len)**, resize segment tree by allocating identity elements without truncating.
     fn resize_upto(&mut self, len: usize) {
         let data = self.over_capacity(len).then(|| self[..].to_vec());
-        self.tree.resize_with(Self::capacity(len), T::identity);
+        self.tree.resize_with(Self::capacity(len), Monoid::identity);
         self.len = len.max(self.len());
         data.into_iter().for_each(|d| self.reconstruct(d));
     }
@@ -89,7 +89,7 @@ impl<T: Monoid + Clone> SegmentTree<T> {
             self.tree[leaf_offset + i] = d;
         }
         for i in (1..leaf_offset).rev() {
-            self.tree[i] = T::op(self.tree[i * 2].clone(), self.tree[i * 2 + 1].clone());
+            self.tree[i] = Semigroup::op(self.tree[i * 2].clone(), self.tree[i * 2 + 1].clone());
         }
     }
 
@@ -109,7 +109,7 @@ impl<T: Monoid + Clone> SegmentTree<T> {
             while node > 1 {
                 node /= 2;
                 self.tree[node] =
-                    T::op(self.tree[node * 2].clone(), self.tree[node * 2 + 1].clone());
+                    Semigroup::op(self.tree[node * 2].clone(), self.tree[node * 2 + 1].clone());
             }
             result
         })
@@ -130,7 +130,7 @@ impl<T: Monoid + Clone> SegmentTree<T> {
             self.resize_upto(self.len() + len);
             self.reconstruct(data);
         } else {
-            let repeat_identity = std::iter::repeat_with(T::identity);
+            let repeat_identity = std::iter::repeat_with(Monoid::identity);
             for d in iter.into_iter().chain(repeat_identity).take(len) {
                 self.push(d.clone());
             }
@@ -163,15 +163,15 @@ impl<T: Monoid + Clone> SegmentTree<T> {
     {
         let Range { start, end } = self.indices(range);
         let (mut left, mut right) = (self.leaf_offset() + start, self.leaf_offset() + end);
-        let mut res = T::identity();
+        let mut res = Monoid::identity();
         while left < right {
             if left % 2 == 1 {
-                res = T::semigroup(res, self.tree[left].clone());
+                res = Semigroup::op(res, self.tree[left].clone());
                 left += 1;
             }
             if right % 2 == 1 {
                 right -= 1;
-                res = T::semigroup(self.tree[right].clone(), res);
+                res = Semigroup::op(self.tree[right].clone(), res);
             }
             left /= 2;
             right /= 2;

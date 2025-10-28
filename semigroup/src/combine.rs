@@ -461,13 +461,13 @@ pub mod test_combine {
         let ab = vec![a.clone(), b.clone()];
         assert_eq!(
             ab.into_iter().fold_final(c.clone()),
-            T::op(T::op(a.clone(), b.clone()), c.clone())
+            Semigroup::op(Semigroup::op(a.clone(), b.clone()), c.clone())
         );
 
         let bc = vec![b.clone(), c.clone()];
         assert_eq!(
             bc.into_iter().rfold_final(a.clone()),
-            T::op(T::op(c.clone(), b.clone()), a.clone())
+            Semigroup::op(Semigroup::op(c.clone(), b.clone()), a.clone())
         );
     }
 
@@ -480,11 +480,11 @@ pub mod test_combine {
         let abc = vec![a.clone(), b.clone(), c.clone()];
         assert_eq!(
             abc.clone().into_iter().combine(),
-            T::op(T::op(a.clone(), b.clone()), c.clone())
+            Semigroup::op(Semigroup::op(a.clone(), b.clone()), c.clone())
         );
         assert_eq!(
             abc.clone().into_iter().rcombine(),
-            T::op(T::op(c.clone(), b.clone()), a.clone())
+            Semigroup::op(Semigroup::op(c.clone(), b.clone()), a.clone())
         );
     }
 
@@ -496,19 +496,19 @@ pub mod test_combine {
         let lazy = lazy.semigroup(b.clone().into()).semigroup(c.clone().into());
         assert_eq!(
             lazy.clone().combine(),
-            T::op(T::op(a.clone(), b.clone()), c.clone())
+            Semigroup::op(Semigroup::op(a.clone(), b.clone()), c.clone())
         );
         assert_eq!(
             lazy.combine_cloned(),
-            T::op(T::op(a.clone(), b.clone()), c.clone())
+            Semigroup::op(Semigroup::op(a.clone(), b.clone()), c.clone())
         );
         assert_eq!(
             lazy.clone().combine_rev(),
-            T::op(T::op(c.clone(), b.clone()), a.clone())
+            Semigroup::op(Semigroup::op(c.clone(), b.clone()), a.clone())
         );
         assert_eq!(
             lazy.combine_rev_cloned(),
-            T::op(T::op(c.clone(), b.clone()), a.clone())
+            Semigroup::op(Semigroup::op(c.clone(), b.clone()), a.clone())
         );
     }
 }

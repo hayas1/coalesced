@@ -129,7 +129,7 @@ impl<T: Semigroup> From<T> for OptionMonoid<T> {
 impl<T: Semigroup> Semigroup for OptionMonoid<T> {
     fn op(base: Self, other: Self) -> Self {
         match (base, other) {
-            (Self(Some(b)), Self(Some(o))) => Self(Some(T::op(b, o))),
+            (Self(Some(b)), Self(Some(o))) => Self(Some(Semigroup::op(b, o))),
             (b, Self(None)) => b,
             (Self(None), o) => o,
         }
@@ -184,17 +184,17 @@ pub mod test_monoid {
         b: T,
         c: T,
     ) {
-        assert_eq!(T::identity(), T::op(T::identity(), T::identity()));
-        assert_eq!(a.clone(), T::op(a.clone(), T::identity()));
-        assert_eq!(a.clone(), T::op(T::identity(), a.clone()));
-        assert_eq!(b.clone(), T::op(b.clone(), T::identity()));
-        assert_eq!(b.clone(), T::op(T::identity(), b.clone()));
-        assert_eq!(c.clone(), T::op(c.clone(), T::identity()));
-        assert_eq!(c.clone(), T::op(T::identity(), c.clone()));
+        assert_eq!(T::identity(), Semigroup::op(T::identity(), T::identity()));
+        assert_eq!(a.clone(), Semigroup::op(a.clone(), Monoid::identity()));
+        assert_eq!(a.clone(), Semigroup::op(Monoid::identity(), a.clone()));
+        assert_eq!(b.clone(), Semigroup::op(b.clone(), Monoid::identity()));
+        assert_eq!(b.clone(), Semigroup::op(Monoid::identity(), b.clone()));
+        assert_eq!(c.clone(), Semigroup::op(c.clone(), Monoid::identity()));
+        assert_eq!(c.clone(), Semigroup::op(Monoid::identity(), c.clone()));
 
         assert_associative_law(a.clone(), b.clone(), c.clone());
-        assert_associative_law(T::identity(), b.clone(), c.clone());
-        assert_associative_law(a.clone(), T::identity(), c.clone());
-        assert_associative_law(a.clone(), b.clone(), T::identity());
+        assert_associative_law(Monoid::identity(), b.clone(), c.clone());
+        assert_associative_law(a.clone(), Monoid::identity(), c.clone());
+        assert_associative_law(a.clone(), b.clone(), Monoid::identity());
     }
 }
