@@ -85,6 +85,27 @@ pub trait CombineIterator: Sized + Iterator {
     {
         self.rfold_final(crate::Monoid::identity())
     }
+
+    /// Collect into [`Lazy`]. If the iterator is empty, returns `None`.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, CombineIterator, Semigroup, Lazy};
+    /// let v1 = vec![Coalesce(Some(1)), Coalesce(Some(2)), Coalesce(Some(3))];
+    /// assert_eq!(
+    ///     v1.into_iter().collect_lazy(),
+    ///     Some(Lazy::from(Coalesce(Some(1))).semigroup(Coalesce(Some(2)).into()).semigroup(Coalesce(Some(3)).into()))
+    /// );
+    ///
+    /// let v2 = Vec::<Coalesce<u32>>::new();
+    /// assert_eq!(v2.into_iter().collect_lazy(), None);
+    /// ```
+    fn collect_lazy(self) -> Option<Lazy<Self::Item>>
+    where
+        Self::Item: Semigroup,
+    {
+        Lazy::from_iterator(self)
+    }
 }
 impl<I: Iterator> CombineIterator for I {}
 
@@ -151,6 +172,7 @@ impl<T> From<T> for Lazy<T> {
     }
 }
 impl<T> Lazy<T> {
+    /// Create [`Lazy`] from iterator like [`CombineIterator::collect_lazy`].
     pub fn from_iterator<I: IntoIterator<Item = T>>(iter: I) -> Option<Self> {
         // compile error: type parameter `T` must be used as the type parameter for some local type
         // impl<T> FromIterator<T> for Option<Lazy<T>> {
