@@ -480,6 +480,11 @@ pub mod test_lazy {
         assert_eq!(lazy.get(0), Some(&a));
         assert_eq!(lazy.get(1), None);
         assert_eq!(lazy.get(..), Some(&[a.clone()][..]));
+        assert_eq!(lazy.iter().collect::<Vec<_>>(), vec![&a]);
+        assert_eq!(
+            lazy.clone().into_iter().collect::<Vec<_>>(),
+            vec![a.clone()]
+        );
         assert_eq!(lazy.clone().split_off_first(), (a.clone(), vec![]));
         assert_eq!(lazy.clone().split_off_last(), (a.clone(), vec![]));
         assert_eq!(lazy.combine_cloned(), a.clone());
@@ -495,6 +500,11 @@ pub mod test_lazy {
         assert_eq!(lazy.get(2), Some(&c));
         assert_eq!(lazy.get(3), None);
         assert_eq!(lazy.get(..), Some(&[a.clone(), b.clone(), c.clone()][..]));
+        assert_eq!(lazy.iter().collect::<Vec<_>>(), vec![&a, &b, &c]);
+        assert_eq!(
+            lazy.clone().into_iter().collect::<Vec<_>>(),
+            vec![a.clone(), b.clone(), c.clone()]
+        );
         assert_eq!(
             lazy.clone().split_off_first(),
             (a.clone(), vec![b.clone(), c.clone()])
