@@ -287,7 +287,7 @@ impl<T> Lazy<T> {
     }
 }
 impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
-    /// Searches for a value that has the given annotation.
+    /// **O(n)**, searches for a value that has the given annotation.
     ///
     /// # Examples
     /// ```
@@ -309,7 +309,7 @@ impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
             .iter()
             .find(|annotated| annotated.annotation() == annotation)
     }
-    /// Searches for a value's index that has the given annotation.
+    /// **O(n)**, searches for a value's index that has the given annotation.
     ///
     /// # Examples
     /// ```
@@ -332,7 +332,7 @@ impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
             .position(|annotated| annotated.annotation() == annotation)
     }
 
-    /// Searches for a value that has the given annotation from the end.
+    /// **O(n)**, searches for a value that has the given annotation from the end.
     ///
     /// # Examples
     /// ```
@@ -354,7 +354,7 @@ impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
             .iter()
             .rfind(|annotated| annotated.annotation() == annotation)
     }
-    /// Searches for a value's index that has the given annotation from the end.
+    /// **O(n)**, searches for a value's index that has the given annotation from the end.
     ///
     /// # Examples
     /// ```
@@ -377,7 +377,7 @@ impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
             .rposition(|annotated| annotated.annotation() == annotation)
     }
 
-    /// Searches for all values that have the given annotation.
+    /// **O(n)**, searches for all values that have the given annotation.
     ///
     /// # Examples
     /// ```
@@ -403,7 +403,7 @@ impl<T, A: PartialEq> Lazy<Annotated<T, A>> {
             .filter(move |annotated| annotated.annotation() == annotation)
     }
 
-    /// Searches for all values' indices that have the given annotation.
+    /// **O(n)**, searches for all values' indices that have the given annotation.
     ///
     /// # Examples
     /// ```
