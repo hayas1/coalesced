@@ -109,7 +109,7 @@ pub trait CombineIterator: Sized + Iterator {
 }
 impl<I: Iterator> CombineIterator for I {}
 
-/// A lazy evaluated [`Semigroup`] that is implemented as a nonempty [`Vec`].
+/// A lazy evaluated [`Semigroup`] with nonempty buffer that is implemented by [`Vec`].
 ///
 /// # Properties
 /// <!-- properties -->
@@ -143,7 +143,7 @@ impl<T> Semigroup for Lazy<T> {
     }
 }
 impl<T: Semigroup> Lazy<T> {
-    /// Evaluate [`Lazy`] to `T`.
+    /// Evaluates [`Lazy`] buffer.
     ///
     /// # Examples
     /// ```
@@ -159,7 +159,7 @@ impl<T: Semigroup> Lazy<T> {
         let (first, tail) = self.split_off_first();
         tail.into_iter().fold(first, Semigroup::op)
     }
-    /// Evaluate [`Lazy`] to `T` like [`Lazy::combine`] by cloning each element.
+    /// Evaluates [`Lazy`] buffer like [`Lazy::combine`] by cloning each element.
     ///
     /// # Examples
     /// ```
@@ -179,7 +179,7 @@ impl<T: Semigroup> Lazy<T> {
         tail.iter().cloned().fold(first.clone(), Semigroup::op)
     }
 
-    /// Evaluate [`Lazy`] to `T` in reverse order.
+    /// Evaluates [`Lazy`] buffer in reverse order.
     ///
     /// # Examples
     /// ```
@@ -196,7 +196,7 @@ impl<T: Semigroup> Lazy<T> {
         head.into_iter().rfold(last, Semigroup::op)
     }
 
-    /// Evaluate [`Lazy`] to `T` in reverse order like [`Lazy::combine_rev`] by cloning each element.
+    /// Evaluates [`Lazy`] buffer in reverse order like [`Lazy::combine_rev`] by cloning each element.
     ///
     /// # Examples
     /// ```
@@ -235,42 +235,53 @@ impl<T> Lazy<T> {
             .next()
             .map(|head| Self(Some(head).into_iter().chain(iterator).collect()))
     }
-    /// Returns `true` if the collection contains no elements. [`Lazy`] is nonempty, so always returns `false`.
+    /// Returns `true` if the [`Lazy`] buffer contains no elements. It is nonempty, so always returns `false`.
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
+    /// Returns `true` if the [`Lazy`] buffer contains exactly one element.
     pub fn is_single(&self) -> bool {
         self.0.len() == 1
     }
+    /// Returns the number of elements in the [`Lazy`] buffer. It is nonempty, so always returns `1` or more.
     pub fn len(&self) -> usize {
         self.0.len()
     }
+    /// Returns a reference to the first element of the [`Lazy`] buffer.
     pub fn first(&self) -> &T {
         self.0.first().unwrap_or_else(|| unreachable!())
     }
+    /// Returns the reference to the first element and all the rest elements of the [`Lazy`] buffer.
     pub fn split_first(&self) -> (&T, &[T]) {
         self.0.split_first().unwrap_or_else(|| unreachable!())
     }
+    /// Returns the first element and all the rest elements of the [`Lazy`] buffer.
     pub fn split_off_first(mut self) -> (T, Vec<T>) {
         let tail = self.0.split_off(1);
         (self.0.pop().unwrap_or_else(|| unreachable!()), tail)
     }
+    /// Returns a reference to the last element of the [`Lazy`] buffer.
     pub fn last(&self) -> &T {
         self.0.last().unwrap_or_else(|| unreachable!())
     }
+    /// Returns the reference to the last element and all the rest elements of the [`Lazy`] buffer.
     pub fn split_last(&self) -> (&T, &[T]) {
         self.0.split_last().unwrap_or_else(|| unreachable!())
     }
+    /// Returns the last element and all the rest elements of the [`Lazy`] buffer.
     pub fn split_off_last(mut self) -> (T, Vec<T>) {
         let mut tail = self.0.split_off(self.0.len() - 1);
         (tail.pop().unwrap_or_else(|| unreachable!()), self.0)
     }
+    /// Returns an element or slice like [`Vec`].
     pub fn get<I: SliceIndex<[T]>>(&self, index: I) -> Option<&I::Output> {
         self.0.get(index)
     }
+    /// Returns an iterator over of the [`Lazy`] buffer.
     pub fn iter(&self) -> <&[T] as IntoIterator>::IntoIter {
         self.0.iter()
     }
+    /// Maps each element of the [`Lazy`] buffer with a function, and returns a new [`Lazy`] buffer.
     pub fn map<U, F: Fn(T) -> U>(self, f: F) -> Lazy<U> {
         Lazy(self.0.into_iter().map(f).collect())
     }
