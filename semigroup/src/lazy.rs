@@ -4,7 +4,19 @@ use semigroup_derive::{properties_priv, ConstructionPriv};
 
 use crate::{Annotated, Construction, Reverse, Semigroup};
 
+/// Extensions for [`Iterator`]s that items implement [`Semigroup`].
 pub trait CombineIterator: Sized + Iterator {
+    /// Folds every [`Semigroup`] element. Given argument is the final value.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, CombineIterator, Semigroup};
+    /// let v1 = vec![Coalesce(None), Coalesce(Some(2)), Coalesce(Some(3))];
+    /// assert_eq!(v1.into_iter().fold_final(Coalesce(Some(4))), Coalesce(Some(2)));
+    ///
+    /// let v2 = vec![Coalesce::<u32>(None), Coalesce(None), Coalesce(None)];
+    /// assert_eq!(v2.into_iter().fold_final(Coalesce(Some(4))), Coalesce(Some(4)));
+    /// ```
     fn fold_final(mut self, fin: Self::Item) -> Self::Item
     where
         Self::Item: Semigroup,
@@ -15,6 +27,18 @@ pub trait CombineIterator: Sized + Iterator {
             fin
         }
     }
+
+    /// Folds every [`Semigroup`] element like from the end using [`Reverse`]. Given argument is the final value.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, CombineIterator, Semigroup};
+    /// let v1 = vec![Coalesce(None), Coalesce(Some(2)), Coalesce(Some(3))];
+    /// assert_eq!(v1.into_iter().rfold_final(Coalesce(Some(3))), Coalesce(Some(3)));
+    ///
+    /// let v2 = vec![Coalesce::<u32>(None), Coalesce(None), Coalesce(None)];
+    /// assert_eq!(v2.into_iter().rfold_final(Coalesce(Some(4))), Coalesce(Some(4)));
+    /// ```
     fn rfold_final(self, fin: Self::Item) -> Self::Item
     where
         Self::Item: Semigroup,
@@ -24,6 +48,17 @@ pub trait CombineIterator: Sized + Iterator {
             .into_inner()
     }
 
+    /// This method like [`CombineIterator::fold_final`], but no argument is required.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, CombineIterator, Semigroup};
+    /// let v1 = vec![Coalesce(None), Coalesce(Some(2)), Coalesce(Some(3))];
+    /// assert_eq!(v1.into_iter().combine(), Coalesce(Some(2)));
+    ///
+    /// let v2 = vec![Coalesce::<u32>(None), Coalesce(None), Coalesce(None)];
+    /// assert_eq!(v2.into_iter().combine(), Coalesce(None));
+    /// ```
     #[cfg(feature = "monoid")]
     fn combine(self) -> Self::Item
     where
@@ -32,6 +67,17 @@ pub trait CombineIterator: Sized + Iterator {
         self.fold_final(crate::Monoid::identity())
     }
 
+    /// This method like [`CombineIterator::rfold_final`], but no argument is required.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, CombineIterator, Semigroup};
+    /// let v1 = vec![Coalesce(None), Coalesce(Some(2)), Coalesce(Some(3))];
+    /// assert_eq!(v1.into_iter().rcombine(), Coalesce(Some(3)));
+    ///
+    /// let v2 = vec![Coalesce::<u32>(None), Coalesce(None), Coalesce(None)];
+    /// assert_eq!(v2.into_iter().rcombine(), Coalesce(None));
+    /// ```
     #[cfg(feature = "monoid")]
     fn rcombine(self) -> Self::Item
     where
