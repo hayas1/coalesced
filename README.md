@@ -15,7 +15,7 @@ cargo add semigroup --features derive,monoid
 ### Reading configs from multiple sources
 A CLI example of `clap` and `serde` integration, see <https://github.com/hayas1/semigroup/blob/master/semigroup/examples/clap_serde.rs>
 
- #### Simple coalesce
+#### Simple coalesce
 ```rust
 use semigroup::Semigroup;
 #[derive(Debug, Clone, PartialEq, Semigroup)]
@@ -36,11 +36,11 @@ let config = cli.semigroup(file).semigroup(env);
 assert_eq!(config, Config { num: Some(1), str: Some("ten"), boolean: false });
 ```
 
-#### Coalesce with rich enum annotation
+#### Coalesce with rich enum annotation and lazy evaluation
 Some [`Semigroup`] such as [`op::Coalesce`] can have an annotation.
-More detail is in [`Annotate`].
+More detail is in [`Annotate`] and [`Lazy`].
 ```rust
-use semigroup::{Annotate, Semigroup};
+use semigroup::{Annotate, Lazy, Semigroup};
 #[derive(Debug, Clone, PartialEq, Semigroup)]
 #[semigroup(annotated, with = "semigroup::op::Coalesce")]
 pub struct Config<'a> {
@@ -56,12 +56,15 @@ pub enum Source {
     Cli,
 }
 
-let cli = Config { num: Some(1), str: None, boolean: true }.annotated(Source::Cli);
+let cli = Lazy::from(Config { num: Some(1), str: None, boolean: true }.annotated(Source::Cli));
 let file = Config { num: None, str: Some("ten"), boolean: false }.annotated(Source::File);
 let env = Config { num: Some(100), str: None, boolean: false }.annotated(Source::Env);
 
-let config = cli.semigroup(file).semigroup(env);
+let lazy = cli.semigroup(file.into()).semigroup(env.into());
+assert_eq!(lazy.first().value(), &Config { num: Some(1), str: None, boolean: true });
+assert_eq!(lazy.last().value(), &Config { num: Some(100), str: None, boolean: false });
 
+let config = lazy.combine();
 assert_eq!(config.value(), &Config { num: Some(1), str: Some("ten"), boolean: false });
 assert_eq!(config.annotation().num, Source::Cli);
 assert_eq!(config.annotation().str, Source::File);
@@ -150,12 +153,12 @@ Only available with the `monoid` feature
 use semigroup::{op::Sum, Semigroup, Construction, segment_tree::SegmentTree};
 let data = 0..=10000;
 let mut sum_tree: SegmentTree<_> = data.into_iter().map(Sum).collect();
-assert_eq!(sum_tree.fold(3..6).into_inner(), 12);
-assert_eq!(sum_tree.fold(..).into_inner(), 50005000);
+assert_eq!(sum_tree.combine(3..6).into_inner(), 12);
+assert_eq!(sum_tree.combine(..).into_inner(), 50005000);
 sum_tree.update_with(4, |Sum(x)| Sum(x + 50));
 sum_tree.update_with(9999, |Sum(x)| Sum(x + 500000));
-assert_eq!(sum_tree.fold(3..6).into_inner(), 62);
-assert_eq!(sum_tree.fold(..).into_inner(), 50505050);
+assert_eq!(sum_tree.combine(3..6).into_inner(), 62);
+assert_eq!(sum_tree.combine(..).into_inner(), 50505050);
 ```
 #### Custom monoid operator
 Only available with the `monoid` feature
@@ -174,9 +177,9 @@ impl Semigroup for Max {
 
 let data = [2, -5, 122, -33, -12, 14, -55, 500, 3];
 let mut max_tree: SegmentTree<_> = data.into_iter().map(Max).collect();
-assert_eq!(max_tree.fold(3..6).0, 14);
+assert_eq!(max_tree.combine(3..6).0, 14);
 max_tree.update_with(4, |Max(x)| Max(x + 1000));
-assert_eq!(max_tree.fold(3..6).0, 988);
+assert_eq!(max_tree.combine(3..6).0, 988);
 
 // #[test]
 semigroup::assert_monoid!(&max_tree[..]);

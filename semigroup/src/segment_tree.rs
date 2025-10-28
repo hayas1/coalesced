@@ -13,9 +13,9 @@ pub mod iter;
 /// use semigroup::{op::Sum, segment_tree::SegmentTree};
 /// let data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 /// let mut sum_tree: SegmentTree<_> = data.into_iter().map(Sum).collect();
-/// assert_eq!(sum_tree.fold(3..=5).0, 12);
+/// assert_eq!(sum_tree.combine(3..=5).0, 12);
 /// sum_tree.update(4, 8.into());
-/// assert_eq!(sum_tree.fold(3..=5).0, 16);
+/// assert_eq!(sum_tree.combine(3..=5).0, 16);
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct SegmentTree<T> {
@@ -156,8 +156,8 @@ impl<T: Monoid + Clone> SegmentTree<T> {
         start..end
     }
 
-    /// **O(log(n))**, fold the range.
-    pub fn fold<R>(&self, range: R) -> T
+    /// **O(log(n))**, combine the range.
+    pub fn combine<R>(&self, range: R) -> T
     where
         R: RangeBounds<usize>,
     {
@@ -188,7 +188,7 @@ impl<T: Monoid + Clone> SegmentTree<T> {
         let Range { mut start, mut end } = self.indices(range);
         while end - start > 1 {
             let mid = (start + end) / 2;
-            if cmp(&self.fold(start..mid)) {
+            if cmp(&self.combine(start..mid)) {
                 end = mid;
             } else {
                 start = mid;
@@ -205,7 +205,7 @@ impl<T: Monoid + Clone> SegmentTree<T> {
         let Range { mut start, mut end } = self.indices(range);
         while end - start > 1 {
             let mid = (start + end) / 2;
-            if cmp(&self.fold(mid..end)) {
+            if cmp(&self.combine(mid..end)) {
                 start = mid;
             } else {
                 end = mid;
@@ -241,17 +241,17 @@ mod tests {
         let mut sum_tree: SegmentTree<_> = data.into_iter().map(Sum).collect();
         assert_monoid!(&sum_tree[..]);
 
-        assert_eq!(sum_tree.fold(3..5).0, 7);
-        assert_eq!(sum_tree.fold(2..7).0, 20);
-        assert_eq!(sum_tree.fold(..).0, 55);
-        assert_eq!(sum_tree.fold(5..5).0, 0);
+        assert_eq!(sum_tree.combine(3..5).0, 7);
+        assert_eq!(sum_tree.combine(2..7).0, 20);
+        assert_eq!(sum_tree.combine(..).0, 55);
+        assert_eq!(sum_tree.combine(5..5).0, 0);
         sum_tree.update(5, 10.into());
-        assert_eq!(sum_tree.fold(3..=4).0, 7);
-        assert_eq!(sum_tree.fold(2..7).0, 25);
-        assert_eq!(sum_tree.fold(1..).0, 60);
+        assert_eq!(sum_tree.combine(3..=4).0, 7);
+        assert_eq!(sum_tree.combine(2..7).0, 25);
+        assert_eq!(sum_tree.combine(1..).0, 60);
         sum_tree.update_with(7, |Sum(x)| Sum(x * 2)); // t[7] = 14
-        assert_eq!(sum_tree.fold(..6).0, 20);
-        assert_eq!(sum_tree.fold(6..=8).0, 28);
+        assert_eq!(sum_tree.combine(..6).0, 20);
+        assert_eq!(sum_tree.combine(6..=8).0, 28);
     }
 
     #[test]
@@ -260,17 +260,17 @@ mod tests {
         let mut prod_tree: SegmentTree<_> = data.into_iter().map(Prod).collect();
         assert_monoid!(&prod_tree[..]);
 
-        assert_eq!(prod_tree.fold(3..5).0, 12);
-        assert_eq!(prod_tree.fold(2..7).0, 720);
-        assert_eq!(prod_tree.fold(0..11).0, 0);
-        assert_eq!(prod_tree.fold(6..6).0, 1);
+        assert_eq!(prod_tree.combine(3..5).0, 12);
+        assert_eq!(prod_tree.combine(2..7).0, 720);
+        assert_eq!(prod_tree.combine(0..11).0, 0);
+        assert_eq!(prod_tree.combine(6..6).0, 1);
         prod_tree.update(5, 10.into());
-        assert_eq!(prod_tree.fold(3..5).0, 12);
-        assert_eq!(prod_tree.fold(2..7).0, 1440);
-        assert_eq!(prod_tree.fold(0..).0, 0);
+        assert_eq!(prod_tree.combine(3..5).0, 12);
+        assert_eq!(prod_tree.combine(2..7).0, 1440);
+        assert_eq!(prod_tree.combine(0..).0, 0);
         prod_tree.update_with(7, |Prod(x)| Prod(x / 2)); // t[7] = 3
-        assert_eq!(prod_tree.fold(5..=7).0, 180);
-        assert_eq!(prod_tree.fold(8..).0, 720);
+        assert_eq!(prod_tree.combine(5..=7).0, 180);
+        assert_eq!(prod_tree.combine(8..).0, 720);
     }
 
     #[test]
@@ -279,14 +279,14 @@ mod tests {
         let mut max_tree: SegmentTree<_> = data.into_iter().map(Max).collect();
         assert_monoid!(&max_tree[..]);
 
-        assert_eq!(max_tree.fold(3..5).0, -12);
-        assert_eq!(max_tree.fold(2..=6).0, 122);
-        assert_eq!(max_tree.fold(..).0, 500);
-        assert_eq!(max_tree.fold(0..0).0, i32::MIN);
+        assert_eq!(max_tree.combine(3..5).0, -12);
+        assert_eq!(max_tree.combine(2..=6).0, 122);
+        assert_eq!(max_tree.combine(..).0, 500);
+        assert_eq!(max_tree.combine(0..0).0, i32::MIN);
         max_tree.update(5, 1000.into());
-        assert_eq!(max_tree.fold(3..=4).0, -12);
-        assert_eq!(max_tree.fold(2..7).0, 1000);
-        assert_eq!(max_tree.fold(..10).0, 1000);
+        assert_eq!(max_tree.combine(3..=4).0, -12);
+        assert_eq!(max_tree.combine(2..7).0, 1000);
+        assert_eq!(max_tree.combine(..10).0, 1000);
     }
 
     #[test]
@@ -295,14 +295,14 @@ mod tests {
         let mut min_tree: SegmentTree<_> = data.into_iter().map(Min).collect();
         assert_monoid!(&min_tree[..]);
 
-        assert_eq!(min_tree.fold(3..5).0, 12);
-        assert_eq!(min_tree.fold(2..7).0, -55);
-        assert_eq!(min_tree.fold(0..).0, -55);
-        assert_eq!(min_tree.fold(5..5).0, i32::MAX);
+        assert_eq!(min_tree.combine(3..5).0, 12);
+        assert_eq!(min_tree.combine(2..7).0, -55);
+        assert_eq!(min_tree.combine(0..).0, -55);
+        assert_eq!(min_tree.combine(5..5).0, i32::MAX);
         min_tree.update(5, (-1000).into());
-        assert_eq!(min_tree.fold(3..5).0, 12);
-        assert_eq!(min_tree.fold(2..7).0, -1000);
-        assert_eq!(min_tree.fold(..10).0, -1000);
+        assert_eq!(min_tree.combine(3..5).0, 12);
+        assert_eq!(min_tree.combine(2..7).0, -1000);
+        assert_eq!(min_tree.combine(..10).0, -1000);
     }
 
     #[test]
@@ -311,14 +311,14 @@ mod tests {
         let mut gcd_tree: SegmentTree<_> = data.into_iter().map(Gcd).collect();
         assert_monoid!(&gcd_tree[..]);
 
-        assert_eq!(gcd_tree.fold(2..4).0, 4);
-        assert_eq!(gcd_tree.fold(2..6).0, 2);
-        assert_eq!(gcd_tree.fold(0..6).0, 1);
-        assert_eq!(gcd_tree.fold(3..3).0, 0);
+        assert_eq!(gcd_tree.combine(2..4).0, 4);
+        assert_eq!(gcd_tree.combine(2..6).0, 2);
+        assert_eq!(gcd_tree.combine(0..6).0, 1);
+        assert_eq!(gcd_tree.combine(3..3).0, 0);
         gcd_tree.update(5, 7.into());
-        assert_eq!(gcd_tree.fold(2..4).0, 4);
-        assert_eq!(gcd_tree.fold(2..6).0, 1);
-        assert_eq!(gcd_tree.fold(0..6).0, 1);
+        assert_eq!(gcd_tree.combine(2..4).0, 4);
+        assert_eq!(gcd_tree.combine(2..6).0, 1);
+        assert_eq!(gcd_tree.combine(0..6).0, 1);
     }
 
     #[test]
@@ -327,14 +327,14 @@ mod tests {
         let mut lcm_tree: SegmentTree<_> = data.into_iter().map(Lcm).collect();
         assert_monoid!(&lcm_tree[..]);
 
-        assert_eq!(lcm_tree.fold(2..4).0, 8);
-        assert_eq!(lcm_tree.fold(2..6).0, 24);
-        assert_eq!(lcm_tree.fold(..).0, 120);
-        assert_eq!(lcm_tree.fold(4..4).0, 1);
+        assert_eq!(lcm_tree.combine(2..4).0, 8);
+        assert_eq!(lcm_tree.combine(2..6).0, 24);
+        assert_eq!(lcm_tree.combine(..).0, 120);
+        assert_eq!(lcm_tree.combine(4..4).0, 1);
         lcm_tree.update(5, 7.into());
-        assert_eq!(lcm_tree.fold(2..4).0, 8);
-        assert_eq!(lcm_tree.fold(2..6).0, 168);
-        assert_eq!(lcm_tree.fold(..).0, 840);
+        assert_eq!(lcm_tree.combine(2..4).0, 8);
+        assert_eq!(lcm_tree.combine(2..6).0, 168);
+        assert_eq!(lcm_tree.combine(..).0, 840);
     }
 
     #[test]
@@ -342,14 +342,14 @@ mod tests {
         let data = [0b111, 0b101, 0b100, 0b000, 0b010];
         let mut xor_tree: SegmentTree<_> = data.into_iter().map(Xor).collect();
         assert_monoid!(&xor_tree[..]);
-        assert_eq!(xor_tree.fold(2..4).0, 0b100);
-        assert_eq!(xor_tree.fold(2..5).0, 0b110);
-        assert_eq!(xor_tree.fold(0..5).0, 0b100);
-        assert_eq!(xor_tree.fold(5..5).0, 0b000);
+        assert_eq!(xor_tree.combine(2..4).0, 0b100);
+        assert_eq!(xor_tree.combine(2..5).0, 0b110);
+        assert_eq!(xor_tree.combine(0..5).0, 0b100);
+        assert_eq!(xor_tree.combine(5..5).0, 0b000);
         xor_tree.update(4, 0b110.into());
-        assert_eq!(xor_tree.fold(2..4).0, 0b100);
-        assert_eq!(xor_tree.fold(2..5).0, 0b010);
-        assert_eq!(xor_tree.fold(0..5).0, 0b000);
+        assert_eq!(xor_tree.combine(2..4).0, 0b100);
+        assert_eq!(xor_tree.combine(2..5).0, 0b010);
+        assert_eq!(xor_tree.combine(0..5).0, 0b000);
     }
 
     #[test]
@@ -388,8 +388,8 @@ mod tests {
             empty.tree,
             vec![OptionMonoid::identity(), OptionMonoid::identity()]
         );
-        assert_eq!(empty.fold(..), OptionMonoid::identity());
-        assert_eq!(empty.fold(0..0), OptionMonoid::identity());
+        assert_eq!(empty.combine(..), OptionMonoid::identity());
+        assert_eq!(empty.combine(0..0), OptionMonoid::identity());
     }
 
     #[test]
@@ -406,12 +406,12 @@ mod tests {
             ]
         );
 
-        assert_eq!(single.fold(..), OptionMonoid::from(Coalesce(Some(3))));
-        assert_eq!(single.fold(1..1), OptionMonoid::identity());
-        assert_eq!(single.fold(1..), OptionMonoid::identity());
+        assert_eq!(single.combine(..), OptionMonoid::from(Coalesce(Some(3))));
+        assert_eq!(single.combine(1..1), OptionMonoid::identity());
+        assert_eq!(single.combine(1..), OptionMonoid::identity());
         single.update(0, OptionMonoid::from(Coalesce(Some(5))));
-        assert_eq!(single.fold(..), OptionMonoid::from(Coalesce(Some(5))));
-        assert_eq!(single.fold(1..), OptionMonoid::identity());
+        assert_eq!(single.combine(..), OptionMonoid::from(Coalesce(Some(5))));
+        assert_eq!(single.combine(1..), OptionMonoid::identity());
     }
 
     #[test]
@@ -439,12 +439,12 @@ mod tests {
             ]
         );
 
-        assert_eq!(pair.fold(..), OptionMonoid::from(Coalesce(Some(3))));
-        assert_eq!(pair.fold(1..1), OptionMonoid::identity());
-        assert_eq!(pair.fold(1..), OptionMonoid::from(Coalesce(Some(4))));
+        assert_eq!(pair.combine(..), OptionMonoid::from(Coalesce(Some(3))));
+        assert_eq!(pair.combine(1..1), OptionMonoid::identity());
+        assert_eq!(pair.combine(1..), OptionMonoid::from(Coalesce(Some(4))));
         pair.update(0, OptionMonoid::from(Coalesce(Some(5))));
-        assert_eq!(pair.fold(..), OptionMonoid::from(Coalesce(Some(5))));
-        assert_eq!(pair.fold(1..), OptionMonoid::from(Coalesce(Some(4))));
+        assert_eq!(pair.combine(..), OptionMonoid::from(Coalesce(Some(5))));
+        assert_eq!(pair.combine(1..), OptionMonoid::from(Coalesce(Some(4))));
         assert_eq!(
             pair.tree,
             vec![
@@ -460,23 +460,29 @@ mod tests {
     fn test_large_tree() {
         let cum_sum = |s, t| (t - s + 1) * (s + t) / 2;
         let mut sum_tree: SegmentTree<_> = (0..2000000).map(Sum).collect();
-        assert_eq!(sum_tree.fold(0..=10).0, cum_sum(0u128, 10u128));
-        assert_eq!(sum_tree.fold(5..=15).0, cum_sum(5, 15));
-        assert_eq!(sum_tree.fold(123..=1234567).0, cum_sum(123, 1234567));
-        assert_eq!(sum_tree.fold(123456..=345678).0, cum_sum(123456, 345678));
-        assert_eq!(sum_tree.fold(888888..=999999).0, cum_sum(888888, 999999));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 1999999));
+        assert_eq!(sum_tree.combine(0..=10).0, cum_sum(0u128, 10u128));
+        assert_eq!(sum_tree.combine(5..=15).0, cum_sum(5, 15));
+        assert_eq!(sum_tree.combine(123..=1234567).0, cum_sum(123, 1234567));
+        assert_eq!(sum_tree.combine(123456..=345678).0, cum_sum(123456, 345678));
+        assert_eq!(sum_tree.combine(888888..=999999).0, cum_sum(888888, 999999));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 1999999));
 
         for i in 0..2000000 {
             sum_tree.update_with(i, |Sum(x)| Sum(x + 1)); // expensive loop
         }
         let cum_sum_1 = |s, t| (t - s + 1) * (s + t + 2) / 2;
-        assert_eq!(sum_tree.fold(0..=10).0, cum_sum_1(0u128, 10u128));
-        assert_eq!(sum_tree.fold(5..=15).0, cum_sum_1(5, 15));
-        assert_eq!(sum_tree.fold(123..=1234567).0, cum_sum_1(123, 1234567));
-        assert_eq!(sum_tree.fold(123456..=345678).0, cum_sum_1(123456, 345678));
-        assert_eq!(sum_tree.fold(888888..=999999).0, cum_sum_1(888888, 999999));
-        assert_eq!(sum_tree.fold(..).0, cum_sum_1(0, 1999999));
+        assert_eq!(sum_tree.combine(0..=10).0, cum_sum_1(0u128, 10u128));
+        assert_eq!(sum_tree.combine(5..=15).0, cum_sum_1(5, 15));
+        assert_eq!(sum_tree.combine(123..=1234567).0, cum_sum_1(123, 1234567));
+        assert_eq!(
+            sum_tree.combine(123456..=345678).0,
+            cum_sum_1(123456, 345678)
+        );
+        assert_eq!(
+            sum_tree.combine(888888..=999999).0,
+            cum_sum_1(888888, 999999)
+        );
+        assert_eq!(sum_tree.combine(..).0, cum_sum_1(0, 1999999));
     }
 
     #[test]
@@ -485,7 +491,7 @@ mod tests {
         let mut sum_tree = SegmentTree::new();
         for i in 0..1023 {
             sum_tree.push(Sum(i));
-            assert_eq!(sum_tree.fold(..).0, cum_sum(0, i));
+            assert_eq!(sum_tree.combine(..).0, cum_sum(0, i));
         }
     }
     #[test]
@@ -494,7 +500,7 @@ mod tests {
         let mut sum_tree = SegmentTree::new();
         for i in 0..2000000 {
             sum_tree.push(Sum(i)); // expensive loop
-            assert_eq!(sum_tree.fold(..).0, cum_sum(0u128, i));
+            assert_eq!(sum_tree.combine(..).0, cum_sum(0u128, i));
         }
     }
 
@@ -503,29 +509,29 @@ mod tests {
         let cum_sum = |s, t| (t - s + 1) * (s + t) / 2;
         let mut sum_tree = SegmentTree::new();
         sum_tree.extend((0..1).map(Sum));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 0));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 0));
         sum_tree.extend((1..10).map(Sum));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 9));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 9));
         sum_tree.extend((10..100).map(Sum));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 99));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 99));
         sum_tree.extend((100..200).map(Sum));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 199));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 199));
         sum_tree.extend((200..300).map(Sum));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 299));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 299));
         sum_tree.extend((300..400).map(Sum));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 399));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 399));
         sum_tree.extend((400..500).map(Sum));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 499));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 499));
         sum_tree.extend((500..600).map(Sum));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 599));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 599));
         sum_tree.extend((600..700).map(Sum));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 699));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 699));
         sum_tree.extend((700..800).map(Sum));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 799));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 799));
         sum_tree.extend((800..900).map(Sum));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 899));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 899));
         sum_tree.extend((900..1000).map(Sum));
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 999));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 999));
         sum_tree.extend_from_slice(&[
             Sum(1000),
             Sum(1001),
@@ -538,7 +544,7 @@ mod tests {
             Sum(1008),
             Sum(1009),
         ]);
-        assert_eq!(sum_tree.fold(..).0, cum_sum(0, 1009));
+        assert_eq!(sum_tree.combine(..).0, cum_sum(0, 1009));
     }
 
     #[test]
@@ -546,8 +552,8 @@ mod tests {
     fn test_descending_empty_range() {
         let data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         let sum_tree: SegmentTree<_> = data.into_iter().map(Sum).collect();
-        assert_eq!(sum_tree.fold(10..0).0, 0);
-        assert_eq!(sum_tree.fold(10..9).0, 0);
-        assert_eq!(sum_tree.fold(9..8).0, 0);
+        assert_eq!(sum_tree.combine(10..0).0, 0);
+        assert_eq!(sum_tree.combine(10..9).0, 0);
+        assert_eq!(sum_tree.combine(9..8).0, 0);
     }
 }

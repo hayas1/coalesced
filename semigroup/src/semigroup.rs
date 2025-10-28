@@ -76,8 +76,8 @@ pub mod test_semigroup {
     use rand::seq::IndexedRandom;
 
     use crate::{
+        combine::test_combine::{assert_combine_iter, assert_lazy},
         commutative::test_commutative::{assert_reverse_associative_law, assert_reverse_reverse},
-        iter::test_iter::assert_lazy_evaluation_iter,
     };
 
     use super::*;
@@ -137,7 +137,8 @@ pub mod test_semigroup {
         assert_associative_law(a.clone(), b.clone(), c.clone());
         assert_reverse_reverse(a.clone(), b.clone(), c.clone());
         assert_reverse_associative_law(a.clone(), b.clone(), c.clone());
-        assert_lazy_evaluation_iter(a.clone(), b.clone(), c.clone());
+        assert_combine_iter(a.clone(), b.clone(), c.clone());
+        assert_lazy(a.clone(), b.clone(), c.clone());
         #[cfg(feature = "monoid")]
         crate::test_monoid::assert_option_monoid(a.clone(), b.clone(), c.clone());
     }
