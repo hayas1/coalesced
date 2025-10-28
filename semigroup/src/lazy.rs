@@ -28,7 +28,7 @@ pub trait CombineIterator: Sized + Iterator {
         }
     }
 
-    /// Folds every [`Semigroup`] element like from the end using [`Reverse`]. Given argument is the final value.
+    /// Folds every [`Semigroup`] element in reverse order using [`Reverse`]. Given argument is the final value.
     ///
     /// # Examples
     /// ```
@@ -143,10 +143,34 @@ impl<T> Semigroup for Lazy<T> {
     }
 }
 impl<T: Semigroup> Lazy<T> {
+    /// Evaluate [`Lazy`] to `T`.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, Lazy, Semigroup};
+    /// let a = Coalesce(Some(1));
+    /// let b = Coalesce(Some(2));
+    /// let c = Coalesce(Some(3));
+    ///
+    /// let lazy = Lazy::from(a).semigroup(b.into()).semigroup(c.into());
+    /// assert_eq!(lazy.combine(), Coalesce(Some(1)));
+    /// ```
     pub fn combine(self) -> T {
         let (first, tail) = self.split_off_first();
         tail.into_iter().fold(first, Semigroup::op)
     }
+    /// Evaluate [`Lazy`] to `T` like [`Lazy::combine`] by cloning each element.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, Lazy, Semigroup};
+    /// let a = Coalesce(Some(1));
+    /// let b = Coalesce(Some(2));
+    /// let c = Coalesce(Some(3));
+    ///
+    /// let lazy = Lazy::from(a).semigroup(b.into()).semigroup(c.into());
+    /// assert_eq!(lazy.combine_cloned(), Coalesce(Some(1)));
+    /// ```
     pub fn combine_cloned(&self) -> T
     where
         T: Clone,
@@ -154,10 +178,36 @@ impl<T: Semigroup> Lazy<T> {
         let (first, tail) = self.split_first();
         tail.iter().cloned().fold(first.clone(), Semigroup::op)
     }
+
+    /// Evaluate [`Lazy`] to `T` in reverse order.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, Lazy, Semigroup};
+    /// let a = Coalesce(Some(1));
+    /// let b = Coalesce(Some(2));
+    /// let c = Coalesce(Some(3));
+    ///
+    /// let lazy = Lazy::from(a).semigroup(b.into()).semigroup(c.into());
+    /// assert_eq!(lazy.combine_rev(), Coalesce(Some(3)));
+    /// ```
     pub fn combine_rev(self) -> T {
         let (last, head) = self.split_off_last();
         head.into_iter().rfold(last, Semigroup::op)
     }
+
+    /// Evaluate [`Lazy`] to `T` in reverse order like [`Lazy::combine_rev`] by cloning each element.
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{op::Coalesce, Lazy, Semigroup};
+    /// let a = Coalesce(Some(1));
+    /// let b = Coalesce(Some(2));
+    /// let c = Coalesce(Some(3));
+    ///
+    /// let lazy = Lazy::from(a).semigroup(b.into()).semigroup(c.into());
+    /// assert_eq!(lazy.combine_rev_cloned(), Coalesce(Some(3)));
+    /// ```
     pub fn combine_rev_cloned(&self) -> T
     where
         T: Clone,
