@@ -38,9 +38,6 @@ struct Person {
 /// ```
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app = App::parse();
-
-    let cli_person = App::parse_from(std::env::args()).person;
-    let env_person = App::parse_from(["app"]).person;
     let file_person = app
         .file
         .as_ref()
@@ -48,7 +45,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .transpose()?
         .unwrap_or_default();
 
-    let person = cli_person.semigroup(env_person).semigroup(file_person);
+    // let cli_person = App::parse_from(std::env::args()).person; // clap reads env vars
+    // let env_person = App::parse_from(["app"]).person;
+    // let person = cli_person.semigroup(env_person).semigroup(file_person);
+
+    let person = app.person.semigroup(file_person);
     println!("{person:?}");
     Ok(())
 }
