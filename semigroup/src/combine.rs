@@ -473,47 +473,10 @@ pub mod test_lazy {
 
     pub fn assert_lazy<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
         let lazy = Lazy::from(a.clone());
-        assert!(!lazy.is_empty());
-        assert!(lazy.is_single());
-        assert_eq!(lazy.first(), &a);
-        assert_eq!(lazy.last(), &a);
-        assert_eq!(lazy.get(0), Some(&a));
-        assert_eq!(lazy.get(1), None);
-        assert_eq!(lazy.get(..), Some(&[a.clone()][..]));
-        assert_eq!(lazy.iter().collect::<Vec<_>>(), vec![&a]);
-        assert_eq!(
-            lazy.clone().into_iter().collect::<Vec<_>>(),
-            vec![a.clone()]
-        );
-        assert_eq!(lazy.clone().split_off_first(), (a.clone(), vec![]));
-        assert_eq!(lazy.clone().split_off_last(), (a.clone(), vec![]));
         assert_eq!(lazy.combine_cloned(), a.clone());
         assert_eq!(lazy.combine_rev_cloned(), a.clone());
 
         let lazy = lazy.semigroup(b.clone().into()).semigroup(c.clone().into());
-        assert!(!lazy.is_empty());
-        assert!(!lazy.is_single());
-        assert_eq!(lazy.first(), &a);
-        assert_eq!(lazy.last(), &c);
-        assert_eq!(lazy.get(0), Some(&a));
-        assert_eq!(lazy.get(1), Some(&b));
-        assert_eq!(lazy.get(2), Some(&c));
-        assert_eq!(lazy.get(3), None);
-        assert_eq!(lazy.get(..), Some(&[a.clone(), b.clone(), c.clone()][..]));
-        assert_eq!(lazy.iter().collect::<Vec<_>>(), vec![&a, &b, &c]);
-        assert_eq!(
-            lazy.clone().into_iter().collect::<Vec<_>>(),
-            vec![a.clone(), b.clone(), c.clone()]
-        );
-        assert_eq!(
-            lazy.clone().split_off_first(),
-            (a.clone(), vec![b.clone(), c.clone()])
-        );
-        assert_eq!(
-            lazy.clone().split_off_last(),
-            (c.clone(), vec![a.clone(), b.clone()])
-        );
-
         assert_eq!(
             lazy.clone().combine(),
             T::op(T::op(a.clone(), b.clone()), c.clone())
@@ -529,6 +492,91 @@ pub mod test_lazy {
         assert_eq!(
             lazy.combine_rev_cloned(),
             T::op(T::op(c.clone(), b.clone()), a.clone())
+        );
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_lazy_nonempty() {
+        let l = Lazy::from_iterator(Vec::<u32>::new());
+        assert!(l.is_none());
+
+        let l = Lazy::from_iterator(vec![1]);
+        assert!(l.is_some());
+    }
+
+    #[test]
+    fn test_lazy_small() {
+        let l = Lazy::from(1);
+        assert!(!l.is_empty());
+        assert!(l.is_single());
+        assert_eq!(l.first(), &1);
+        assert_eq!(l.last(), &1);
+        assert_eq!(l, Lazy::from_iterator(vec![1]).unwrap());
+
+        let ll = Lazy::from_iterator(vec![1, 2]).unwrap();
+        assert!(!ll.is_empty());
+        assert!(!ll.is_single());
+        assert_eq!(ll.first(), &1);
+        assert_eq!(ll.last(), &2);
+    }
+
+    #[test]
+    fn test_lazy_split() {
+        let l = Lazy::from(1);
+        assert_eq!(l.split_first(), (&1, &[][..]));
+        assert_eq!(l.split_last(), (&1, &[][..]));
+        assert_eq!(l.clone().split_off_first(), (1, vec![]));
+        assert_eq!(l.clone().split_off_last(), (1, vec![]));
+
+        let ll = Lazy::from_iterator(vec![1, 2, 3, 4, 5]).unwrap();
+        assert_eq!(ll.split_first(), (&1, &[2, 3, 4, 5][..]));
+        assert_eq!(ll.split_last(), (&5, &[1, 2, 3, 4][..]));
+        assert_eq!(ll.clone().split_off_first(), (1, vec![2, 3, 4, 5]));
+        assert_eq!(ll.clone().split_off_last(), (5, vec![1, 2, 3, 4]));
+    }
+
+    #[test]
+    fn test_lazy_index() {
+        let l = Lazy::from(1);
+        assert_eq!(l[0], 1);
+        assert_eq!(l[..], [1]);
+        assert_eq!(l[..1], [1]);
+        assert_eq!(l.get(0), Some(&1));
+        assert_eq!(l.get(1), None);
+        assert_eq!(l.get(..), Some(&[1][..]));
+        assert_eq!(l.get(..1), Some(&[1][..]));
+
+        let ll = Lazy::from_iterator(vec![1, 2]).unwrap();
+        assert_eq!(ll[0], 1);
+        assert_eq!(ll[1], 2);
+        assert_eq!(ll[..], [1, 2]);
+        assert_eq!(ll[..1], [1]);
+        assert_eq!(ll.get(0), Some(&1));
+        assert_eq!(ll.get(1), Some(&2));
+        assert_eq!(ll.get(2), None);
+        assert_eq!(ll.get(..), Some(&[1, 2][..]));
+        assert_eq!(ll.get(..1), Some(&[1][..]));
+    }
+
+    #[test]
+    fn test_lazy_iter() {
+        let l = Lazy::from(1);
+        assert_eq!(l.iter().collect::<Vec<_>>(), vec![&1]);
+        assert_eq!(l.clone().into_iter().collect::<Vec<_>>(), vec![1]);
+
+        let ll = Lazy::from_iterator(0..100000).unwrap();
+        assert_eq!(
+            ll.iter().cloned().collect::<Vec<_>>(),
+            (0..100000).collect::<Vec<_>>()
+        );
+        assert_eq!(
+            ll.clone().into_iter().collect::<Vec<_>>(),
+            (0..100000).collect::<Vec<_>>()
         );
     }
 }
