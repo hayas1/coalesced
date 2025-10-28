@@ -23,6 +23,22 @@ pub trait CombineIterator: Sized + Iterator {
             .fold(Reverse(fin), Semigroup::op)
             .into_inner()
     }
+
+    #[cfg(feature = "monoid")]
+    fn combine(self) -> Self::Item
+    where
+        Self::Item: crate::Monoid,
+    {
+        self.fold_final(crate::Monoid::identity())
+    }
+
+    #[cfg(feature = "monoid")]
+    fn rcombine(self) -> Self::Item
+    where
+        Self::Item: crate::Monoid,
+    {
+        self.rfold_final(crate::Monoid::identity())
+    }
 }
 impl<I: Iterator> CombineIterator for I {}
 
@@ -85,14 +101,10 @@ impl<T: Semigroup> Lazy<T> {
 }
 impl<T> From<T> for Lazy<T> {
     fn from(value: T) -> Self {
-        Self::new(value)
-    }
-}
-
-impl<T> Lazy<T> {
-    pub fn new(value: T) -> Self {
         Self(vec![value])
     }
+}
+impl<T> Lazy<T> {
     pub fn from_iterator<I: IntoIterator<Item = T>>(iter: I) -> Option<Self> {
         // compile error: type parameter `T` must be used as the type parameter for some local type
         // impl<T> FromIterator<T> for Option<Lazy<T>> {
