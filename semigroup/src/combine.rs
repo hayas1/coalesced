@@ -452,7 +452,7 @@ impl<T, I: SliceIndex<[T]>> Index<I> for Lazy<T> {
 }
 
 #[cfg(feature = "test")]
-pub mod test_lazy {
+pub mod test_combine {
     use std::fmt::Debug;
 
     use super::*;

@@ -141,7 +141,7 @@ pub mod test_monoid {
     use std::fmt::Debug;
 
     use crate::{
-        combine::test_lazy::assert_combine_iter_monoid,
+        combine::test_combine::assert_combine_iter_monoid,
         semigroup::test_semigroup::assert_associative_law,
     };
 
