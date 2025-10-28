@@ -14,7 +14,7 @@
 //! ## Reading configs from multiple sources
 //! A CLI example of `clap` and `serde` integration, see <https://github.com/hayas1/semigroup/blob/master/semigroup/examples/clap_serde.rs>
 //!
-//!  ### Simple coalesce
+//! ### Simple coalesce
 //! ```
 //! use semigroup::Semigroup;
 //! #[derive(Debug, Clone, PartialEq, Semigroup)]
@@ -35,11 +35,11 @@
 //! assert_eq!(config, Config { num: Some(1), str: Some("ten"), boolean: false });
 //! ```
 //!
-//! ### Coalesce with rich enum annotation
+//! ### Coalesce with rich enum annotation and lazy evaluation
 //! Some [`Semigroup`] such as [`op::Coalesce`] can have an annotation.
-//! More detail is in [`Annotate`].
+//! More detail is in [`Annotate`] and [`Lazy`].
 //! ```
-//! use semigroup::{Annotate, Semigroup};
+//! use semigroup::{Annotate, Lazy, Semigroup};
 //! #[derive(Debug, Clone, PartialEq, Semigroup)]
 //! #[semigroup(annotated, with = "semigroup::op::Coalesce")]
 //! pub struct Config<'a> {
@@ -55,12 +55,15 @@
 //!     Cli,
 //! }
 //!
-//! let cli = Config { num: Some(1), str: None, boolean: true }.annotated(Source::Cli);
+//! let cli = Lazy::from(Config { num: Some(1), str: None, boolean: true }.annotated(Source::Cli));
 //! let file = Config { num: None, str: Some("ten"), boolean: false }.annotated(Source::File);
 //! let env = Config { num: Some(100), str: None, boolean: false }.annotated(Source::Env);
 //!
-//! let config = cli.semigroup(file).semigroup(env);
+//! let lazy = cli.semigroup(file.into()).semigroup(env.into());
+//! assert_eq!(lazy.first().value(), &Config { num: Some(1), str: None, boolean: true });
+//! assert_eq!(lazy.last().value(), &Config { num: Some(100), str: None, boolean: false });
 //!
+//! let config = lazy.combine();
 //! assert_eq!(config.value(), &Config { num: Some(1), str: Some("ten"), boolean: false });
 //! assert_eq!(config.annotation().num, Source::Cli);
 //! assert_eq!(config.annotation().str, Source::File);
