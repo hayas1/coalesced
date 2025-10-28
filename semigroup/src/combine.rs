@@ -471,6 +471,23 @@ pub mod test_lazy {
         );
     }
 
+    #[cfg(feature = "monoid")]
+    pub fn assert_combine_iter_monoid<T: crate::Monoid + Clone + PartialEq + Debug>(
+        a: T,
+        b: T,
+        c: T,
+    ) {
+        let abc = vec![a.clone(), b.clone(), c.clone()];
+        assert_eq!(
+            abc.clone().into_iter().combine(),
+            T::op(T::op(a.clone(), b.clone()), c.clone())
+        );
+        assert_eq!(
+            abc.clone().into_iter().rcombine(),
+            T::op(T::op(c.clone(), b.clone()), a.clone())
+        );
+    }
+
     pub fn assert_lazy<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
         let lazy = Lazy::from(a.clone());
         assert_eq!(lazy.combine_cloned(), a.clone());
