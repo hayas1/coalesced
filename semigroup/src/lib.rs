@@ -196,6 +196,20 @@
 //! # }
 //! ```
 //!
+//! # Highlights
+//! - [`Semigroup`] trait
+//!   - derive [`Construction`] defines a new *semigroup* operation (Some operations are already defined in [`crate::op`]).
+//!   - derive [`Semigroup`] implements *semigroup* by existing *semigroup* operation.
+//!   - test *associativity* using [`assert_semigroup!`].
+//! - Some related traits also supported by derive
+//!   - [`Annotate`] supports practical *annotation*.
+//!   - [`Monoid`] has *identity element*.
+//!   - [`Commutative`] represents *commutativity*.
+//! - Combine operations
+//!   - [`CombineIterator`] provides *fold* and *combine* operations for iterators.
+//!   - [`Lazy`] provides *lazy evaluation*.
+//!   - [`segment_tree::SegmentTree`] is useful for fast range queries on [`Monoid`].
+//!
 //! # Links
 //! - GitHub: <https://github.com/hayas1/semigroup>
 //! - GitHub Pages: <https://hayas1.github.io/semigroup/semigroup>
