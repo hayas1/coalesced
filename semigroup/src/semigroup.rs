@@ -85,6 +85,10 @@ pub mod test_semigroup {
     /// Assert that the given type satisfies the *semigroup* property.
     ///
     /// # Usage
+    /// ```sh
+    /// cargo add semigroup --dev --features test
+    /// ```
+    ///
     /// - 1 argument: iterator of more than 3 items that implements [`Semigroup`].
     /// - More than 3 arguments: items that implements [`Semigroup`].
     ///
