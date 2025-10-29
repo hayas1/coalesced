@@ -52,11 +52,11 @@
 //!     Cli,
 //! }
 //!
-//! let cli = Lazy::from(Config { num: Some(1), str: None, boolean: true }.annotated(Source::Cli));
+//! let cli = Config { num: Some(1), str: None, boolean: true }.annotated(Source::Cli);
 //! let file = Config { num: None, str: Some("ten"), boolean: false }.annotated(Source::File);
 //! let env = Config { num: Some(100), str: None, boolean: false }.annotated(Source::Env);
 //!
-//! let lazy = cli.semigroup(file.into()).semigroup(env.into());
+//! let lazy = Lazy::from(cli).semigroup(file.into()).semigroup(env.into());
 //! assert_eq!(lazy.first().value(), &Config { num: Some(1), str: None, boolean: true });
 //! assert_eq!(lazy.last().value(), &Config { num: Some(100), str: None, boolean: false });
 //!
