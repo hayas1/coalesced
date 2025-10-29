@@ -68,22 +68,28 @@
 //! ```
 //!
 //! # Highlights
-//! - [`Semigroup`] trait
+//! - `#[derive(Semigroup)]` and `#[derive(Construction)]`
+//!   - derive [`Semigroup`] implements *semigroup* for a struct by field level semantics.
 //!   - derive [`Construction`] defines a new *semigroup* operation (Some operations are already defined in [`crate::op`]).
-//!   - derive [`Semigroup`] implements *semigroup* by existing *semigroup* operation.
-//!   - test *associativity* using [`assert_semigroup!`].
-//! - Some related traits also supported by derive
-//!   - [`Annotate`] supports practical *annotation*.
-//!   - [`Monoid`] has *identity element*.
-//!   - [`Commutative`] represents *commutativity*.
-//! - Combine operations
+//! - Practical *annotation* support
+//!   - Some *semigroup* operations such as [`op::Coalesce`] can have an annotation that is represented by [`Annotate`] trait.
+//! - Combine multiple elements
 //!   - [`CombineIterator`] provides *fold* and *combine* operations for iterators.
 //!   - [`Lazy`] provides *lazy evaluation*.
 //!   - [`segment_tree::SegmentTree`] is useful for fast range queries on [`Monoid`].
 //!
+//! | | [`Semigroup`] | [`Annotate`] | [`Monoid`] | [`Commutative`] |
+//! | :---: | :---: | :---: | :---: | :---: |
+//! | **property** | *associativity* | *annotation* | *identity element* | *commutativity* |
+//! | **`#[derive(Semigroup)]`** <br> **`#[semigroup(...)]`** | | `annotated` | `monoid` | `commutative` |
+//! | **`#[derive(Construction)]`** <br> **`#[construction(...)]`** | | `annotated` | `monoid` | `commutative` |
+//! | **testing** | [`assert_semigroup!`] |  | [`assert_monoid!`] | [`assert_commutative!`] |
+//! | **suitable combine** | [`CombineIterator`] | [`Lazy`] | [`SegmentTree`](`segment_tree::SegmentTree`) | |
+//!
 //! # Links
 //! - GitHub: <https://github.com/hayas1/semigroup>
 //! - GitHub Pages: <https://hayas1.github.io/semigroup/semigroup>
+//! - Release Notes: <https://github.com/hayas1/semigroup/releases>
 //! - Crates.io: <https://crates.io/crates/semigroup>
 //! - Docs.rs: <https://docs.rs/semigroup>
 //!
