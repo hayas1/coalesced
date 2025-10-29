@@ -37,7 +37,7 @@ use crate::Semigroup;
 /// use semigroup::{Construction, Semigroup, Monoid};
 ///
 /// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
-/// #[construction(monoid, commutative, identity = Self(0))]
+/// #[construction(monoid, identity = Self(0))]
 /// pub struct Sum(u64);
 /// impl Semigroup for Sum {
 ///     fn op(base: Self, other: Self) -> Self {
