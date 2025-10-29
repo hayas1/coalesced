@@ -11,19 +11,83 @@ use crate::Semigroup;
 /// - mean
 /// - quantile
 /// - and more...
+///
 /// # Properties
 /// <!-- properties -->
 ///
 /// # Examples
+/// ## Statistically aggregation
 /// ```
-/// use semigroup::{op::HdrHistogram, Construction, Semigroup};
+/// use semigroup::{op::HdrHistogram, Semigroup};
 ///
-/// let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
-/// let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();
+/// let histogram1 = (1..100).collect::<HdrHistogram<u32>>();
+/// let histogram2 = (100..1000).collect::<HdrHistogram<u32>>();
 ///
-/// let h = a.semigroup(b);
-/// assert_eq!(h.histogram().mean(), 3.5);
-/// assert_eq!(h.histogram().value_at_quantile(0.9), 6);
+/// let histogram = histogram1.semigroup(histogram2).into_histogram();
+///
+/// assert_eq!(histogram.mean(), 499.9999999999999);
+/// assert_eq!(histogram.value_at_quantile(0.9), 900);
+/// ```
+///
+/// ## Load testing request-response result
+/// ```
+/// # #[cfg(feature="monoid")]
+/// # {
+/// use std::time::{Duration, Instant};
+/// use semigroup::{
+///     op::{HdrHistogram, Sum, Min, Max},
+///     Construction, Commutative, Semigroup, OptionMonoid, Monoid
+/// };
+///
+/// #[derive(Debug, Clone, PartialEq, Semigroup)]
+/// #[semigroup(commutative)]
+/// pub struct RequestAggregate {
+///     count: Sum<u64>,
+///     pass: Sum<u64>,
+///     start: Min<Instant>,
+///     end: Max<Instant>,
+///     latency: HdrHistogram<u32>,
+/// }
+/// impl RequestAggregate {
+///     pub fn new(pass: bool, time: Instant, latency: Duration) -> Self {
+///         Self {
+///             count: Sum(1),
+///             pass: Sum(if pass { 1 } else { 0 }),
+///             start: Min(time),
+///             end: Max(time),
+///             latency: HdrHistogram::from(latency.as_millis() as u64),
+///         }
+///     }
+///     pub fn count(&self) -> u64 {
+///         self.count.into_inner()
+///     }
+///     pub fn pass_rate(&self) -> f64 {
+///         self.pass.into_inner() as f64 / self.count.into_inner() as f64
+///     }
+///     pub fn duration(&self) -> Duration {
+///         self.end.into_inner() - self.start.into_inner()
+///     }
+///     pub fn rps(&self) -> f64 {
+///         self.count.into_inner() as f64 / self.duration().as_secs_f64()
+///     }
+///     pub fn p99_latency(&self) -> Duration {
+///         Duration::from_millis(self.latency.histogram().value_at_quantile(0.99) as u64)
+///     }
+/// }
+///
+/// let (now, mut agg) = (Instant::now(), OptionMonoid::identity());
+/// for i in 0..10000000 {
+///     let duration = Duration::from_millis(i);
+///     agg = agg.semigroup(RequestAggregate::new(i % 2 == 0, now + duration, duration).into());
+/// }
+///
+/// let request_aggregate = agg.into_inner().unwrap();
+/// assert_eq!(request_aggregate.count(), 10000000);
+/// assert_eq!(request_aggregate.pass_rate(), 0.5);
+/// assert_eq!(request_aggregate.duration(), Duration::from_millis(9999999));
+/// assert_eq!(request_aggregate.rps(), 1000.00010000001);
+/// assert_eq!(request_aggregate.p99_latency(), Duration::from_millis(9904127));
+/// # }
 /// ```
 #[derive(Debug, Clone, PartialEq, SemigroupPriv)]
 #[semigroup(monoid, commutative)]
