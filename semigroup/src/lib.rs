@@ -1,8 +1,9 @@
 #![cfg_attr(doc_cfg, feature(doc_cfg))]
-//! [`Semigroup`](`crate::semigroup::Semigroup`) trait is useful for
-//! - reading configs from multiple sources using [`Coalesce`](`crate::op::Coalesce`)
-//! - statistically aggregation using [`Histogram`](`crate::op::HdrHistogram`)
-//! - fast range queries using [`SegmentTree`](`crate::segment_tree::SegmentTree`)
+//! [`Semigroup`](`crate::semigroup::Semigroup`) trait is useful for combining multiple elements.
+//! - [`Coalesce`](`crate::op::Coalesce`): reading configs from multiple sources
+//! - [`Histogram`](`crate::op::HdrHistogram`): statistically aggregation
+//! - [`SegmentTree`](`crate::segment_tree::SegmentTree`): fast range queries
+//! - and more...
 //!
 //! # Usage
 //! ```sh
