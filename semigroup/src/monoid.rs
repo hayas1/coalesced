@@ -7,7 +7,8 @@ use crate::Semigroup;
 /// 2. *Associativity*: `op(op(a, b), c) = op(a, op(b, c))`
 /// 3. Existence of *identity element*: `op(identity(), a) = a = op(a, identity())`
 ///
-/// # Deriving
+/// # Examples
+/// ## Deriving
 /// [`Monoid`] can be derived like [`Semigroup`], use `monoid` attribute.
 /// ```
 /// use semigroup::{Semigroup, Monoid};
@@ -28,7 +29,7 @@ use crate::Semigroup;
 /// assert_eq!(a.semigroup(b).semigroup(c), ExampleStruct { str: Some("ten"), sum: 110 });
 /// ```
 ///
-/// # Construction
+/// ## Construction
 /// [`Monoid`] can be constructed by [`crate::ConstructionMonoid`] like [`Semigroup`], use `monoid` attribute.
 ///
 /// Some operations are already provided by [`crate::op`].
@@ -36,7 +37,7 @@ use crate::Semigroup;
 /// use semigroup::{Construction, Semigroup, Monoid};
 ///
 /// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
-/// #[construction(monoid, commutative, identity = Self(0))]
+/// #[construction(monoid, identity = Self(0))]
 /// pub struct Sum(u64);
 /// impl Semigroup for Sum {
 ///     fn op(base: Self, other: Self) -> Self {

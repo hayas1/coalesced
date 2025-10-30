@@ -9,13 +9,41 @@ pub mod iter;
 /// It requires the underlying operation on the data to form a [`Monoid`].
 ///
 /// # Examples
+/// ## Range sum
 /// ```
-/// use semigroup::{op::Sum, segment_tree::SegmentTree};
-/// let data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+/// use semigroup::{op::Sum, Semigroup, Construction, segment_tree::SegmentTree};
+/// let data = 0..=10000;
 /// let mut sum_tree: SegmentTree<_> = data.into_iter().map(Sum).collect();
-/// assert_eq!(sum_tree.combine(3..=5).0, 12);
-/// sum_tree.update(4, 8.into());
-/// assert_eq!(sum_tree.combine(3..=5).0, 16);
+/// assert_eq!(sum_tree.combine(3..6).into_inner(), 12);
+/// assert_eq!(sum_tree.combine(..).into_inner(), 50005000);
+/// sum_tree.update_with(4, |Sum(x)| Sum(x + 50));
+/// sum_tree.update_with(9999, |Sum(x)| Sum(x + 500000));
+/// assert_eq!(sum_tree.combine(3..6).into_inner(), 62);
+/// assert_eq!(sum_tree.combine(..).into_inner(), 50505050);
+/// ```
+///
+/// ## Custom monoid operator
+/// ```
+/// use semigroup::{Semigroup, Construction, segment_tree::SegmentTree, Monoid};
+/// #[derive(
+///     Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction,
+/// )]
+/// #[construction(monoid, commutative, identity = Self(i32::MIN))]
+/// struct Max(pub i32);
+/// impl Semigroup for Max {
+///     fn op(base: Self, other: Self) -> Self {
+///         Self(std::cmp::max(base.0, other.0))
+///     }
+/// }
+///
+/// let data = [2, -5, 122, -33, -12, 14, -55, 500, 3];
+/// let mut max_tree: SegmentTree<_> = data.into_iter().map(Max).collect();
+/// assert_eq!(max_tree.combine(3..6).0, 14);
+/// max_tree.update_with(4, |Max(x)| Max(x + 1000));
+/// assert_eq!(max_tree.combine(3..6).0, 988);
+///
+/// // #[test]
+/// semigroup::assert_monoid!(&max_tree[..]);
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq, Default, Hash)]
 pub struct SegmentTree<T> {

@@ -4,13 +4,13 @@ use crate::{Annotate, Annotated, AnnotatedSemigroup, Semigroup};
 
 /// [`Construction`] represents [`crate::Semigroup`] as a [new type struct](https://doc.rust-lang.org/rust-by-example/generics/new_types.html).
 ///
-/// # Example
+/// # Examples
 /// Simple example see [`crate::Semigroup#construction`].
 /// TODO more derive details
 pub trait Construction<T>: Semigroup + Sized + From<T> + Deref<Target = T> + DerefMut {
     /// Convert into inner type of [new type struct](https://doc.rust-lang.org/rust-by-example/generics/new_types.html).
     ///
-    /// # Example
+    /// # Examples
     /// ```
     /// use semigroup::{Construction, Semigroup};
     ///
@@ -30,7 +30,7 @@ pub trait Construction<T>: Semigroup + Sized + From<T> + Deref<Target = T> + Der
     /// Semigroup operation between `base` and `other` with constructed type.
     /// When `T` does not implement [`crate::Semigroup`], this function can be used.
     ///
-    /// # Example
+    /// # Examples
     /// ```
     /// use semigroup::{Construction, Semigroup};
     ///
@@ -53,7 +53,7 @@ pub trait Construction<T>: Semigroup + Sized + From<T> + Deref<Target = T> + Der
 
 /// [`ConstructionAnnotated`] represents [`crate::AnnotatedSemigroup`] as a [new type struct](https://doc.rust-lang.org/rust-by-example/generics/new_types.html) like [`Construction`].
 ///
-/// # Example
+/// # Examples
 /// TODO more derive details
 pub trait ConstructionAnnotated<T, A>:
     Construction<T> + AnnotatedSemigroup<A> + Annotate<A>
@@ -61,7 +61,7 @@ pub trait ConstructionAnnotated<T, A>:
     /// Semigroup operation between `base` and `other` with constructed type.
     /// When `T` does not implement [`crate::AnnotatedSemigroup`], this function can be used.
     ///
-    /// # Example
+    /// # Examples
     /// ```
     /// use semigroup::{AnnotatedSemigroup, Annotated, Construction, ConstructionAnnotated, Semigroup};
     ///
@@ -89,7 +89,7 @@ pub trait ConstructionAnnotated<T, A>:
 
 /// [`ConstructionMonoid`] represents [`crate::Monoid`] as a [new type struct](https://doc.rust-lang.org/rust-by-example/generics/new_types.html). like [`Construction`].
 ///
-/// # Example
+/// # Examples
 /// Simple example see [`crate::Monoid#construction`].
 /// TODO more derive details
 #[cfg(feature = "monoid")]
@@ -97,7 +97,7 @@ pub trait ConstructionMonoid<T>: Construction<T> + crate::Monoid {
     /// Get monoid *identity element* with constructed type.
     /// When `T` does not implement [`crate::Monoid`], this function can be used.
     ///
-    /// # Example
+    /// # Examples
     /// ```
     /// use semigroup::{Construction, ConstructionMonoid, Semigroup};
     ///
