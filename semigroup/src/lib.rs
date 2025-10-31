@@ -85,7 +85,7 @@
 //! | **`#[derive(Semigroup)]`** <br> **`#[semigroup(...)]`** | | `annotated` | `monoid` | `commutative` |
 //! | **`#[derive(Construction)]`** <br> **`#[construction(...)]`** | | `annotated` | `monoid` | `commutative` |
 //! | **testing** | [`assert_semigroup!`] |  | [`assert_monoid!`] | [`assert_commutative!`] |
-//! | **suitable combine** | [`CombineIterator`] | [`Lazy`] | [`SegmentTree`](`segment_tree::SegmentTree`) | |
+//! | **suitable combine** | [`CombineIterator`] | [`Lazy`] | [`SegmentTree`](`segment_tree::SegmentTree`) | [`CombineStream`] |
 //!
 //! # Links
 //! - GitHub: <https://github.com/hayas1/semigroup>
