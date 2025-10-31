@@ -192,7 +192,7 @@ impl<I: Iterator> CombineIterator for I {}
 ///
 /// ## Calculate right fold by left fold algorithm
 /// ```
-/// # #[cfg(feature="monoid")]
+/// # #[cfg(feature = "monoid")]
 /// # {
 /// use semigroup::{op::Coalesce, Reverse, Construction, Semigroup, Monoid};
 ///
