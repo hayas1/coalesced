@@ -47,6 +47,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "commutative")]
     fn test_gcd_commutative() {
         let (a, b, c) = (Gcd(12u32), Gcd(18), Gcd(27));
         crate::assert_commutative!(a, b, c);

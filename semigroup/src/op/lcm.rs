@@ -47,6 +47,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "commutative")]
     fn test_lcm_commutative() {
         let (a, b, c) = (Lcm(4u32), Lcm(6), Lcm(9));
         crate::assert_commutative!(a, b, c);
