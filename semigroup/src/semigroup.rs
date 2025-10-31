@@ -83,8 +83,9 @@ pub mod test_semigroup {
     use rand::seq::IndexedRandom;
 
     use crate::{
-        combine::test_combine::{assert_combine_iter, assert_lazy},
+        combine::test_combine::assert_combine_iter,
         commutative::test_commutative::{assert_reverse_associative_law, assert_reverse_reverse},
+        lazy::test_lazy::assert_lazy,
     };
 
     use super::*;

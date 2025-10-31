@@ -107,6 +107,7 @@ mod combine;
 #[cfg(feature = "commutative")]
 mod commutative;
 mod construction;
+mod lazy;
 #[cfg(feature = "monoid")]
 mod monoid;
 pub mod op;
@@ -114,7 +115,7 @@ pub mod op;
 pub mod segment_tree;
 mod semigroup;
 
-pub use self::{annotate::*, combine::*, commutative::*, construction::*, semigroup::*};
+pub use self::{annotate::*, combine::*, commutative::*, construction::*, lazy::*, semigroup::*};
 
 #[cfg(feature = "monoid")]
 pub use self::monoid::*;
