@@ -104,6 +104,7 @@
 
 mod annotate;
 mod combine;
+#[cfg(feature = "commutative")]
 mod commutative;
 mod construction;
 #[cfg(feature = "monoid")]
