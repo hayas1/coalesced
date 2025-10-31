@@ -62,6 +62,13 @@ pub trait Semigroup {
     {
         Semigroup::op(self, other)
     }
+    #[cfg(feature = "commutative")]
+    fn op_async(base: Self, other: Self) -> impl std::future::Future<Output = Self>
+    where
+        Self: Sized + Send,
+    {
+        async { Semigroup::op(base, other) }
+    }
 }
 
 /// [`AnnotatedSemigroup`] is a [`Semigroup`] that has an annotation, such as [`crate::Annotate`].

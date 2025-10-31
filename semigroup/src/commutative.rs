@@ -65,11 +65,7 @@ pub trait Commutative: Semigroup {
     where
         Self: Sized + Send,
     {
-        async {
-            stream
-                .fold(init, |acc, x| async { Semigroup::op(acc, x) })
-                .await
-        }
+        async { stream.fold(init, Semigroup::op_async).await }
     }
     fn reduce_stream(
         mut stream: impl Stream<Item = Self> + Unpin,
@@ -79,11 +75,7 @@ pub trait Commutative: Semigroup {
     {
         async {
             let init = stream.next().await?;
-            Some(
-                stream
-                    .fold(init, |acc, x| async { Semigroup::op(acc, x) })
-                    .await,
-            )
+            Some(stream.fold(init, Semigroup::op_async).await)
         }
     }
     #[cfg(feature = "monoid")]
@@ -91,11 +83,7 @@ pub trait Commutative: Semigroup {
     where
         Self: Sized + Send + crate::Monoid,
     {
-        async {
-            stream
-                .fold(Self::identity(), |acc, x| async { Semigroup::op(acc, x) })
-                .await
-        }
+        async { stream.fold(Self::identity(), Semigroup::op_async).await }
     }
 }
 
