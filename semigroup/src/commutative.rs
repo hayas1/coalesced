@@ -1,3 +1,6 @@
+use std::future::Future;
+
+use futures::{Stream, StreamExt};
 use semigroup_derive::{properties_priv, ConstructionPriv};
 
 use crate::Semigroup;
@@ -54,11 +57,70 @@ use crate::Semigroup;
 ///
 /// # Testing
 /// Use [`crate::assert_commutative!`] macro.
-/// This is marker trait.
 ///
 /// The *commutativity* property is not guaranteed by Rust’s type system,
 /// so it must be verified manually using [`crate::assert_commutative!`].
-pub trait Commutative: Semigroup {}
+pub trait Commutative: Semigroup {
+    fn fold_stream(stream: impl Stream<Item = Self>, init: Self) -> impl Future<Output = Self>
+    where
+        Self: Sized + Send,
+    {
+        async {
+            stream
+                .fold(init, |acc, x| async { Semigroup::op(acc, x) })
+                .await
+        }
+    }
+    fn reduce_stream(
+        mut stream: impl Stream<Item = Self> + Unpin,
+    ) -> impl Future<Output = Option<Self>>
+    where
+        Self: Sized + Send,
+    {
+        async {
+            let init = stream.next().await?;
+            Some(
+                stream
+                    .fold(init, |acc, x| async { Semigroup::op(acc, x) })
+                    .await,
+            )
+        }
+    }
+    #[cfg(feature = "monoid")]
+    fn combine_stream(stream: impl Stream<Item = Self>) -> impl Future<Output = Self>
+    where
+        Self: Sized + Send + crate::Monoid,
+    {
+        async {
+            stream
+                .fold(Self::identity(), |acc, x| async { Semigroup::op(acc, x) })
+                .await
+        }
+    }
+}
+
+pub trait CombineStream: Sized + Stream {
+    fn fold_semigroup(self, init: Self::Item) -> impl Future<Output = Self::Item>
+    where
+        Self::Item: Commutative + Send,
+    {
+        Self::Item::fold_stream(self, init)
+    }
+    fn reduce_semigroup(self) -> impl Future<Output = Option<Self::Item>>
+    where
+        Self: Unpin,
+        Self::Item: Commutative + Send,
+    {
+        Self::Item::reduce_stream(self)
+    }
+    #[cfg(feature = "monoid")]
+    fn combine_monoid(self) -> impl Future<Output = Self::Item>
+    where
+        Self::Item: Commutative + crate::Monoid + Send,
+    {
+        Self::Item::combine_stream(self)
+    }
+}
 
 /// A [`Semigroup`](crate::Semigroup) [construction](crate::Construction) that flips the order of operands:
 /// `op(Reverse(a), Reverse(b)) = Reverse(op(b, a))`.
