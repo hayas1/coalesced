@@ -90,7 +90,7 @@ impl<'a> FieldSemigroupOp<'a> {
         let with = field_attr.with(container_attr);
         with.map(|path| {
             parse_quote! {
-                #member: <#path<_> as #path_construction_monoid<_>>::lit_identity()
+                #member: <#path<_> as #path_construction_monoid<_>>::lift_identity()
             }
         })
         .unwrap_or_else(|| {
