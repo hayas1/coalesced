@@ -117,7 +117,7 @@ impl<T> From<T> for Lazy<T> {
     }
 }
 impl<T> Lazy<T> {
-    /// Create [`Lazy`] from iterator like [`CombineIterator::collect_lazy`].
+    /// Create [`Lazy`] from iterator. Used by [`crate::CombineIterator::collect_lazy`].
     pub fn from_iterator<I: IntoIterator<Item = T>>(iter: I) -> Option<Self> {
         // compile error: type parameter `T` must be used as the type parameter for some local type
         // impl<T> FromIterator<T> for Option<Lazy<T>> {
