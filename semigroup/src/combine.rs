@@ -48,6 +48,48 @@ pub trait CombineIterator: Sized + Iterator {
             .into_inner()
     }
 
+    /// This method like [`CombineIterator::fold_final`], but no argument is required and return [`Option`].
+    ///
+    /// # Example
+    /// ```
+    /// use semigroup::{op::Coalesce, CombineIterator, Semigroup};
+    /// let v1 = vec![Coalesce(None), Coalesce(Some(2)), Coalesce(Some(3))];
+    /// assert_eq!(v1.into_iter().lreduce(), Some(Coalesce(Some(2))));
+    ///
+    /// let v2 = vec![Coalesce::<u32>(None), Coalesce(None), Coalesce(None)];
+    /// assert_eq!(v2.into_iter().lreduce(), Some(Coalesce(None)));
+    ///
+    /// let v3 = Vec::<Coalesce<u32>>::new();
+    /// assert_eq!(v3.into_iter().lreduce(), None)
+    /// ```
+    fn lreduce(self) -> Option<Self::Item>
+    where
+        Self::Item: Semigroup,
+    {
+        self.reduce(Semigroup::op)
+    }
+
+    /// This method like [`CombineIterator::rfold_final`], but no argument is required and return [`Option`].
+    ///
+    /// # Example
+    /// ```
+    /// use semigroup::{op::Coalesce, CombineIterator, Semigroup};
+    /// let v1 = vec![Coalesce(None), Coalesce(Some(2)), Coalesce(Some(3))];
+    /// assert_eq!(v1.into_iter().rreduce(), Some(Coalesce(Some(3))));
+    ///
+    /// let v2 = vec![Coalesce::<u32>(None), Coalesce(None), Coalesce(None)];
+    /// assert_eq!(v2.into_iter().rreduce(), Some(Coalesce(None)));
+    ///
+    /// let v3 = Vec::<Coalesce<u32>>::new();
+    /// assert_eq!(v3.into_iter().rreduce(), None)
+    /// ```
+    fn rreduce(self) -> Option<Self::Item>
+    where
+        Self::Item: Semigroup,
+    {
+        self.map(Reverse).reduce(Semigroup::op).map(|Reverse(x)| x)
+    }
+
     /// This method like [`CombineIterator::fold_final`], but no argument is required.
     ///
     /// # Examples
