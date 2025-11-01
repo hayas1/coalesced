@@ -4,6 +4,7 @@ use futures::{Stream, StreamExt};
 
 use crate::{Commutative, Semigroup};
 
+/// Async version of [`Semigroup`].
 pub trait AsyncSemigroup: Semigroup {
     fn async_op(base: Self, other: Self) -> impl std::future::Future<Output = Self>
     where
@@ -14,6 +15,7 @@ pub trait AsyncSemigroup: Semigroup {
 }
 impl<T: Semigroup> AsyncSemigroup for T {}
 
+/// Async version of [`Commutative`].
 pub trait AsyncCommutative: AsyncSemigroup + Commutative {
     /// Used by [`CombineStream::fold_semigroup`].
     fn fold_stream(stream: impl Stream<Item = Self>, init: Self) -> impl Future<Output = Self>
