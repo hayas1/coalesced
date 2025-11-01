@@ -11,7 +11,7 @@ impl<T: std::ops::Add> crate::Monoid for Sum<T> {
     }
 }
 #[automatically_derived]
-#[cfg(feature = "commutative")]
+#[cfg(feature = "async")]
 impl<T: std::ops::Add> crate::Commutative for Sum<T> {}
 #[automatically_derived]
 impl<T: std::ops::Add> From<T> for Sum<T> {

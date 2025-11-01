@@ -31,7 +31,7 @@ use crate::Semigroup;
 ///
 /// ## Load testing request-response result
 /// ```
-/// # #[cfg(feature = "commutative")]
+/// # #[cfg(feature = "async")]
 /// # futures::executor::block_on(async {
 /// use std::time::{Duration, Instant};
 /// use futures::StreamExt;
