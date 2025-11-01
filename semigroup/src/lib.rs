@@ -105,6 +105,8 @@
 mod annotate;
 mod combine;
 mod commutative;
+#[cfg(feature = "async")]
+mod concurrent;
 mod construction;
 mod lazy;
 #[cfg(feature = "monoid")]
@@ -114,6 +116,8 @@ pub mod op;
 pub mod segment_tree;
 mod semigroup;
 
+#[cfg(feature = "async")]
+pub use self::concurrent::*;
 #[cfg(feature = "monoid")]
 pub use self::monoid::*;
 pub use self::{annotate::*, combine::*, commutative::*, construction::*, lazy::*, semigroup::*};
