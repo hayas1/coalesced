@@ -2,7 +2,7 @@ use std::future::Future;
 
 use futures::{Stream, StreamExt};
 
-use crate::Semigroup;
+use crate::{AsyncSemigroup, Semigroup};
 
 /// [`Commutative`] represents a binary operation that satisfies the following property
 /// 1. *Commutativity*: `op(a, b) = op(b, a)`
@@ -65,7 +65,7 @@ pub trait Commutative: Semigroup {
     where
         Self: Sized + Send,
     {
-        async { stream.fold(init, Semigroup::op_async).await }
+        async { stream.fold(init, AsyncSemigroup::async_op).await }
     }
     /// Used by [`CombineStream::reduce_semigroup`].
     fn reduce_stream(
@@ -76,7 +76,7 @@ pub trait Commutative: Semigroup {
     {
         async {
             let init = stream.next().await?;
-            Some(stream.fold(init, Semigroup::op_async).await)
+            Some(stream.fold(init, AsyncSemigroup::async_op).await)
         }
     }
     /// Used by [`CombineStream::combine_monoid`].
@@ -85,7 +85,11 @@ pub trait Commutative: Semigroup {
     where
         Self: Sized + Send + crate::Monoid,
     {
-        async { stream.fold(Self::identity(), Semigroup::op_async).await }
+        async {
+            stream
+                .fold(Self::identity(), AsyncSemigroup::async_op)
+                .await
+        }
     }
 }
 
