@@ -110,10 +110,10 @@ pub trait ConstructionMonoid<T>: Construction<T> + crate::Monoid {
     ///     }
     /// }
     ///
-    /// let a: Option<u32> = Coalesce::lit_identity();
+    /// let a: Option<u32> = Coalesce::lift_identity();
     /// assert_eq!(a, None);
     /// ```
-    fn lit_identity() -> T {
+    fn lift_identity() -> T {
         Self::identity().into_inner()
     }
 }

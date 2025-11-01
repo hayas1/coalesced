@@ -19,7 +19,7 @@ impl ::semigroup::Monoid for MonoidStruct {
         Self {
             sum: <semigroup::op::Sum<
                 _,
-            > as ::semigroup::ConstructionMonoid<_>>::lit_identity(),
+            > as ::semigroup::ConstructionMonoid<_>>::lift_identity(),
         }
     }
 }
