@@ -6,7 +6,7 @@ use crate::{Commutative, Semigroup};
 
 /// Async version of [`Semigroup`].
 pub trait AsyncSemigroup: Semigroup {
-    fn async_op(base: Self, other: Self) -> impl std::future::Future<Output = Self>
+    fn async_op(base: Self, other: Self) -> impl Future<Output = Self>
     where
         Self: Sized + Send,
     {
