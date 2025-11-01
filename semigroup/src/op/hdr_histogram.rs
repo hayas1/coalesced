@@ -31,7 +31,7 @@ use crate::Semigroup;
 ///
 /// ## Load testing request-response result
 /// ```
-/// # #[cfg(feature = "commutative")]
+/// # #[cfg(feature = "async")]
 /// # futures::executor::block_on(async {
 /// use std::time::{Duration, Instant};
 /// use futures::StreamExt;
@@ -212,7 +212,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "commutative")]
     fn test_hdr_histogram_commutative() {
         let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
         let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();

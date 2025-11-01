@@ -46,7 +46,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "commutative")]
     fn test_max_commutative() {
         let (a, b, c) = (Max(1), Max(2), Max(3));
         crate::assert_commutative!(a, b, c);

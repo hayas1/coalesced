@@ -90,9 +90,7 @@ impl<'a> OpTrait<'a> {
             ..
         } = self;
         let Constant {
-            path_commutative,
-            attr_feature_commutative,
-            ..
+            path_commutative, ..
         } = constant;
         let DeriveInput {
             ident, generics, ..
@@ -105,7 +103,6 @@ impl<'a> OpTrait<'a> {
         attr.is_commutative().then(|| {
             parse_quote! {
                 #[automatically_derived]
-                #attr_feature_commutative
                 impl #impl_generics #path_commutative for #ident #ty_generics #where_clause {}
             }
         })

@@ -46,7 +46,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "commutative")]
     fn test_min_commutative() {
         let (a, b, c) = (Min(1), Min(2), Min(3));
         crate::assert_commutative!(a, b, c);

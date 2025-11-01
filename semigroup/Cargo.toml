@@ -13,8 +13,8 @@ derive = []
 serde = ["dep:serde"]
 test = ["dep:rand"]
 monoid = ["dep:num"]
-commutative = ["dep:futures"]
 histogram = ["dep:hdrhistogram"]
+async = ["dep:futures"]
 
 [dependencies]
 semigroup_derive = { version = "0.4.0", path = "../semigroup_derive" }
