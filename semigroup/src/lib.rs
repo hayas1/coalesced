@@ -85,7 +85,7 @@
 //! | **`#[derive(Semigroup)]`** <br> **`#[semigroup(...)]`** | | `annotated` | `monoid` | `commutative` |
 //! | **`#[derive(Construction)]`** <br> **`#[construction(...)]`** | | `annotated` | `monoid` | `commutative` |
 //! | **testing** | [`assert_semigroup!`] |  | [`assert_monoid!`] | [`assert_commutative!`] |
-//! | **suitable combine** | [`CombineIterator`] | [`Lazy`] | [`SegmentTree`](`segment_tree::SegmentTree`) | |
+//! | **suitable combine** | [`CombineIterator`] | [`Lazy`] | [`SegmentTree`](`segment_tree::SegmentTree`) | [`CombineStream`] |
 //!
 //! # Links
 //! - GitHub: <https://github.com/hayas1/semigroup>
@@ -104,8 +104,10 @@
 
 mod annotate;
 mod combine;
+#[cfg(feature = "commutative")]
 mod commutative;
 mod construction;
+mod lazy;
 #[cfg(feature = "monoid")]
 mod monoid;
 pub mod op;
@@ -113,10 +115,11 @@ pub mod op;
 pub mod segment_tree;
 mod semigroup;
 
-pub use self::{annotate::*, combine::*, commutative::*, construction::*, semigroup::*};
-
+#[cfg(feature = "commutative")]
+pub use self::commutative::*;
 #[cfg(feature = "monoid")]
 pub use self::monoid::*;
+pub use self::{annotate::*, combine::*, construction::*, lazy::*, semigroup::*};
 
 #[cfg(feature = "derive")]
 #[cfg_attr(doc_cfg, doc(cfg(feature = "derive")))]

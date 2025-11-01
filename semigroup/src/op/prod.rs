@@ -48,6 +48,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "commutative")]
     fn test_prod_commutative() {
         let (a, b, c) = (Prod(1), Prod(2), Prod(3));
         crate::assert_commutative!(a, b, c);

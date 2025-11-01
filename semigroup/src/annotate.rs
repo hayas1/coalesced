@@ -2,7 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use semigroup_derive::{properties_priv, ConstructionPriv};
 
-use crate::{AnnotatedSemigroup, Commutative, Semigroup};
+use crate::{AnnotatedSemigroup, Semigroup};
 
 /// Some [`Semigroup`] such as [`crate::op::Coalesce`] can have an annotation.
 /// The annotated operation is represented by [`AnnotatedSemigroup`], and the annotated value is represented by a type [`Annotated`].
@@ -108,12 +108,12 @@ pub trait Annotate<A>: Sized {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[construction(
     commutative,
-    commutative_where = "T: AnnotatedSemigroup<A> + Commutative",
+    commutative_where = "T: AnnotatedSemigroup<A> + crate::Commutative",
     without_construction
 )]
 #[properties_priv(
     commutative,
-    commutative_where = "T: AnnotatedSemigroup<A> + Commutative"
+    commutative_where = "T: AnnotatedSemigroup<A> + crate::Commutative"
 )]
 pub struct Annotated<T, A> {
     value: T,

@@ -47,6 +47,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "commutative")]
     fn test_xor_commutative() {
         let (a, b, c) = (Xor(0b111), Xor(0b101), Xor(0b100));
         crate::assert_commutative!(a, b, c);

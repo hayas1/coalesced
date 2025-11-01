@@ -48,6 +48,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "commutative")]
     fn test_sum_commutative() {
         let (a, b, c) = (Sum(1), Sum(2), Sum(3));
         crate::assert_commutative!(a, b, c);

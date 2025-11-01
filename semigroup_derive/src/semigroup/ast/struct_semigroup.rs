@@ -125,7 +125,9 @@ impl<'a> StructSemigroup<'a> {
             ..
         } = self;
         let Constant {
-            path_commutative, ..
+            path_commutative,
+            attr_feature_commutative,
+            ..
         } = constant;
         let DeriveInput {
             ident, generics, ..
@@ -138,6 +140,7 @@ impl<'a> StructSemigroup<'a> {
         attr.is_commutative().then(|| {
             parse_quote! {
                 #[automatically_derived]
+                #attr_feature_commutative
                 impl #impl_generics #path_commutative for #ident #ty_generics #where_clause {}
             }
         })

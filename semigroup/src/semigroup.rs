@@ -63,6 +63,17 @@ pub trait Semigroup {
         Semigroup::op(self, other)
     }
 }
+#[cfg(feature = "commutative")]
+pub trait AsyncSemigroup: Semigroup {
+    fn async_op(base: Self, other: Self) -> impl std::future::Future<Output = Self>
+    where
+        Self: Sized + Send,
+    {
+        async { Semigroup::op(base, other) }
+    }
+}
+#[cfg(feature = "commutative")]
+impl<T: Semigroup> AsyncSemigroup for T {}
 
 /// [`AnnotatedSemigroup`] is a [`Semigroup`] that has an annotation, such as [`crate::Annotate`].
 pub trait AnnotatedSemigroup<A>: Sized + Semigroup {
@@ -76,8 +87,8 @@ pub mod test_semigroup {
     use rand::seq::IndexedRandom;
 
     use crate::{
-        combine::test_combine::{assert_combine_iter, assert_lazy},
-        commutative::test_commutative::{assert_reverse_associative_law, assert_reverse_reverse},
+        combine::test_combine::{assert_combine_iter, assert_semigroup_reverse},
+        lazy::test_lazy::assert_lazy,
     };
 
     use super::*;
@@ -139,8 +150,7 @@ pub mod test_semigroup {
 
     pub fn assert_semigroup_impl<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
         assert_associative_law(a.clone(), b.clone(), c.clone());
-        assert_reverse_reverse(a.clone(), b.clone(), c.clone());
-        assert_reverse_associative_law(a.clone(), b.clone(), c.clone());
+        assert_semigroup_reverse(a.clone(), b.clone(), c.clone());
         assert_combine_iter(a.clone(), b.clone(), c.clone());
         assert_lazy(a.clone(), b.clone(), c.clone());
         #[cfg(feature = "monoid")]

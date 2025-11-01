@@ -31,12 +31,13 @@ use crate::Semigroup;
 ///
 /// ## Load testing request-response result
 /// ```
-/// # #[cfg(feature="monoid")]
-/// # {
+/// # #[cfg(feature = "commutative")]
+/// # futures::executor::block_on(async {
 /// use std::time::{Duration, Instant};
+/// use futures::StreamExt;
 /// use semigroup::{
 ///     op::{HdrHistogram, Sum, Min, Max},
-///     Construction, Commutative, Semigroup, OptionMonoid, Monoid
+///     Construction, Commutative, CombineStream, Semigroup
 /// };
 ///
 /// #[derive(Debug, Clone, PartialEq, Semigroup)]
@@ -75,19 +76,19 @@ use crate::Semigroup;
 ///     }
 /// }
 ///
-/// let (now, mut agg) = (Instant::now(), OptionMonoid::identity());
-/// for i in 0..10000000 {
+/// let now = Instant::now();
+/// let stream = futures::stream::iter(0..10000000).map(|i| {
 ///     let duration = Duration::from_millis(i);
-///     agg = agg.semigroup(RequestAggregate::new(i % 2 == 0, now + duration, duration).into());
-/// }
+///     RequestAggregate::new(i % 2 == 0, now + duration, duration)
+/// });
 ///
-/// let request_aggregate = agg.into_inner().unwrap();
+/// let request_aggregate = stream.reduce_semigroup().await.unwrap();
 /// assert_eq!(request_aggregate.count(), 10000000);
 /// assert_eq!(request_aggregate.pass_rate(), 0.5);
 /// assert_eq!(request_aggregate.duration(), Duration::from_millis(9999999));
 /// assert_eq!(request_aggregate.rps(), 1000.00010000001);
 /// assert_eq!(request_aggregate.p99_latency(), Duration::from_millis(9904127));
-/// # }
+/// # });
 /// ```
 #[derive(Debug, Clone, PartialEq, SemigroupPriv)]
 #[semigroup(monoid, commutative)]
@@ -211,6 +212,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "commutative")]
     fn test_hdr_histogram_commutative() {
         let a: HdrHistogram<u32> = [1u64, 2, 3].into_iter().collect();
         let b: HdrHistogram<u32> = [4, 5, 6].into_iter().collect();
