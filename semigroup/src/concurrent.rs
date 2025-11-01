@@ -49,6 +49,7 @@ pub trait AsyncCommutative: AsyncSemigroup + Commutative {
 }
 impl<T: Commutative> AsyncCommutative for T {}
 
+/// Extensions for [`Stream`]s that items implement [`AsyncCommutative`]. Like [`crate::CombineIterator`].
 pub trait CombineStream: Sized + Stream {
     /// This method like [`crate::CombineIterator::fold_final`], but stream.
     ///
