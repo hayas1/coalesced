@@ -11,6 +11,8 @@ use crate::{AsyncSemigroup, Semigroup};
 ///
 /// And the [*monoid*](crate::Monoid) set that satisfies the *commutativity* property is often called *commutative monoid*.
 ///
+/// This is marker trait.
+///
 /// # Examples
 /// ## Deriving
 /// [`Commutative`] can be derived like [`Semigroup`], use `commutative` attribute.
@@ -59,7 +61,9 @@ use crate::{AsyncSemigroup, Semigroup};
 ///
 /// The *commutativity* property is not guaranteed by Rust’s type system,
 /// so it must be verified manually using [`crate::assert_commutative!`].
-pub trait Commutative: Semigroup {
+pub trait Commutative: Semigroup {}
+
+pub trait AsyncCommutative: AsyncSemigroup + Commutative {
     /// Used by [`CombineStream::fold_semigroup`].
     fn fold_stream(stream: impl Stream<Item = Self>, init: Self) -> impl Future<Output = Self>
     where
@@ -92,6 +96,7 @@ pub trait Commutative: Semigroup {
         }
     }
 }
+impl<T: Commutative> AsyncCommutative for T {}
 
 pub trait CombineStream: Sized + Stream {
     /// This method like [`crate::CombineIterator::fold_final`], but stream.
@@ -123,7 +128,7 @@ pub trait CombineStream: Sized + Stream {
     /// ```
     fn fold_semigroup(self, init: Self::Item) -> impl Future<Output = Self::Item>
     where
-        Self::Item: Commutative + Send,
+        Self::Item: AsyncCommutative + Send,
     {
         Self::Item::fold_stream(self, init)
     }
@@ -158,7 +163,7 @@ pub trait CombineStream: Sized + Stream {
     fn reduce_semigroup(self) -> impl Future<Output = Option<Self::Item>>
     where
         Self: Unpin,
-        Self::Item: Commutative + Send,
+        Self::Item: AsyncCommutative + Send,
     {
         Self::Item::reduce_stream(self)
     }
@@ -193,7 +198,7 @@ pub trait CombineStream: Sized + Stream {
     #[cfg(feature = "monoid")]
     fn combine_monoid(self) -> impl Future<Output = Self::Item>
     where
-        Self::Item: Commutative + crate::Monoid + Send,
+        Self::Item: AsyncCommutative + crate::Monoid + Send,
     {
         Self::Item::combine_stream(self)
     }
