@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
-use syn::{parse_quote, DeriveInput, ItemImpl};
+use syn::{DeriveInput, ItemImpl, parse_quote};
 
 use crate::{annotation::Annotation, constant::Constant, construction::attr::ContainerAttr};
 

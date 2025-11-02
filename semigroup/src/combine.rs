@@ -1,4 +1,4 @@
-use semigroup_derive::{properties_priv, ConstructionPriv};
+use semigroup_derive::{ConstructionPriv, properties_priv};
 
 use crate::{Construction, Lazy, Semigroup};
 

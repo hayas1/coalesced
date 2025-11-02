@@ -1,4 +1,4 @@
-use comfy_table::{presets::ASCII_MARKDOWN, Cell, CellAlignment, Cells, Row, Table};
+use comfy_table::{Cell, CellAlignment, Cells, Row, Table, presets::ASCII_MARKDOWN};
 use syn::ItemStruct;
 
 use crate::{constant::Constant, properties::attr::ContainerAttr};
@@ -53,11 +53,7 @@ impl<'a> PropertiesTable<'a> {
         [attr.is_annotated(), attr.is_monoid(), attr.is_commutative()].map(Self::impl_cell)
     }
     pub fn impl_cell(is: bool) -> &'a str {
-        if is {
-            "✅"
-        } else {
-            "❌"
-        }
+        if is { "✅" } else { "❌" }
     }
 
     pub fn where_row(&self) -> [String; 3] {

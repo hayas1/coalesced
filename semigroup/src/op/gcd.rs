@@ -1,5 +1,5 @@
 use num::{Integer, Unsigned};
-use semigroup_derive::{properties_priv, ConstructionPriv};
+use semigroup_derive::{ConstructionPriv, properties_priv};
 
 use crate::Semigroup;
 

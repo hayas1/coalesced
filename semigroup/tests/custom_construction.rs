@@ -1,5 +1,5 @@
 #![cfg(all(feature = "monoid", feature = "test"))]
-use semigroup::{assert_monoid, assert_semigroup, properties, Construction, Semigroup};
+use semigroup::{Construction, Semigroup, assert_monoid, assert_semigroup, properties};
 
 /// A semigroup construction that join two [`String`]s into a [`String`].
 /// # Properties

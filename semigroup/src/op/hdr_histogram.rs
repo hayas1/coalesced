@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use hdrhistogram::{Counter, Histogram};
-use semigroup_derive::{properties_priv, ConstructionPriv, SemigroupPriv};
+use semigroup_derive::{ConstructionPriv, SemigroupPriv, properties_priv};
 
 use crate::Semigroup;
 

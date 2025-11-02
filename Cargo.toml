@@ -2,7 +2,7 @@
 version = "0.4.0"
 description = "Useful semigroup trait"
 authors = ["hayas1 <h4ystack@gmail.com>"]
-edition = "2021"
+edition = "2024"
 repository = "https://github.com/hayas1/semigroup"
 license-file = "LICENSE"
 readme = "README.md"

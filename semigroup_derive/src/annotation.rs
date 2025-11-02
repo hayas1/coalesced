@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::{
-    parse_quote, GenericParam, Generics, ImplGenerics, Type, TypeParam, WhereClause, WherePredicate,
+    GenericParam, Generics, ImplGenerics, Type, TypeParam, WhereClause, WherePredicate, parse_quote,
 };
 
 #[derive(Debug, Clone)]

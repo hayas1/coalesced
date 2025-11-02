@@ -1,4 +1,4 @@
-use syn::{parse_quote, Attribute, Expr, ExprLit, ItemStruct, Lit, Meta, MetaNameValue};
+use syn::{Attribute, Expr, ExprLit, ItemStruct, Lit, Meta, MetaNameValue, parse_quote};
 
 use crate::{
     constant::Constant,
