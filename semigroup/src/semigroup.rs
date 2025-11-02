@@ -107,13 +107,33 @@ pub mod test_semigroup {
     ///
     /// # Panics
     /// - If the given function does not satisfy the *semigroup* property.
-    /// - The input iterator has less than 3 items.
+    /// ```should_panic
+    /// use semigroup::{assert_semigroup, Construction, Semigroup};
+    /// #[derive(Debug, Clone, PartialEq, Construction)]
+    /// pub struct Sub(i32);
+    /// impl Semigroup for Sub {
+    ///     fn op(base: Self, other: Self) -> Self {
+    ///         Self(base.0 - other.0)
+    ///     }
+    /// }
+    /// let a = Sub(1);
+    /// let b = Sub(2);
+    /// let c = Sub(3);
+    /// assert_semigroup!(a, b, c);
+    /// ```
     ///
+    /// - The input iterator has less than 3 items.
     /// ```compile_fail
     /// use semigroup::{assert_semigroup, op::Coalesce};
     /// let a = Coalesce(Some(1));
     /// let b = Coalesce(None);
     /// assert_semigroup!(a, b);
+    /// ```
+    /// ```should_panic
+    /// use semigroup::{assert_semigroup, op::Coalesce};
+    /// let a = Coalesce(Some(1));
+    /// let b = Coalesce(None);
+    /// assert_semigroup!(&vec![a, b]);
     /// ```
     #[macro_export]
     macro_rules! assert_semigroup {

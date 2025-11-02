@@ -70,7 +70,7 @@ pub trait CombineStream: Sized + Stream {
     /// # });
     /// ```
     ///
-    /// # Panics
+    /// # Type safety
     /// This method is only available when item implements [`Commutative`].
     /// ```compile_fail
     /// # futures::executor::block_on(async {
@@ -104,7 +104,7 @@ pub trait CombineStream: Sized + Stream {
     /// # });
     /// ```
     ///
-    /// # Panics
+    /// # Type safety
     /// This method is only available when item implements [`Commutative`].
     /// ```compile_fail
     /// # futures::executor::block_on(async {
@@ -139,7 +139,7 @@ pub trait CombineStream: Sized + Stream {
     /// # });
     /// ```
     ///
-    /// # Panics
+    /// # Type safety
     /// This method is only available when item implements [`Commutative`].
     /// ```compile_fail
     /// # futures::executor::block_on(async {
