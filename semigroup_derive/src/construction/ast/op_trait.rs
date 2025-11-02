@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::ToTokens;
-use syn::{DeriveInput, Field, ItemImpl, parse_quote};
+use syn::{DeriveInput, ItemImpl, parse_quote};
 
 use crate::{annotation::Annotation, constant::Constant, construction::attr::ContainerAttr};
 
@@ -14,33 +14,22 @@ pub struct OpTrait<'a> {
 }
 impl ToTokens for OpTrait<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        self.impl_monoid().iter().for_each(|i| i.to_tokens(tokens));
-        self.impl_commutative()
-            .iter()
-            .for_each(|i| i.to_tokens(tokens));
-        self.impl_semigroup_with_unit_annotate()
-            .into_iter()
-            .for_each(|i| i.to_tokens(tokens));
-        self.impl_annotate()
-            .into_iter()
-            .for_each(|i| i.to_tokens(tokens));
+        self.impl_monoid().to_tokens(tokens);
+        self.impl_commutative().to_tokens(tokens);
+        self.impl_semigroup_with_unit_annotation().to_tokens(tokens);
+        self.impl_annotate().to_tokens(tokens);
     }
 }
 impl<'a> OpTrait<'a> {
-    pub fn new(
-        constant: &'a Constant,
-        derive: &'a DeriveInput,
-        attr: &'a ContainerAttr,
-        _field: &'a Field,
-    ) -> Option<Self> {
+    pub fn new(constant: &'a Constant, derive: &'a DeriveInput, attr: &'a ContainerAttr) -> Self {
         let annotation = attr.annotation(constant);
 
-        Some(Self {
+        Self {
             constant,
             derive,
             attr,
             annotation,
-        })
+        }
     }
 
     pub fn impl_monoid(&self) -> Option<ItemImpl> {
@@ -59,18 +48,18 @@ impl<'a> OpTrait<'a> {
             ident, generics, ..
         } = derive;
         let mut g = generics.clone();
-        attr.unit_where()
+        attr.monoid_where()
             .into_iter()
             .for_each(|w| g.make_where_clause().predicates.push(w));
         (attr.is_monoid() && attr.with_monoid_impl()).then(|| {
-            attr.unit()
+            attr.identity()
                 .map(|expr| {
                     let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
                     parse_quote! {
                         #[automatically_derived]
                         #attr_feature_monoid
                         impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
-                            fn unit() -> Self {
+                            fn identity() -> Self {
                                 #expr
                             }
                         }
@@ -84,7 +73,7 @@ impl<'a> OpTrait<'a> {
                         #[automatically_derived]
                         #attr_feature_monoid
                         impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
-                            fn unit() -> Self {
+                            fn identity() -> Self {
                                 Default::default()
                             }
                         }
@@ -106,7 +95,11 @@ impl<'a> OpTrait<'a> {
         let DeriveInput {
             ident, generics, ..
         } = derive;
-        let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+        let mut g = generics.clone();
+        attr.commutative_where()
+            .into_iter()
+            .for_each(|w| g.make_where_clause().predicates.push(w));
+        let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
         attr.is_commutative().then(|| {
             parse_quote! {
                 #[automatically_derived]
@@ -115,7 +108,7 @@ impl<'a> OpTrait<'a> {
         })
     }
 
-    pub fn impl_semigroup_with_unit_annotate(&self) -> Option<ItemImpl> {
+    pub fn impl_semigroup_with_unit_annotation(&self) -> Option<ItemImpl> {
         let Self {
             constant:
                 Constant {
@@ -132,7 +125,7 @@ impl<'a> OpTrait<'a> {
 
         attr.is_annotated().then(|| {
             let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
-            let unit_annotation = attr.unit_annotate();
+            let unit_annotation = attr.unit_annotation();
             parse_quote! {
                 #[automatically_derived]
                 impl #impl_generics #path_semigroup for #ident #ty_generics #where_clause {

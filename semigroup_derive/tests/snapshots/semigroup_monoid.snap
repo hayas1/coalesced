@@ -15,11 +15,11 @@ impl ::semigroup::Semigroup for MonoidStruct {
 }
 #[automatically_derived]
 impl ::semigroup::Monoid for MonoidStruct {
-    fn unit() -> Self {
+    fn identity() -> Self {
         Self {
             sum: <semigroup::op::Sum<
                 _,
-            > as ::semigroup::ConstructionMonoid<_>>::lift_unit(),
+            > as ::semigroup::ConstructionMonoid<_>>::lift_identity(),
         }
     }
 }

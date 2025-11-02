@@ -6,7 +6,7 @@ expression: formatted
 #[automatically_derived]
 #[cfg(feature = "monoid")]
 impl<T: std::ops::Add> crate::Monoid for Sum<T> {
-    fn unit() -> Self {
+    fn identity() -> Self {
         Default::default()
     }
 }

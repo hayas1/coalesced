@@ -1,34 +1,15 @@
 use std::ops::{Deref, DerefMut};
 
+use semigroup_derive::{properties_priv, ConstructionPriv};
+
 use crate::{AnnotatedSemigroup, Semigroup};
 
 /// Some [`Semigroup`] such as [`crate::op::Coalesce`] can have an annotation.
-/// [`Annotate`] trait will be derived by [`Semigroup`].
-/// The annotated value is represented by a type [`Annotated`].
+/// The annotated operation is represented by [`AnnotatedSemigroup`], and the annotated value is represented by a type [`Annotated`].
 ///
 /// # Examples
-/// ## constructed semigroup
-/// ```
-/// use semigroup::{op::Coalesce, Annotate, Semigroup};
-///
-/// let a = Coalesce(Some(1)).annotated("first");
-/// let b = Coalesce(None).annotated("second");
-/// let c = Coalesce(Some(3)).annotated("third");
-///
-/// let ab = a.semigroup(b);
-/// assert_eq!(ab.value(), &Coalesce(Some(1)));
-/// assert_eq!(ab.annotation(), &"first");
-///
-/// let bc = b.semigroup(c);
-/// assert_eq!(bc.value(), &Coalesce(Some(3)));
-/// assert_eq!(bc.annotation(), &"third");
-///
-/// let ca = c.semigroup(a);
-/// assert_eq!(ca.value(), &Coalesce(Some(3)));
-/// assert_eq!(ca.annotation(), &"third");
-/// ```
-///
-/// ## derived semigroup
+/// ## Deriving
+/// [`Annotate`] can be derived like [`Semigroup`], use `annotated` attribute.
 /// ```
 /// use semigroup::{op::Coalesce, Annotate, Annotated, Semigroup};
 ///
@@ -66,13 +47,53 @@ use crate::{AnnotatedSemigroup, Semigroup};
 /// assert_eq!(ca.annotation().boolean, "first");
 /// assert_eq!(ca.annotation(), &ExampleStructAnnotation{ num: "third", str: "third", boolean: "first" });
 /// ```
+///
+/// ## Construction
+/// [`Annotate`] can be constructed by [`crate::ConstructionAnnotated`] like [`Semigroup`], use `annotated` attribute.
+/// In this case, the [`Semigroup`] annotated operation is represented by [`AnnotatedSemigroup`].
+///
+/// Some operations are already provided by [`crate::op`].
+/// ```
+/// use semigroup::{AnnotatedSemigroup, Annotate, Annotated, Construction, ConstructionAnnotated, Semigroup};
+///
+/// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
+/// #[construction(annotated)]
+/// struct Coalesce<T>(Option<T>);
+/// impl<A, T> AnnotatedSemigroup<A> for Coalesce<T> {
+///     fn annotated_op(base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A> {
+///         match (&base.value().0, &other.value().0) {
+///             (Some(_), _) | (None, None) => base,
+///             (None, Some(_)) => other,
+///         }
+///     }
+/// }
+///
+/// let a = Coalesce(Some(1)).annotated("first");
+/// let b = Coalesce(None).annotated("second");
+/// let c = Coalesce(Some(3)).annotated("third");
+///
+/// let ab = a.semigroup(b);
+/// assert_eq!(ab.value(), &Coalesce(Some(1)));
+/// assert_eq!(ab.annotation(), &"first");
+///
+/// let bc = b.semigroup(c);
+/// assert_eq!(bc.value(), &Coalesce(Some(3)));
+/// assert_eq!(bc.annotation(), &"third");
+///
+/// let ca = c.semigroup(a);
+/// assert_eq!(ca.value(), &Coalesce(Some(3)));
+/// assert_eq!(ca.annotation(), &"third");
+/// ```
 pub trait Annotate<A>: Sized {
     type Annotation;
     fn annotated(self, annotation: Self::Annotation) -> Annotated<Self, A>;
 }
 
-/// [`Annotated`] represents a value with an annotation.
+/// [`Annotated`] represents a [`Semigroup`] value with an annotation.
 /// The value will be annotated by [`Annotate`] trait.
+///
+/// # Properties
+/// <!-- properties -->
 ///
 /// # Examples
 /// ```
@@ -84,7 +105,16 @@ pub trait Annotate<A>: Sized {
 /// assert_eq!(annotated.annotation(), &"first");
 /// assert_eq!(annotated, Annotated::new(Coalesce(Some(1)), "first"));
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
+#[construction(
+    commutative,
+    commutative_where = "T: AnnotatedSemigroup<A> + crate::Commutative",
+    without_construction
+)]
+#[properties_priv(
+    commutative,
+    commutative_where = "T: AnnotatedSemigroup<A> + crate::Commutative"
+)]
 pub struct Annotated<T, A> {
     value: T,
     annotation: A,
@@ -102,6 +132,7 @@ impl<T: AnnotatedSemigroup<A>, A> Annotated<T, A> {
 }
 
 impl<T, A> Annotated<T, A> {
+    /// [`Annotated`] has `new` method, but [`Annotated`] should be created by [`Annotate`] trait.
     pub fn new(value: T, annotation: A) -> Self {
         Self { value, annotation }
     }
@@ -110,9 +141,6 @@ impl<T, A> Annotated<T, A> {
     }
     pub fn parts(&self) -> (&T, &A) {
         (&self.value, &self.annotation)
-    }
-    pub fn parts_mut(&mut self) -> (&mut T, &mut A) {
-        (&mut self.value, &mut self.annotation)
     }
     pub fn into_value(self) -> T {
         self.value
@@ -128,9 +156,6 @@ impl<T, A> Annotated<T, A> {
     }
     pub fn annotation(&self) -> &A {
         &self.annotation
-    }
-    pub fn annotation_mut(&mut self) -> &mut A {
-        &mut self.annotation
     }
 
     pub fn map<U>(self, f: impl FnOnce(T) -> U) -> Annotated<U, A> {
@@ -162,10 +187,10 @@ impl<T, A> Annotated<T, A> {
             annotation: &self.annotation,
         }
     }
-    pub fn as_ref_mut(&mut self) -> Annotated<&mut T, &mut A> {
+    pub fn as_ref_mut(&mut self) -> Annotated<&mut T, &A> {
         Annotated {
             value: &mut self.value,
-            annotation: &mut self.annotation,
+            annotation: &self.annotation,
         }
     }
     pub fn as_deref(&self) -> Annotated<&T::Target, &A>
@@ -174,7 +199,7 @@ impl<T, A> Annotated<T, A> {
     {
         self.as_ref().map(|v| v.deref())
     }
-    pub fn as_deref_mut(&mut self) -> Annotated<&mut T::Target, &mut A>
+    pub fn as_deref_mut(&mut self) -> Annotated<&mut T::Target, &A>
     where
         T: DerefMut,
     {
@@ -290,7 +315,7 @@ pub mod tests {
         let one_value_ref_annotation_ref_mut = Annotated::new(&1, &mut first);
         assert_eq!(one_value_ref_annotation_ref_mut.cloned(), annotated_one);
 
-        let one_value_ref_mut_annotation_ref_mut = Annotated::new(&mut one, &mut first);
+        let one_value_ref_mut_annotation_ref_mut = Annotated::new(&mut one, &first);
         assert_eq!(
             one_value_ref_mut_annotation_ref_mut,
             annotated_one.as_ref_mut()

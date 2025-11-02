@@ -11,16 +11,18 @@ readme.workspace = true
 [features]
 derive = []
 serde = ["dep:serde"]
-test = ["monoid", "dep:rand"]
+test = ["dep:rand"]
 monoid = ["dep:num"]
 histogram = ["dep:hdrhistogram"]
+async = ["dep:futures"]
 
 [dependencies]
-semigroup_derive = { version = "0.3.2", path = "../semigroup_derive" }
+semigroup_derive = { version = "0.4.0", path = "../semigroup_derive" }
 serde = { version = "1.0.228", features = ["derive"], optional = true }
 num = { version = "0.4.3", optional = true }
 rand = { version = "0.9.2", optional = true }
 hdrhistogram = { version = "7.5.4", optional = true }
+futures = { version = "0.3.31", optional = true }
 
 [dev-dependencies]
 semigroup = { path = ".", features = ["derive", "test"] }

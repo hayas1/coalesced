@@ -1,17 +1,20 @@
-error[E0277]: the trait bound `Overwrite<_>: ConstructionMonoid<_>` is not satisfied
+error[E0405]: cannot find trait `Monoid` in crate `semigroup`
  --> tests/ui/semigroup/derive_monoid_without_monoid.rs:3:35
   |
 3 | #[derive(Debug, Clone, PartialEq, Semigroup)]
-  |                                   ^^^^^^^^^ the trait `ConstructionMonoid<_>` is not implemented for `Overwrite<_>`
+  |                                   ^^^^^^^^^ not found in `semigroup`
   |
-  = help: the following other types implement trait `ConstructionMonoid<T>`:
-            `Coalesce<T>` implements `ConstructionMonoid<Option<T>>`
-            `Gcd<T>` implements `ConstructionMonoid<T>`
-            `Lcm<T>` implements `ConstructionMonoid<T>`
-            `Max<T>` implements `ConstructionMonoid<T>`
-            `Min<T>` implements `ConstructionMonoid<T>`
-            `OptionMonoid<T>` implements `ConstructionMonoid<Option<T>>`
-            `Prod<T>` implements `ConstructionMonoid<T>`
-            `Xor<T>` implements `ConstructionMonoid<T>`
-          and $N others
+  = note: this error originates in the derive macro `Semigroup` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0405]: cannot find trait `ConstructionMonoid` in crate `semigroup`
+ --> tests/ui/semigroup/derive_monoid_without_monoid.rs:3:35
+  |
+3 | #[derive(Debug, Clone, PartialEq, Semigroup)]
+  |                                   ^^^^^^^^^
+  |
+ ::: src/construction.rs
+  |
+  | pub trait Construction<T>: Semigroup + Sized + From<T> + Deref<Target = T> + DerefMut {
+  | ------------------------------------------------------------------------------------- similarly named trait `Construction` defined here
+  |
   = note: this error originates in the derive macro `Semigroup` (in Nightly builds, run with -Z macro-backtrace for more info)

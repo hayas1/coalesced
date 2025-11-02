@@ -40,7 +40,7 @@ mod tests {
         impl_construction::<Internal>,
         syn::parse_quote! {
             #[derive(ConstructionPriv)]
-            #[construction(monoid, commutative, unit = Default::default())]
+            #[construction(monoid, commutative, identity = Default::default())]
             pub struct Sum<T: std::ops::Add>(pub T);
         },
     )]

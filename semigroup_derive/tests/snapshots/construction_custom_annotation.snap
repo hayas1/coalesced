@@ -8,7 +8,7 @@ impl<T: IntoIterator + FromIterator<T::Item>> ::semigroup::Monoid for Concat<T>
 where
     Self: Default,
 {
-    fn unit() -> Self {
+    fn identity() -> Self {
         Default::default()
     }
 }

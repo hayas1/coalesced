@@ -16,8 +16,8 @@ pub mod op_trait;
 
 #[derive(Debug, Clone)]
 pub struct Construction<'a> {
-    construction_trait: ConstructionTrait<'a>,
-    op_trait: Option<OpTrait<'a>>,
+    construction_trait: Option<ConstructionTrait<'a>>,
+    op_trait: OpTrait<'a>,
 }
 impl ToTokens for Construction<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
@@ -31,9 +31,11 @@ impl<'a> Construction<'a> {
         derive: &'a DeriveInput,
         attr: &'a ContainerAttr,
     ) -> syn::Result<Self> {
-        let field = Self::newtype_field(derive)?;
-        let construction_trait = ConstructionTrait::new(constant, derive, attr, field)?;
-        let op_trait = OpTrait::new(constant, derive, attr, field);
+        let construction_trait = attr
+            .with_construction()
+            .then(|| ConstructionTrait::new(constant, derive, attr, Self::newtype_field(derive)?))
+            .transpose()?;
+        let op_trait = OpTrait::new(constant, derive, attr);
         Ok(Self {
             construction_trait,
             op_trait,
@@ -55,15 +57,15 @@ impl<'a> Construction<'a> {
             }
             Data::Enum(DataEnum { enum_token, .. }) => Err(syn::Error::new_spanned(
                 enum_token,
-                ConstructionError::UnsupportedEnum,
+                ConstructionError::ExpectNewType,
             )),
             Data::Struct(DataStruct { struct_token, .. }) => Err(syn::Error::new_spanned(
                 struct_token,
-                ConstructionError::OnlyNewType,
+                ConstructionError::ExpectNewType,
             )),
             Data::Union(DataUnion { union_token, .. }) => Err(syn::Error::new_spanned(
                 union_token,
-                ConstructionError::OnlyNewType,
+                ConstructionError::ExpectNewType,
             )),
         }
     }

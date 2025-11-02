@@ -4,7 +4,7 @@ use semigroup_derive::{ConstructionPriv, properties_priv};
 
 use crate::Semigroup;
 
-/// A semigroup construction that returns the sum.
+/// A [`Semigroup`](crate::Semigroup) [construction](crate::Construction) that returns the sum.
 /// # Properties
 /// <!-- properties -->
 ///
@@ -19,8 +19,8 @@ use crate::Semigroup;
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(monoid, commutative, unit = Self(T::zero()), unit_where = "T: num::Zero")]
-#[properties_priv(monoid, commutative)]
+#[construction(monoid, commutative, identity = Self(T::zero()), monoid_where = "T: num::Zero")]
+#[properties_priv(monoid, commutative, monoid_where = "T: num::Zero")]
 pub struct Sum<T: Add<Output = T>>(pub T);
 impl<T: Add<Output = T>> Semigroup for Sum<T> {
     fn op(base: Self, other: Self) -> Self {
@@ -30,26 +30,27 @@ impl<T: Add<Output = T>> Semigroup for Sum<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Construction, Semigroup, assert_commutative, assert_monoid, assert_semigroup};
+    use crate::{Construction, Semigroup};
 
     use super::*;
 
     #[test]
-    fn test_sum_as_semigroup() {
+    fn test_sum_semigroup() {
         let (a, b, c) = (Sum(1), Sum(2), Sum(3));
-        assert_semigroup!(a, b, c);
+        crate::assert_semigroup!(a, b, c);
     }
 
     #[test]
-    fn test_sum_as_monoid() {
+    #[cfg(feature = "monoid")]
+    fn test_sum_monoid() {
         let (a, b, c) = (Sum(1), Sum(2), Sum(3));
-        assert_monoid!(a, b, c);
+        crate::assert_monoid!(a, b, c);
     }
 
     #[test]
     fn test_sum_commutative() {
         let (a, b, c) = (Sum(1), Sum(2), Sum(3));
-        assert_commutative!(a, b, c);
+        crate::assert_commutative!(a, b, c);
     }
 
     #[test]

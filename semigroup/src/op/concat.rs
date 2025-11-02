@@ -2,7 +2,7 @@ use semigroup_derive::{ConstructionPriv, properties_priv};
 
 use crate::{Annotated, AnnotatedSemigroup};
 
-/// A semigroup construction that concatenates two values.
+/// A [`Semigroup`](crate::Semigroup) [construction](crate::Construction) that concatenates two values.
 /// # Properties
 /// <!-- properties -->
 ///
@@ -20,13 +20,13 @@ use crate::{Annotated, AnnotatedSemigroup};
 #[construction(
     annotated,
     monoid,
-    unit = Self(std::iter::empty().collect()),
+    identity = Self(std::iter::empty().collect()),
     annotation_type_param = "A: IntoIterator + FromIterator<A::Item>",
     annotation_where = "A::Item: Clone",
     unit_annotation = "vec![(); 0]",
     without_annotate_impl
 )]
-#[properties_priv(annotated, monoid)]
+#[properties_priv(annotated, monoid, annotation_where = "A::Item: Clone")]
 pub struct Concat<T: IntoIterator + FromIterator<T::Item>>(pub T);
 impl<T: IntoIterator + FromIterator<T::Item>, A: IntoIterator + FromIterator<A::Item>>
     AnnotatedSemigroup<A> for Concat<T>
@@ -72,20 +72,21 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::{Construction, Semigroup, assert_monoid, assert_semigroup};
+    use crate::{Construction, Semigroup};
 
     use super::*;
 
     #[test]
-    fn test_concat_as_semigroup() {
+    fn test_concat_semigroup() {
         let (a, b, c) = (Concat(vec![1]), Concat(vec![2]), Concat(vec![3]));
-        assert_semigroup!(a, b, c);
+        crate::assert_semigroup!(a, b, c);
     }
 
     #[test]
-    fn test_concat_as_monoid() {
+    #[cfg(feature = "monoid")]
+    fn test_concat_monoid() {
         let (a, b, c) = (Concat(vec![1]), Concat(vec![2]), Concat(vec![3]));
-        assert_monoid!(a, b, c)
+        crate::assert_monoid!(a, b, c)
     }
 
     #[test]
