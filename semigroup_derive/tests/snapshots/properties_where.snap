@@ -3,12 +3,12 @@ source: semigroup_derive/src/properties.rs
 assertion_line: 94
 expression: formatted
 ---
-/// A semigroup construction that returns the first non-`None` value.
+/// A semigroup construction that returns the sum.
 /// # Properties
 /// <!-- properties start -->
 ///|       | [`crate::Annotate`] | [`crate::Monoid`] | [`crate::Commutative`] |
 ///|-------|---------------------|-------------------|------------------------|
-///|  impl |          ✅         |         ✅        |           ❌           |
-///| where |                     |                   |                        |
+///|  impl |          ❌         |         ✅        |           ✅           |
+///| where |                     |   `T: num::Zero`  |                        |
 ///<!-- properties end -->
-pub struct Coalesce<T>(pub Option<T>);
+pub struct Sum<T: Add<Output = T>>(pub T);

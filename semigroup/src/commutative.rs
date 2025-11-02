@@ -7,7 +7,10 @@ use crate::Semigroup;
 ///
 /// And the [*monoid*](crate::Monoid) set that satisfies the *commutativity* property is often called *commutative monoid*.
 ///
-/// # Deriving
+/// This is marker trait.
+///
+/// # Examples
+/// ## Deriving
 /// [`Commutative`] can be derived like [`Semigroup`], use `commutative` attribute.
 /// ```
 /// use semigroup::Semigroup;
@@ -29,33 +32,90 @@ use crate::Semigroup;
 /// assert_eq!(a.semigroup(b).semigroup(c), ExampleStruct { sum: 111, min: 1 });
 /// ```
 ///
+/// ## Construction
+/// [`Commutative`] can be constructed like [`Semigroup`], use `commutative` attribute.
+/// ```
+/// use semigroup::{Construction, Semigroup};
+///
+/// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
+/// #[construction(commutative)]
+/// pub struct Sum(u64);
+/// impl Semigroup for Sum {
+///     fn op(base: Self, other: Self) -> Self {
+///         Self(base.0 + other.0)
+///     }
+/// }
+///
+/// let (a, b, c) = (Sum(1), Sum(2), Sum(3));
+/// // #[test]
+/// semigroup::assert_commutative!(&a, &b, &c);
+/// assert_eq!(a.semigroup(b).semigroup(c), Sum(6));
+/// ```
+///
 /// # Testing
 /// Use [`crate::assert_commutative!`] macro.
-/// This is marker trait.
 ///
 /// The *commutativity* property is not guaranteed by Rust’s type system,
 /// so it must be verified manually using [`crate::assert_commutative!`].
-///
 pub trait Commutative: Semigroup {}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct Reverse<T>(pub T);
-
-impl<T: Semigroup> Semigroup for Reverse<T> {
-    fn op(base: Self, other: Self) -> Self {
-        Self(Semigroup::op(other.0, base.0))
-    }
-}
-
-#[cfg(any(test, feature = "test"))]
+#[cfg(feature = "test")]
 pub mod test_commutative {
     use std::fmt::Debug;
 
-    use crate::semigroup::test_semigroup::assert_associative_law;
+    use crate::Reverse;
 
     use super::*;
 
+    /// Assert that the given type satisfies the *commutative* property.
+    ///
+    /// # Usage
+    /// Same to [`crate::assert_semigroup!`].
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{assert_commutative, op::Sum};
+    ///
+    /// let a = Sum(1);
+    /// let b = Sum(2);
+    /// let c = Sum(3);
+    /// assert_commutative!(a, b, c);
+    ///
+    /// let v = vec![a, b, c];
+    /// assert_commutative!(&v);
+    /// ```
+    ///
+    /// # Panics
+    /// - If the given function does not satisfy the *commutative* property.
+    /// ```should_panic
+    /// use semigroup::{assert_commutative, Construction, Semigroup};
+    /// #[derive(Debug, Clone, PartialEq, Construction)]
+    /// #[construction(commutative)]
+    /// pub struct Sub(i32);
+    /// impl Semigroup for Sub {
+    ///     fn op(base: Self, other: Self) -> Self {
+    ///         Self(base.0 - other.0)
+    ///     }
+    /// }
+    /// let a = Sub(1);
+    /// let b = Sub(2);
+    /// let c = Sub(3);
+    /// assert_commutative!(a, b, c);
+    /// ```
+    ///
+    /// - The input iterator has less than 3 items.
+    /// ```compile_fail
+    /// use semigroup::{assert_commutative, op::Sum};
+    /// let a = Sum(1);
+    /// let b = Sum(2);
+    /// assert_commutative!(a, b);
+    /// ```
+    /// ```should_panic
+    /// use semigroup::{assert_commutative, op::Sum};
+    /// let a = Sum(1);
+    /// let b = Sum(2);
+    /// assert_commutative!(&vec![a, b]);
+    /// ```
     #[macro_export]
     macro_rules! assert_commutative {
         ($a:expr, $b: expr, $($tail: expr),*) => {
@@ -78,12 +138,12 @@ pub mod test_commutative {
     }
 
     pub fn assert_commutative_law<T: Commutative + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
-        let abc = T::op(T::op(a.clone(), b.clone()), c.clone());
-        let bca = T::op(T::op(b.clone(), c.clone()), a.clone());
-        let cba = T::op(T::op(c.clone(), b.clone()), a.clone());
-        let acb = T::op(T::op(a.clone(), c.clone()), b.clone());
-        let bac = T::op(T::op(b.clone(), a.clone()), c.clone());
-        let cab = T::op(T::op(c.clone(), a.clone()), b.clone());
+        let abc = Semigroup::op(Semigroup::op(a.clone(), b.clone()), c.clone());
+        let bca = Semigroup::op(Semigroup::op(b.clone(), c.clone()), a.clone());
+        let cba = Semigroup::op(Semigroup::op(c.clone(), b.clone()), a.clone());
+        let acb = Semigroup::op(Semigroup::op(a.clone(), c.clone()), b.clone());
+        let bac = Semigroup::op(Semigroup::op(b.clone(), a.clone()), c.clone());
+        let cab = Semigroup::op(Semigroup::op(c.clone(), a.clone()), b.clone());
 
         assert_eq!(abc, bca);
         assert_eq!(bca, cba);
@@ -100,40 +160,16 @@ pub mod test_commutative {
     ) {
         let (ra, rb, rc) = (Reverse(a.clone()), Reverse(b.clone()), Reverse(c.clone()));
         assert_eq!(
-            T::op(a.clone(), b.clone()),
-            Reverse::<T>::op(ra.clone(), rb.clone()).0
+            Semigroup::op(a.clone(), b.clone()),
+            Semigroup::op(ra.clone(), rb.clone()).0
         );
         assert_eq!(
-            T::op(b.clone(), c.clone()),
-            Reverse::<T>::op(rb.clone(), rc.clone()).0
+            Semigroup::op(b.clone(), c.clone()),
+            Semigroup::op(rb.clone(), rc.clone()).0
         );
         assert_eq!(
-            T::op(c.clone(), a.clone()),
-            Reverse::<T>::op(rc.clone(), ra.clone()).0
+            Semigroup::op(c.clone(), a.clone()),
+            Semigroup::op(rc.clone(), ra.clone()).0
         );
-    }
-
-    pub fn assert_reverse_reverse<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
-        let (ra, rb, rc) = (Reverse(a.clone()), Reverse(b.clone()), Reverse(c.clone()));
-        assert_eq!(
-            T::op(a.clone(), b.clone()),
-            Reverse::<T>::op(rb.clone(), ra.clone()).0
-        );
-        assert_eq!(
-            T::op(b.clone(), c.clone()),
-            Reverse::<T>::op(rc.clone(), rb.clone()).0
-        );
-        assert_eq!(
-            T::op(a.clone(), c.clone()),
-            Reverse::<T>::op(rc.clone(), ra.clone()).0
-        );
-    }
-    pub fn assert_reverse_associative_law<T: Semigroup + Clone + PartialEq + Debug>(
-        a: T,
-        b: T,
-        c: T,
-    ) {
-        let (ra, rb, rc) = (Reverse(a), Reverse(b), Reverse(c));
-        assert_associative_law(ra, rb, rc);
     }
 }

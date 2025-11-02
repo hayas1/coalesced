@@ -2,7 +2,7 @@ use semigroup_derive::{properties_priv, ConstructionPriv};
 
 use crate::{Annotated, AnnotatedSemigroup};
 
-/// A semigroup construction that returns the second value.
+/// A [`Semigroup`](crate::Semigroup) [construction](crate::Construction) that returns the second value.
 /// # Properties
 /// <!-- properties -->
 ///
@@ -28,14 +28,14 @@ impl<T, A> AnnotatedSemigroup<A> for Overwrite<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_semigroup, Construction, Semigroup};
+    use crate::{Construction, Semigroup};
 
     use super::*;
 
     #[test]
-    fn test_overwrite_as_semigroup() {
+    fn test_overwrite_semigroup() {
         let (a, b, c) = (Overwrite(1), Overwrite(2), Overwrite(3));
-        assert_semigroup!(a, b, c);
+        crate::assert_semigroup!(a, b, c);
     }
 
     #[test]

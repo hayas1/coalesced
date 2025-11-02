@@ -23,10 +23,8 @@ pub struct StructSemigroup<'a> {
 impl ToTokens for StructSemigroup<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         self.impl_semigroup().to_tokens(tokens);
-        self.impl_monoid().iter().for_each(|s| s.to_tokens(tokens));
-        self.impl_commutative()
-            .iter()
-            .for_each(|s| s.to_tokens(tokens));
+        self.impl_monoid().to_tokens(tokens);
+        self.impl_commutative().to_tokens(tokens);
     }
 }
 impl<'a> StructSemigroup<'a> {
@@ -86,30 +84,30 @@ impl<'a> StructSemigroup<'a> {
         } = derive;
         (attr.is_monoid() && attr.with_monoid_impl()).then(|| {
             let mut g = generics.clone();
-            attr.unit_where()
+            attr.monoid_where()
                 .into_iter()
                 .for_each(|w| g.make_where_clause().predicates.push(w));
             let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
 
-            attr.unit()
+            attr.identity()
                 .map(|expr| {
                     parse_quote! {
                         #[automatically_derived]
                         #attr_feature_monoid
                         impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
-                            fn unit() -> Self {
+                            fn identity() -> Self {
                                 #expr
                             }
                         }
                     }
                 })
                 .unwrap_or_else(|| {
-                    let fields_op = field_ops.iter().map(|op| op.impl_field_monoid_unit());
+                    let fields_op = field_ops.iter().map(|op| op.impl_field_monoid_identity());
                     parse_quote! {
                         #[automatically_derived]
                         #attr_feature_monoid
                         impl #impl_generics #path_monoid for #ident #ty_generics #where_clause {
-                            fn unit() -> Self {
+                            fn identity() -> Self {
                                 Self {
                                     #(#fields_op),*
                                 }
@@ -132,7 +130,11 @@ impl<'a> StructSemigroup<'a> {
         let DeriveInput {
             ident, generics, ..
         } = derive;
-        let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+        let mut g = generics.clone();
+        attr.commutative_where()
+            .into_iter()
+            .for_each(|w| g.make_where_clause().predicates.push(w));
+        let (impl_generics, ty_generics, where_clause) = g.split_for_impl();
         attr.is_commutative().then(|| {
             parse_quote! {
                 #[automatically_derived]

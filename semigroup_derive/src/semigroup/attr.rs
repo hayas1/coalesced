@@ -11,13 +11,14 @@ pub struct ContainerAttr {
 
     #[darling(default)]
     monoid: bool,
-    unit: Option<Expr>,
-    unit_where: Option<String>, // TODO Vec
+    identity: Option<Expr>,
+    monoid_where: Option<String>, // TODO Vec
     #[darling(default)]
     without_monoid_impl: bool,
 
     #[darling(default)]
     commutative: bool,
+    commutative_where: Option<String>, // TODO Vec
 
     with: Option<Path>,
     annotation_param: Option<Ident>,
@@ -31,9 +32,11 @@ impl ContainerAttr {
             annotated,
             annotation_param,
             monoid,
-            unit,
-            unit_where,
+            identity,
+            monoid_where,
             without_monoid_impl,
+            commutative,
+            commutative_where,
             ..
         } = &self;
         if !annotated {
@@ -47,10 +50,10 @@ impl ContainerAttr {
             })?;
         }
         if !monoid {
-            let err_attr_name = if unit.is_some() {
-                Some(var_name!(unit))
-            } else if unit_where.is_some() {
-                Some(var_name!(unit_where))
+            let err_attr_name = if identity.is_some() {
+                Some(var_name!(identity))
+            } else if monoid_where.is_some() {
+                Some(var_name!(monoid_where))
             } else if *without_monoid_impl {
                 Some(var_name!(without_monoid_impl))
             } else {
@@ -58,6 +61,16 @@ impl ContainerAttr {
             };
             err_attr_name.map_or(Ok(()), |a| {
                 Err(darling::Error::custom(SemigroupError::OnlyMonoid(a)))
+            })?;
+        }
+        if !commutative {
+            let err_attr_name = if commutative_where.is_some() {
+                Some(var_name!(commutative_where))
+            } else {
+                None
+            };
+            err_attr_name.map_or(Ok(()), |a| {
+                Err(darling::Error::custom(SemigroupError::OnlyCommutative(a)))
             })?;
         }
         Ok(self)
@@ -70,11 +83,11 @@ impl ContainerAttr {
     pub fn is_monoid(&self) -> bool {
         self.monoid
     }
-    pub fn unit(&self) -> Option<&Expr> {
-        self.unit.as_ref()
+    pub fn identity(&self) -> Option<&Expr> {
+        self.identity.as_ref()
     }
-    pub fn unit_where(&self) -> Option<WherePredicate> {
-        self.unit_where
+    pub fn monoid_where(&self) -> Option<WherePredicate> {
+        self.monoid_where
             .as_deref()
             .map(syn::parse_str)
             .map(|p| p.unwrap_or_else(|e| todo!("{e}")))
@@ -85,6 +98,12 @@ impl ContainerAttr {
 
     pub fn is_commutative(&self) -> bool {
         self.commutative
+    }
+    pub fn commutative_where(&self) -> Option<WherePredicate> {
+        self.commutative_where
+            .as_deref()
+            .map(syn::parse_str)
+            .map(|p| p.unwrap_or_else(|e| todo!("{e}")))
     }
 
     pub fn annotation(&self, constant: &Constant, annotation_ident: &Ident) -> Annotation {
@@ -151,10 +170,10 @@ mod tests {
     #[case::invalid_monoid_attr(
         syn::parse_quote! {
             #[derive(Semigroup)]
-            #[semigroup(unit = ())]
+            #[semigroup(identity = ())]
             pub struct UnnamedStruct();
         },
-        Err("attribute `unit` are supported only with `monoid`"),
+        Err("attribute `identity` are supported only with `monoid`"),
     )]
     fn test_semigroup_container_attr(
         #[case] input: DeriveInput,

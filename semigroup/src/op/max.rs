@@ -2,7 +2,7 @@ use semigroup_derive::{properties_priv, ConstructionPriv};
 
 use crate::{Annotated, AnnotatedSemigroup};
 
-/// A semigroup construction that returns the maximum value.
+/// A [`Semigroup`](crate::Semigroup) [construction](crate::Construction) that returns the maximum value.
 /// # Properties
 /// <!-- properties -->
 ///
@@ -17,8 +17,8 @@ use crate::{Annotated, AnnotatedSemigroup};
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, ConstructionPriv)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[construction(annotated, monoid, commutative, unit = Self(T::min_value()), unit_where = "T: num::Bounded")]
-#[properties_priv(annotated, monoid, commutative)]
+#[construction(annotated, monoid, commutative, identity = Self(T::min_value()), monoid_where = "T: num::Bounded")]
+#[properties_priv(annotated, monoid, commutative, monoid_where = "T: num::Bounded")]
 pub struct Max<T: Ord>(pub T);
 impl<A, T: Ord> AnnotatedSemigroup<A> for Max<T> {
     fn annotated_op(base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A> {
@@ -28,26 +28,27 @@ impl<A, T: Ord> AnnotatedSemigroup<A> for Max<T> {
 
 #[cfg(test)]
 mod tests {
-    use crate::{assert_commutative, assert_monoid, assert_semigroup, Construction, Semigroup};
+    use crate::{Construction, Semigroup};
 
     use super::*;
 
     #[test]
-    fn test_max_as_semigroup() {
+    fn test_max_semigroup() {
         let (a, b, c) = (Max(1), Max(2), Max(3));
-        assert_semigroup!(a, b, c);
+        crate::assert_semigroup!(a, b, c);
     }
 
     #[test]
-    fn test_max_as_monoid() {
+    #[cfg(feature = "monoid")]
+    fn test_max_monoid() {
         let (a, b, c) = (Max(1), Max(2), Max(3));
-        assert_monoid!(a, b, c);
+        crate::assert_monoid!(a, b, c);
     }
 
     #[test]
     fn test_max_commutative() {
         let (a, b, c) = (Max(1), Max(2), Max(3));
-        assert_commutative!(a, b, c);
+        crate::assert_commutative!(a, b, c);
     }
 
     #[test]

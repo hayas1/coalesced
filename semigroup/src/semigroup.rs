@@ -4,7 +4,8 @@ use crate::Annotated;
 /// 1. *Closure*: `op: T × T → T`
 /// 2. *Associativity*: `op(op(a, b), c) = op(a, op(b, c))`
 ///
-/// # Deriving
+/// # Examples
+/// ## Deriving
 /// When fields do not implement [`Semigroup`], use `with` attribute.
 /// ```
 /// use semigroup::Semigroup;
@@ -27,7 +28,7 @@ use crate::Annotated;
 /// assert_eq!(a.semigroup(b).semigroup(c), ExampleStruct { str: Some("ten"), boolean: false, sum: 111 });
 /// ```
 ///
-/// # Construction
+/// ## Construction
 /// [`Semigroup`] can be constructed by [`crate::Construction`].
 ///
 /// Some operations are already provided by [`crate::op`].
@@ -35,7 +36,6 @@ use crate::Annotated;
 /// use semigroup::{Construction, Semigroup};
 ///
 /// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash, Construction)]
-/// #[construction(monoid, commutative)]
 /// pub struct Sum(u64);
 /// impl Semigroup for Sum {
 ///     fn op(base: Self, other: Self) -> Self {
@@ -64,20 +64,20 @@ pub trait Semigroup {
     }
 }
 
-/// [`AnnotatedSemigroup`] is a [`Semigroup`] that has an annotation.
+/// [`AnnotatedSemigroup`] is a [`Semigroup`] that has an annotation, such as [`crate::Annotate`].
 pub trait AnnotatedSemigroup<A>: Sized + Semigroup {
     fn annotated_op(base: Annotated<Self, A>, other: Annotated<Self, A>) -> Annotated<Self, A>;
 }
 
-#[cfg(any(test, feature = "test"))]
+#[cfg(feature = "test")]
 pub mod test_semigroup {
     use std::fmt::Debug;
 
     use rand::seq::IndexedRandom;
 
     use crate::{
-        commutative::test_commutative::{assert_reverse_associative_law, assert_reverse_reverse},
-        iter::test_iter::assert_lazy_evaluation_iter,
+        combine::test_combine::{assert_combine_iter, assert_semigroup_reverse},
+        lazy::test_lazy::assert_lazy,
     };
 
     use super::*;
@@ -85,6 +85,10 @@ pub mod test_semigroup {
     /// Assert that the given type satisfies the *semigroup* property.
     ///
     /// # Usage
+    /// ```sh
+    /// cargo add semigroup --dev --features test
+    /// ```
+    ///
     /// - 1 argument: iterator of more than 3 items that implements [`Semigroup`].
     /// - More than 3 arguments: items that implements [`Semigroup`].
     ///
@@ -103,13 +107,33 @@ pub mod test_semigroup {
     ///
     /// # Panics
     /// - If the given function does not satisfy the *semigroup* property.
-    /// - The input iterator has less than 3 items.
+    /// ```should_panic
+    /// use semigroup::{assert_semigroup, Construction, Semigroup};
+    /// #[derive(Debug, Clone, PartialEq, Construction)]
+    /// pub struct Sub(i32);
+    /// impl Semigroup for Sub {
+    ///     fn op(base: Self, other: Self) -> Self {
+    ///         Self(base.0 - other.0)
+    ///     }
+    /// }
+    /// let a = Sub(1);
+    /// let b = Sub(2);
+    /// let c = Sub(3);
+    /// assert_semigroup!(a, b, c);
+    /// ```
     ///
+    /// - The input iterator has less than 3 items.
     /// ```compile_fail
     /// use semigroup::{assert_semigroup, op::Coalesce};
     /// let a = Coalesce(Some(1));
     /// let b = Coalesce(None);
     /// assert_semigroup!(a, b);
+    /// ```
+    /// ```should_panic
+    /// use semigroup::{assert_semigroup, op::Coalesce};
+    /// let a = Coalesce(Some(1));
+    /// let b = Coalesce(None);
+    /// assert_semigroup!(&vec![a, b]);
     /// ```
     #[macro_export]
     macro_rules! assert_semigroup {
@@ -123,7 +147,6 @@ pub mod test_semigroup {
             {
                 let (a, b, c) = $crate::test_semigroup::pick3($v);
                 $crate::test_semigroup::assert_semigroup_impl(a.clone(), b.clone(), c.clone());
-                $crate::test_monoid::assert_option_monoid(a.clone(), b.clone(), c.clone());
             }
         };
     }
@@ -136,14 +159,16 @@ pub mod test_semigroup {
 
     pub fn assert_semigroup_impl<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
         assert_associative_law(a.clone(), b.clone(), c.clone());
-        assert_reverse_reverse(a.clone(), b.clone(), c.clone());
-        assert_reverse_associative_law(a.clone(), b.clone(), c.clone());
-        assert_lazy_evaluation_iter(a.clone(), b.clone(), c.clone());
+        assert_semigroup_reverse(a.clone(), b.clone(), c.clone());
+        assert_combine_iter(a.clone(), b.clone(), c.clone());
+        assert_lazy(a.clone(), b.clone(), c.clone());
+        #[cfg(feature = "monoid")]
+        crate::test_monoid::assert_option_monoid(a.clone(), b.clone(), c.clone());
     }
 
     pub fn assert_associative_law<T: Semigroup + Clone + PartialEq + Debug>(a: T, b: T, c: T) {
-        let ab_c = T::op(T::op(a.clone(), b.clone()), c.clone());
-        let a_bc = T::op(a.clone(), T::op(b.clone(), c.clone()));
+        let ab_c = Semigroup::op(Semigroup::op(a.clone(), b.clone()), c.clone());
+        let a_bc = Semigroup::op(a.clone(), Semigroup::op(b.clone(), c.clone()));
         assert_eq!(ab_c, a_bc);
     }
 }
