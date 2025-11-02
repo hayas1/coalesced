@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use semigroup_derive::{properties_priv, ConstructionPriv};
+use semigroup_derive::{ConstructionPriv, properties_priv};
 
 use crate::{AnnotatedSemigroup, Semigroup};
 
