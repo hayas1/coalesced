@@ -1,10 +1,12 @@
 <!-- cargo-rdme start -->
 
 [`Semigroup`](https://docs.rs/semigroup/latest/semigroup/semigroup/trait.Semigroup.html) trait is useful for combining multiple elements.
+For example:
 - [`Coalesce`](`op::Coalesce`): reading configs from multiple sources
-- [`Histogram`](`op::HdrHistogram`): statistically aggregation
-- [`SegmentTree`](https://docs.rs/semigroup/latest/semigroup/segment_tree/struct.SegmentTree.html): fast range queries
-- and more...
+- [`Histogram`](`op::HdrHistogram`): statistical aggregation
+
+This crate enables you to **derive [`Semigroup`](https://docs.rs/semigroup/latest/semigroup/semigroup/trait.Semigroup.html)**
+and provides many practical implementations.
 
 ## Usage
 ```sh
