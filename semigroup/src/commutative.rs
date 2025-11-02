@@ -71,6 +71,51 @@ pub mod test_commutative {
     ///
     /// # Usage
     /// Same to [`crate::assert_semigroup!`].
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{assert_commutative, op::Sum};
+    ///
+    /// let a = Sum(1);
+    /// let b = Sum(2);
+    /// let c = Sum(3);
+    /// assert_commutative!(a, b, c);
+    ///
+    /// let v = vec![a, b, c];
+    /// assert_commutative!(&v);
+    /// ```
+    ///
+    /// # Panics
+    /// - If the given function does not satisfy the *commutative* property.
+    /// ```should_panic
+    /// use semigroup::{assert_commutative, Construction, Semigroup};
+    /// #[derive(Debug, Clone, PartialEq, Construction)]
+    /// #[construction(commutative)]
+    /// pub struct Sub(i32);
+    /// impl Semigroup for Sub {
+    ///     fn op(base: Self, other: Self) -> Self {
+    ///         Self(base.0 - other.0)
+    ///     }
+    /// }
+    /// let a = Sub(1);
+    /// let b = Sub(2);
+    /// let c = Sub(3);
+    /// assert_commutative!(a, b, c);
+    /// ```
+    ///
+    /// - The input iterator has less than 3 items.
+    /// ```compile_fail
+    /// use semigroup::{assert_commutative, op::Sum};
+    /// let a = Sum(1);
+    /// let b = Sum(2);
+    /// assert_commutative!(a, b);
+    /// ```
+    /// ```should_panic
+    /// use semigroup::{assert_commutative, op::Sum};
+    /// let a = Sum(1);
+    /// let b = Sum(2);
+    /// assert_commutative!(&vec![a, b]);
+    /// ```
     #[macro_export]
     macro_rules! assert_commutative {
         ($a:expr, $b: expr, $($tail: expr),*) => {

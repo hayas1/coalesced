@@ -152,6 +152,51 @@ pub mod test_monoid {
     ///
     /// # Usage
     /// Same to [`crate::assert_semigroup!`].
+    ///
+    /// # Examples
+    /// ```
+    /// use semigroup::{assert_monoid, op::Coalesce};
+    ///
+    /// let a = Coalesce(Some(1));
+    /// let b = Coalesce(None);
+    /// let c = Coalesce(Some(3));
+    /// assert_monoid!(a, b, c);
+    ///
+    /// let v = vec![a, b, c];
+    /// assert_monoid!(&v);
+    /// ```
+    ///
+    /// # Panics
+    /// - If the given function does not satisfy the *monoid* property.
+    /// ```should_panic
+    /// use semigroup::{assert_monoid, Construction, Semigroup};
+    /// #[derive(Debug, Clone, PartialEq, Construction)]
+    /// #[construction(monoid, identity = Self(0))]
+    /// pub struct Sub(i32);
+    /// impl Semigroup for Sub {
+    ///     fn op(base: Self, other: Self) -> Self {
+    ///         Self(base.0 - other.0)
+    ///     }
+    /// }
+    /// let a = Sub(1);
+    /// let b = Sub(2);
+    /// let c = Sub(3);
+    /// assert_monoid!(a, b, c);
+    /// ```
+    ///
+    /// - The input iterator has less than 3 items.
+    /// ```compile_fail
+    /// use semigroup::{assert_monoid, op::Coalesce};
+    /// let a = Coalesce(Some(1));
+    /// let b = Coalesce(None);
+    /// assert_monoid!(a, b);
+    /// ```
+    /// ```should_panic
+    /// use semigroup::{assert_monoid, op::Coalesce};
+    /// let a = Coalesce(Some(1));
+    /// let b = Coalesce(None);
+    /// assert_monoid!(&vec![a, b]);
+    /// ```
     #[macro_export]
     macro_rules! assert_monoid {
         ($a:expr, $b: expr, $($tail: expr),*) => {
